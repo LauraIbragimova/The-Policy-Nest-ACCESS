@@ -1,0 +1,136 @@
+{
+  "program": {
+    "name": "ACCESS Model",
+    "fullName": "Advancing Chronic Care with Effective, Scalable Solutions",
+    "duration": "10-year voluntary model (2025–2035)",
+    "conditionTracks": [
+      "Hypertension",
+      "Diabetes",
+      "Chronic Musculoskeletal Pain",
+      "Depression"
+    ],
+    "organizationTypes": [
+      "ACO / MSSP Participant",
+      "FQHC / Community Health Center",
+      "Independent Practice / Group Practice",
+      "Health System / Hospital",
+      "Digital Health / Tech-Enabled Provider"
+    ]
+  },
+  "phases": [
+    {
+      "id": "phase-1",
+      "number": 1,
+      "title": "Readiness Assessment",
+      "duration": "60–90 days before participation start",
+      "goal": "Confirm eligibility, identify gaps, align leadership",
+      "tasks": [
+        { "id": "t1-1", "title": "Review ACCESS eligibility criteria and condition track requirements", "owner": "VBC Director / Strategy Lead", "priority": "High", "checkpointLinked": "eligibility-confirmation" },
+        { "id": "t1-2", "title": "Confirm Medicare FFS patient population and qualifying conditions", "owner": "Data/Analytics Team", "priority": "High" },
+        { "id": "t1-3", "title": "Assess existing technology infrastructure against ACCESS requirements", "owner": "IT/EHR Lead", "priority": "High" },
+        { "id": "t1-4", "title": "Identify care team roles and staffing gaps", "owner": "Operations Lead", "priority": "High" },
+        { "id": "t1-5", "title": "Review outcome measurement framework and baseline performance", "owner": "Quality/Clinical Lead", "priority": "Medium" },
+        { "id": "t1-6", "title": "Conduct leadership alignment session", "owner": "Executive Sponsor", "priority": "High" },
+        { "id": "t1-7", "title": "Submit or confirm participation application", "owner": "Compliance/Contracting", "priority": "High", "checkpointLinked": "participation-application" }
+      ],
+      "risks": ["eligibility-misread", "leadership-misalignment", "reporting-infrastructure-lag"]
+    },
+    {
+      "id": "phase-2",
+      "number": 2,
+      "title": "Operational Design",
+      "duration": "60–90 days",
+      "goal": "Design care workflows, assign team roles, select/confirm vendors",
+      "tasks": [
+        { "id": "t2-1", "title": "Map current care delivery workflows against ACCESS model requirements", "owner": "Clinical Operations Lead", "priority": "High" },
+        { "id": "t2-2", "title": "Define care team roles (care coordinator, tech liaison, clinical lead)", "owner": "HR / Operations", "priority": "High" },
+        { "id": "t2-3", "title": "Evaluate and select technology vendor(s) for condition track", "owner": "IT / VBC Director", "priority": "High", "checkpointLinked": "vendor-attestation" },
+        { "id": "t2-4", "title": "Draft patient enrollment and alignment protocol", "owner": "Care Coordination Team", "priority": "High" },
+        { "id": "t2-5", "title": "Develop staff training plan", "owner": "Training Lead", "priority": "Medium" },
+        { "id": "t2-6", "title": "Build internal communication plan for ACCESS launch", "owner": "Communications / Admin", "priority": "Medium" },
+        { "id": "t2-7", "title": "Establish data governance and patient consent processes", "owner": "Compliance", "priority": "High", "checkpointLinked": "data-governance-setup" }
+      ],
+      "risks": ["vendor-selection-delay", "workflow-redesign-resistance", "unclear-consent-protocols"]
+    },
+    {
+      "id": "phase-3",
+      "number": 3,
+      "title": "Technology & Reporting Setup",
+      "duration": "60–90 days",
+      "goal": "Configure EHR, establish data feeds, stand up reporting infrastructure",
+      "tasks": [
+        { "id": "t3-1", "title": "Configure EHR to capture ACCESS-required outcome data fields", "owner": "IT / EHR Lead", "priority": "High", "checkpointLinked": "ehr-configuration-validation" },
+        { "id": "t3-2", "title": "Establish data feed from technology vendor to reporting systems", "owner": "IT / Vendor", "priority": "High" },
+        { "id": "t3-3", "title": "Build outcome tracking dashboard (internal)", "owner": "Data/Analytics Team", "priority": "High" },
+        { "id": "t3-4", "title": "Test data completeness and accuracy against ACCESS measure definitions", "owner": "Quality Lead", "priority": "High" },
+        { "id": "t3-5", "title": "Conduct end-to-end data flow validation", "owner": "IT / Compliance", "priority": "High" },
+        { "id": "t3-6", "title": "Document reporting workflow and assign ongoing ownership", "owner": "Operations Lead", "priority": "Medium" },
+        { "id": "t3-7", "title": "Complete any CMS-required technical onboarding steps", "owner": "Compliance / IT", "priority": "High", "checkpointLinked": "cms-technical-onboarding" }
+      ],
+      "risks": ["ehr-configuration-lag", "data-quality-issues", "cms-reporting-format-mismatch"]
+    },
+    {
+      "id": "phase-4",
+      "number": 4,
+      "title": "Enrollment & Launch",
+      "duration": "30–60 days",
+      "goal": "Align beneficiaries, train staff, go live",
+      "tasks": [
+        { "id": "t4-1", "title": "Begin beneficiary voluntary alignment (prospective)", "owner": "Care Coordination Team", "priority": "High", "checkpointLinked": "beneficiary-alignment-start" },
+        { "id": "t4-2", "title": "Conduct staff training on ACCESS workflows and tools", "owner": "Training Lead", "priority": "High" },
+        { "id": "t4-3", "title": "Communicate launch timeline and expectations to clinical teams", "owner": "Executive Sponsor", "priority": "High" },
+        { "id": "t4-4", "title": "Activate technology vendor solution for enrolled patients", "owner": "IT / Vendor", "priority": "High" },
+        { "id": "t4-5", "title": "Confirm CMS go-live requirements are met", "owner": "Compliance", "priority": "High", "checkpointLinked": "go-live-confirmation" },
+        { "id": "t4-6", "title": "Document baseline performance metrics for Year 1 comparison", "owner": "Data/Analytics Team", "priority": "Medium" }
+      ],
+      "risks": ["low-beneficiary-alignment", "staff-readiness-gaps", "technology-activation-delay"]
+    },
+    {
+      "id": "phase-5",
+      "number": 5,
+      "title": "Monitoring & Optimization",
+      "duration": "Ongoing (Year 1+)",
+      "goal": "Track performance, maintain compliance, improve outcomes",
+      "tasks": [
+        { "id": "t5-1", "title": "Review outcome metrics monthly against OAP targets", "owner": "Quality/Clinical Lead", "priority": "High" },
+        { "id": "t5-2", "title": "Monitor CMS ACCESS program updates and guidance changes", "owner": "VBC Director / Compliance", "priority": "High" },
+        { "id": "t5-3", "title": "Conduct quarterly performance review with leadership", "owner": "Executive Sponsor", "priority": "High" },
+        { "id": "t5-4", "title": "Identify and address care gaps for aligned beneficiaries", "owner": "Care Coordination Team", "priority": "High" },
+        { "id": "t5-5", "title": "Update workflows and tools based on performance data", "owner": "Operations Lead", "priority": "Medium" },
+        { "id": "t5-6", "title": "Track regulatory checkpoints and submission deadlines", "owner": "Compliance", "priority": "High", "checkpointLinked": "year-1-reporting" },
+        { "id": "t5-7", "title": "Prepare Year 1 performance summary", "owner": "Data/Analytics Team", "priority": "Medium", "checkpointLinked": "annual-performance-review" }
+      ],
+      "risks": ["performance-below-oap-threshold", "staff-turnover", "missing-cms-deadlines"]
+    }
+  ],
+  "checkpoints": [
+    { "id": "eligibility-confirmation", "title": "Eligibility Confirmation", "description": "Confirm organization and patient population meets ACCESS criteria", "phase": 1 },
+    { "id": "participation-application", "title": "Participation Application", "description": "Submit/confirm application with CMS", "phase": 1 },
+    { "id": "vendor-attestation", "title": "Vendor Attestation", "description": "Confirm technology vendor meets ACCESS requirements", "phase": 2 },
+    { "id": "data-governance-setup", "title": "Data Governance Setup", "description": "Patient consent and data sharing protocols documented", "phase": 2 },
+    { "id": "ehr-configuration-validation", "title": "EHR Configuration Validation", "description": "CMS-required data fields active and tested", "phase": 3 },
+    { "id": "cms-technical-onboarding", "title": "CMS Technical Onboarding", "description": "Complete any required CMS system setup steps", "phase": 3 },
+    { "id": "beneficiary-alignment-start", "title": "Beneficiary Alignment Start", "description": "Confirm prospective alignment process is live", "phase": 4 },
+    { "id": "go-live-confirmation", "title": "Go-Live Confirmation", "description": "CMS go-live requirements verified", "phase": 4 },
+    { "id": "year-1-reporting", "title": "Year 1 Reporting", "description": "First outcome reporting cycle submitted", "phase": 5 },
+    { "id": "annual-performance-review", "title": "Annual Performance Review", "description": "OAP reconciliation and compliance review", "phase": 5 }
+  ],
+  "risks": [
+    { "id": "eligibility-misread", "title": "Eligibility Misread", "likelihood": "Medium", "impact": "High", "mitigation": "Review CMS FAQ and eligibility criteria with legal/compliance before applying", "phases": [1] },
+    { "id": "vendor-selection-delay", "title": "Vendor Selection Delay", "likelihood": "High", "impact": "High", "mitigation": "Begin vendor evaluation in Phase 1 in parallel with readiness assessment", "phases": [1, 2] },
+    { "id": "ehr-configuration-lag", "title": "EHR Configuration Lag", "likelihood": "High", "impact": "High", "mitigation": "Assign dedicated IT lead; build 30-day buffer into Phase 3 timeline", "phases": [3] },
+    { "id": "low-beneficiary-alignment", "title": "Low Beneficiary Alignment", "likelihood": "Medium", "impact": "High", "mitigation": "Develop patient outreach strategy and staff scripts in Phase 2", "phases": [4] },
+    { "id": "workflow-redesign-resistance", "title": "Staff Resistance to Workflow Change", "likelihood": "Medium", "impact": "Medium", "mitigation": "Early clinical champion identification; include frontline staff in design", "phases": [2] },
+    { "id": "cms-guidance-change", "title": "CMS Guidance Change Mid-Rollout", "likelihood": "Low", "impact": "High", "mitigation": "Monitor CMS ACCESS page and Federal Register weekly; maintain flexible workplan", "phases": [1, 2, 3, 4, 5] },
+    { "id": "data-quality-issues", "title": "Reporting Data Quality Failure", "likelihood": "Medium", "impact": "High", "mitigation": "Test data completeness in Phase 3 before go-live", "phases": [3, 5] },
+    { "id": "leadership-misalignment", "title": "Leadership Misalignment", "likelihood": "Low", "impact": "High", "mitigation": "Executive sponsor kickoff session in Phase 1", "phases": [1] },
+    { "id": "performance-below-oap-threshold", "title": "Outcome Performance Below OAP Threshold", "likelihood": "Medium", "impact": "High", "mitigation": "Establish baseline metrics at launch; review monthly with clinical leads", "phases": [5] },
+    { "id": "staff-turnover", "title": "Staff Turnover Affecting Program Continuity", "likelihood": "Medium", "impact": "Medium", "mitigation": "Document all workflows; cross-train at least two staff per key role", "phases": [5] },
+    { "id": "missing-cms-deadlines", "title": "Missing CMS Reporting Deadlines", "likelihood": "Low", "impact": "High", "mitigation": "Assign compliance owner to calendar all deadlines; build 2-week lead time into each", "phases": [5] },
+    { "id": "reporting-infrastructure-lag", "title": "Underestimation of Reporting Infrastructure Lead Time", "likelihood": "Medium", "impact": "High", "mitigation": "Begin IT scoping in Phase 1; treat reporting setup as a parallel workstream", "phases": [1, 3] },
+    { "id": "unclear-consent-protocols", "title": "Unclear Patient Consent and Data Sharing Protocols", "likelihood": "Medium", "impact": "High", "mitigation": "Engage legal/compliance in Phase 2 data governance design; document before enrollment begins", "phases": [2] },
+    { "id": "technology-activation-delay", "title": "Technology Activation Delay at Launch", "likelihood": "Medium", "impact": "High", "mitigation": "Complete vendor testing in Phase 3; confirm activation readiness 2 weeks before go-live", "phases": [3, 4] },
+    { "id": "staff-readiness-gaps", "title": "Staff Readiness Gaps at Go-Live", "likelihood": "Medium", "impact": "Medium", "mitigation": "Complete all training at least 2 weeks before go-live; conduct dry run with care team", "phases": [4] },
+    { "id": "cms-reporting-format-mismatch", "title": "CMS Reporting Format Mismatch", "likelihood": "Low", "impact": "High", "mitigation": "Validate output format against CMS technical specs before finalizing EHR configuration", "phases": [3] }
+  ]
+}
