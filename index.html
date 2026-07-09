@@ -1,0 +1,676 @@
+<!-- ACCESS Rollout Planner — The Policy Nest -->
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ACCESS Rollout Planner | The Policy Nest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300..700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<style>
+:root,[data-theme="light"]{--color-bg:#faf9f7;--color-surface:#ffffff;--color-surface-2:#f5f3f0;--color-surface-offset:#ede9e4;--color-border:#ddd9d3;--color-divider:#e8e4df;--color-text:#1e1a17;--color-text-muted:#6b6560;--color-text-faint:#aaa69f;--color-primary:#4a2e4f;--color-primary-hover:#3a2040;--color-primary-active:#2a1530;--color-primary-highlight:#e8dfe9;--color-accent:#c47b3a;--color-accent-hover:#a8612a;--color-success:#3a7a2a;--color-success-highlight:#d4e8cc;--color-warning:#9a6200;--color-warning-highlight:#f0e0b0;--color-error:#8a2020;--color-error-highlight:#f0cccc;--color-blue:#1a5a8a;--color-blue-highlight:#cce0f0;--shadow-sm:0 1px 3px rgba(30,26,23,.07);--shadow-md:0 4px 12px rgba(30,26,23,.10);--shadow-lg:0 12px 32px rgba(30,26,23,.14);--radius-sm:4px;--radius-md:8px;--radius-lg:12px;--radius-xl:16px;--radius-full:9999px;--font-display:'DM Serif Display',Georgia,serif;--font-body:'DM Sans','Helvetica Neue',sans-serif;--text-xs:clamp(.75rem,.7rem + .25vw,.875rem);--text-sm:clamp(.875rem,.8rem + .35vw,1rem);--text-base:clamp(1rem,.95rem + .25vw,1.125rem);--text-lg:clamp(1.125rem,1rem + .75vw,1.5rem);--text-xl:clamp(1.5rem,1.2rem + 1.25vw,2.25rem);--space-1:.25rem;--space-2:.5rem;--space-3:.75rem;--space-4:1rem;--space-5:1.25rem;--space-6:1.5rem;--space-8:2rem;--space-10:2.5rem;--space-12:3rem;}
+[data-theme="dark"]{--color-bg:#18141a;--color-surface:#211d24;--color-surface-2:#2a252e;--color-surface-offset:#322d36;--color-border:#3d3842;--color-divider:#2e293200;--color-text:#e8e3dd;--color-text-muted:#8c8680;--color-text-faint:#5a5550;--color-primary:#9b6ea2;--color-primary-hover:#b080b8;--color-primary-active:#c490cc;--color-primary-highlight:#3a2e3e;--color-accent:#d48a4a;--color-accent-hover:#e09a5a;--color-success:#5a9a4a;--color-success-highlight:#2a3e24;--color-warning:#c08020;--color-warning-highlight:#3e3010;--color-error:#c04040;--color-error-highlight:#3e1a1a;--color-blue:#4a8ac0;--color-blue-highlight:#1a2e3e;--shadow-sm:0 1px 3px rgba(0,0,0,.25);--shadow-md:0 4px 12px rgba(0,0,0,.35);--shadow-lg:0 12px 32px rgba(0,0,0,.45);}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{-webkit-font-smoothing:antialiased;scroll-behavior:smooth;}
+body{font-family:var(--font-body);font-size:var(--text-base);color:var(--color-text);background:var(--color-bg);line-height:1.6;min-height:100dvh;}
+button{cursor:pointer;background:none;border:none;font:inherit;color:inherit;}
+a,button,[role="button"]{transition:color 180ms ease,background 180ms ease,border-color 180ms ease,box-shadow 180ms ease;}
+img{display:block;max-width:100%;height:auto;}
+
+/* HEADER */
+.header{background:var(--color-primary);color:#fff;padding:var(--space-3) var(--space-6);display:flex;align-items:center;gap:var(--space-4);box-shadow:var(--shadow-md);position:sticky;top:0;z-index:100;}
+.header-logo{height:44px;width:auto;border-radius:var(--radius-sm);}
+.header-title{display:flex;flex-direction:column;}
+.header-title h1{font-family:var(--font-display);font-size:var(--text-lg);font-weight:400;line-height:1.15;color:#fff;}
+.header-title span{font-size:var(--text-xs);color:rgba(255,255,255,.7);letter-spacing:.04em;}
+.header-badge{margin-left:auto;display:flex;align-items:center;gap:var(--space-2);}
+.badge{display:inline-flex;align-items:center;gap:var(--space-1);padding:var(--space-1) var(--space-3);border-radius:var(--radius-full);font-size:var(--text-xs);font-weight:600;letter-spacing:.03em;}
+.badge-cms{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.25);}
+.theme-toggle{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:var(--radius-md);padding:var(--space-2);color:#fff;display:flex;align-items:center;justify-content:center;}
+.theme-toggle:hover{background:rgba(255,255,255,.22);}
+
+/* LAYOUT */
+.app-layout{display:grid;grid-template-columns:340px 1fr;gap:0;min-height:calc(100dvh - 68px);}
+@media(max-width:900px){.app-layout{grid-template-columns:1fr;}}
+
+/* LEFT PANEL */
+.left-panel{background:var(--color-surface);border-right:1px solid var(--color-border);padding:var(--space-6);overflow-y:auto;}
+.panel-section{margin-bottom:var(--space-6);}
+.panel-section-title{font-size:var(--text-xs);font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--color-text-muted);margin-bottom:var(--space-3);}
+.form-group{margin-bottom:var(--space-4);}
+label{display:block;font-size:var(--text-sm);font-weight:600;margin-bottom:var(--space-2);color:var(--color-text);}
+select,input[type=text]{width:100%;padding:var(--space-2) var(--space-3);border:1px solid var(--color-border);border-radius:var(--radius-md);background:var(--color-surface-2);color:var(--color-text);font:inherit;font-size:var(--text-sm);}
+select:focus,input:focus{outline:2px solid var(--color-primary);outline-offset:2px;}
+.checkbox-group{display:flex;flex-direction:column;gap:var(--space-2);}
+.checkbox-item{display:flex;align-items:flex-start;gap:var(--space-2);padding:var(--space-2) var(--space-3);border-radius:var(--radius-md);border:1px solid var(--color-border);background:var(--color-surface);cursor:pointer;transition:border-color 180ms ease,background 180ms ease;}
+.checkbox-item:hover{border-color:var(--color-primary);background:var(--color-primary-highlight);}
+.checkbox-item input{margin-top:3px;accent-color:var(--color-primary);}
+.checkbox-item-label{font-size:var(--text-sm);font-weight:600;}
+.checkbox-item-desc{font-size:var(--text-xs);color:var(--color-text-muted);margin-top:2px;}
+.phase-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-2);}
+.phase-btn{padding:var(--space-2) var(--space-3);border-radius:var(--radius-md);border:1px solid var(--color-border);background:var(--color-surface);font-size:var(--text-xs);font-weight:600;color:var(--color-text-muted);text-align:left;transition:all 180ms ease;}
+.phase-btn.active{border-color:var(--color-primary);background:var(--color-primary-highlight);color:var(--color-primary);}
+.phase-btn:hover:not(.active){border-color:var(--color-text-muted);}
+.phase-num{display:inline-block;width:20px;height:20px;border-radius:50%;background:var(--color-primary);color:#fff;font-size:10px;font-weight:700;text-align:center;line-height:20px;margin-right:var(--space-1);}
+.gap-grid{display:flex;flex-wrap:wrap;gap:var(--space-2);}
+.gap-chip{display:flex;align-items:center;gap:var(--space-1);padding:var(--space-1) var(--space-3);border-radius:var(--radius-full);font-size:var(--text-xs);font-weight:600;border:1px solid var(--color-border);background:var(--color-surface);cursor:pointer;transition:all 180ms ease;}
+.gap-chip.selected{background:var(--color-warning-highlight);border-color:var(--color-warning);color:var(--color-warning);}
+.gap-chip:hover:not(.selected){border-color:var(--color-text-muted);}
+.btn-generate{width:100%;padding:var(--space-3) var(--space-4);background:var(--color-accent);color:#fff;border-radius:var(--radius-lg);font-size:var(--text-base);font-weight:700;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:var(--space-2);box-shadow:var(--shadow-md);transition:all 180ms ease;margin-top:var(--space-4);}
+.btn-generate:hover{background:var(--color-accent-hover);box-shadow:var(--shadow-lg);transform:translateY(-1px);}
+
+/* RIGHT PANEL */
+.right-panel{background:var(--color-bg);display:flex;flex-direction:column;}
+.plan-header{padding:var(--space-5) var(--space-6) var(--space-3);border-bottom:1px solid var(--color-border);background:var(--color-surface);}
+.plan-title{font-family:var(--font-display);font-size:var(--text-xl);color:var(--color-text);line-height:1.2;}
+.plan-meta{display:flex;flex-wrap:wrap;gap:var(--space-2);margin-top:var(--space-2);}
+.plan-gap-tag{display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:var(--radius-full);background:var(--color-warning-highlight);color:var(--color-warning);font-size:var(--text-xs);font-weight:700;}
+.progress-bar-wrap{margin-top:var(--space-3);}
+.progress-bar-label{font-size:var(--text-xs);color:var(--color-text-muted);margin-bottom:var(--space-1);display:flex;justify-content:space-between;}
+.progress-bar{height:6px;background:var(--color-surface-offset);border-radius:var(--radius-full);overflow:hidden;}
+.progress-bar-fill{height:100%;background:var(--color-primary);border-radius:var(--radius-full);transition:width .5s ease;}
+
+/* TABS */
+.tabs-bar{display:flex;gap:0;border-bottom:1px solid var(--color-border);background:var(--color-surface);padding:0 var(--space-6);overflow-x:auto;}
+.tab-btn{padding:var(--space-3) var(--space-4);font-size:var(--text-sm);font-weight:600;color:var(--color-text-muted);border-bottom:2px solid transparent;white-space:nowrap;transition:all 180ms ease;}
+.tab-btn.active{color:var(--color-primary);border-bottom-color:var(--color-primary);}
+.tab-btn:hover:not(.active){color:var(--color-text);}
+.tab-content{display:none;padding:var(--space-6);overflow-y:auto;flex:1;}
+.tab-content.active{display:block;}
+
+/* WORK PLAN */
+.phase-accordion{margin-bottom:var(--space-4);border:1px solid var(--color-border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-sm);}
+.phase-acc-header{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-3) var(--space-4);background:var(--color-surface);cursor:pointer;border-left:3px solid var(--color-primary);}
+.phase-acc-header:hover{background:var(--color-surface-2);}
+.phase-acc-title{font-weight:700;font-size:var(--text-sm);flex:1;}
+.phase-acc-badge{font-size:var(--text-xs);color:var(--color-text-muted);background:var(--color-surface-offset);padding:2px 8px;border-radius:var(--radius-full);}
+.phase-acc-chevron{color:var(--color-text-muted);transition:transform 200ms ease;}
+.phase-acc-header.open .phase-acc-chevron{transform:rotate(180deg);}
+.phase-acc-body{display:none;padding:var(--space-3) var(--space-4);background:var(--color-surface-2);border-top:1px solid var(--color-divider);}
+.phase-acc-body.open{display:block;}
+.task-list{list-style:none;}
+.task-item{display:flex;align-items:flex-start;gap:var(--space-2);padding:var(--space-2) 0;border-bottom:1px solid var(--color-divider);}
+.task-item:last-child{border-bottom:none;}
+.task-item input[type=checkbox]{margin-top:3px;accent-color:var(--color-primary);}
+.task-item label{font-size:var(--text-sm);color:var(--color-text);cursor:pointer;}
+.task-item.done label{text-decoration:line-through;color:var(--color-text-muted);}
+.phase-checkpoints{margin-top:var(--space-3);}
+.checkpoint-item{display:flex;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-3);border-radius:var(--radius-md);background:var(--color-blue-highlight);margin-bottom:var(--space-2);}
+.checkpoint-label{font-size:var(--text-xs);flex:1;color:var(--color-blue);font-weight:600;}
+.status-cycle{padding:2px 10px;border-radius:var(--radius-full);font-size:10px;font-weight:700;cursor:pointer;border:1px solid;transition:all 180ms ease;}
+.status-ns{background:var(--color-surface-offset);color:var(--color-text-muted);border-color:var(--color-border);}
+.status-ip{background:var(--color-warning-highlight);color:var(--color-warning);border-color:var(--color-warning);}
+.status-done{background:var(--color-success-highlight);color:var(--color-success);border-color:var(--color-success);}
+
+/* REG CHECKPOINTS */
+.reg-table{width:100%;border-collapse:collapse;}
+.reg-table th{text-align:left;padding:var(--space-2) var(--space-3);font-size:var(--text-xs);font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--color-text-muted);border-bottom:2px solid var(--color-border);}
+.reg-table td{padding:var(--space-3);font-size:var(--text-sm);border-bottom:1px solid var(--color-divider);vertical-align:top;}
+.reg-table tr:hover td{background:var(--color-surface-2);}
+
+/* RISK REGISTRY */
+.risk-table{width:100%;border-collapse:collapse;}
+.risk-table th{text-align:left;padding:var(--space-2) var(--space-3);font-size:var(--text-xs);font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--color-text-muted);border-bottom:2px solid var(--color-border);cursor:pointer;}
+.risk-table td{padding:var(--space-3);font-size:var(--text-sm);border-bottom:1px solid var(--color-divider);vertical-align:top;}
+.risk-table tr.flagged td{background:var(--color-warning-highlight);}
+.risk-table tr:hover td{opacity:.9;}
+.risk-badge{display:inline-block;padding:2px 8px;border-radius:var(--radius-full);font-size:10px;font-weight:700;}
+.risk-h{background:#fdd;color:#a00;}
+.risk-m{background:#ffd;color:#880;}
+.risk-l{background:#dfd;color:#040;}
+
+/* KPI */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:var(--space-4);}
+.kpi-card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-4);box-shadow:var(--shadow-sm);}
+.kpi-card-title{font-weight:700;font-size:var(--text-sm);margin-bottom:var(--space-1);}
+.kpi-meta{font-size:var(--text-xs);color:var(--color-text-muted);margin-bottom:var(--space-3);}
+.kpi-bar-wrap{height:8px;background:var(--color-surface-offset);border-radius:var(--radius-full);overflow:hidden;margin-bottom:var(--space-2);}
+.kpi-bar-fill{height:100%;background:var(--color-primary);border-radius:var(--radius-full);transition:width .6s cubic-bezier(.16,1,.3,1);}
+.kpi-pct{font-size:var(--text-xs);color:var(--color-text-muted);text-align:right;}
+
+/* QUALITY */
+.quality-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:var(--space-4);}
+.quality-card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-4);box-shadow:var(--shadow-sm);}
+
+/* FR UPDATES */
+.fr-list{display:flex;flex-direction:column;gap:var(--space-3);}
+.fr-item{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-4);box-shadow:var(--shadow-sm);display:flex;gap:var(--space-3);align-items:flex-start;}
+.fr-dot{width:10px;height:10px;border-radius:50%;background:var(--color-primary);margin-top:5px;flex-shrink:0;}
+.fr-body{flex:1;}
+.fr-title{font-weight:700;font-size:var(--text-sm);margin-bottom:var(--space-1);}
+.fr-meta{font-size:var(--text-xs);color:var(--color-text-muted);}
+.fr-dismiss{color:var(--color-text-faint);padding:var(--space-1);border-radius:var(--radius-sm);}
+.fr-dismiss:hover{color:var(--color-error);background:var(--color-error-highlight);}
+
+/* EMPTY STATE */
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:var(--space-12) var(--space-8);text-align:center;color:var(--color-text-muted);min-height:400px;}
+.empty-state svg{width:48px;height:48px;color:var(--color-text-faint);margin-bottom:var(--space-4);}
+.empty-state h3{font-family:var(--font-display);font-size:var(--text-lg);color:var(--color-text);margin-bottom:var(--space-2);}
+.empty-state p{font-size:var(--text-sm);max-width:36ch;}
+
+@media(max-width:600px){
+.tabs-bar{padding:0 var(--space-3);}
+.tab-content{padding:var(--space-4);}
+.left-panel{padding:var(--space-4);}
+.plan-header{padding:var(--space-4);}
+.kpi-grid,.quality-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <img src="./assets/policy-nest-logo.jpg" alt="The Policy Nest" class="header-logo">
+  <div class="header-title">
+    <h1>ACCESS Rollout Planner</h1>
+    <span>CMS GUIDE-Care Model Implementation Tool</span>
+  </div>
+  <div class="header-badge">
+    <span class="badge badge-cms">CMS 2026</span>
+    <button class="theme-toggle" data-theme-toggle aria-label="Toggle dark mode">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="app-layout">
+
+  <!-- LEFT PANEL -->
+  <aside class="left-panel">
+    <div class="panel-section">
+      <div class="panel-section-title">Organization</div>
+      <div class="form-group">
+        <label for="org-type">Organization Type</label>
+        <select id="org-type">
+          <option value="">Select type…</option>
+          <option value="aco">ACO / MSSP Participant</option>
+          <option value="fqhc">FQHC / Rural Health Clinic</option>
+          <option value="hospital">Hospital / Health System</option>
+          <option value="practice">Independent Practice</option>
+          <option value="dpo">DCE / REACH Entity</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="panel-section">
+      <div class="panel-section-title">Condition Tracks</div>
+      <div class="checkbox-group" id="tracks">
+        <label class="checkbox-item">
+          <input type="checkbox" value="ckm"><div>
+            <div class="checkbox-item-label">CKM — Kidney &amp; Metabolic</div>
+            <div class="checkbox-item-desc">CKD stages 3-5, T2DM, hypertension</div>
+          </div>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" value="msk"><div>
+            <div class="checkbox-item-label">MSK — Musculoskeletal</div>
+            <div class="checkbox-item-desc">Hip/knee OA, spine, conservative care</div>
+          </div>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" value="bh"><div>
+            <div class="checkbox-item-label">BH — Behavioral Health</div>
+            <div class="checkbox-item-desc">Depression, anxiety, SUD integration</div>
+          </div>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" value="onc"><div>
+            <div class="checkbox-item-label">Oncology — Cancer Navigation</div>
+            <div class="checkbox-item-desc">Care navigation, episode bundling</div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <div class="panel-section">
+      <div class="panel-section-title">Implementation Phase</div>
+      <div class="phase-grid" id="phase-grid">
+        <button class="phase-btn active" data-phase="1"><span class="phase-num">1</span>Pre-Launch</button>
+        <button class="phase-btn" data-phase="2"><span class="phase-num">2</span>Launch</button>
+        <button class="phase-btn" data-phase="3"><span class="phase-num">3</span>Scaling</button>
+        <button class="phase-btn" data-phase="4"><span class="phase-num">4</span>Optimization</button>
+        <button class="phase-btn" data-phase="5"><span class="phase-num">5</span>Sustainment</button>
+      </div>
+    </div>
+
+    <div class="panel-section">
+      <div class="panel-section-title">Readiness Gaps ⚠</div>
+      <div class="gap-grid" id="gap-grid">
+        <button class="gap-chip" data-gap="data">Data &amp; Analytics</button>
+        <button class="gap-chip" data-gap="workforce">Workforce</button>
+        <button class="gap-chip" data-gap="interop">Interoperability</button>
+        <button class="gap-chip" data-gap="finance">Finance / P&amp;L</button>
+        <button class="gap-chip" data-gap="governance">Governance</button>
+      </div>
+    </div>
+
+    <button class="btn-generate" id="btn-generate">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      Generate My Rollout Plan
+    </button>
+  </aside>
+
+  <!-- RIGHT PANEL -->
+  <main class="right-panel">
+    <div class="plan-header" id="plan-header" style="display:none">
+      <div class="plan-title" id="plan-title">ACCESS Implementation Plan</div>
+      <div class="plan-meta" id="plan-meta"></div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-label"><span>Overall Progress</span><span id="progress-pct">0%</span></div>
+        <div class="progress-bar"><div class="progress-bar-fill" id="progress-fill" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <div class="tabs-bar" id="tabs-bar" style="display:none">
+      <button class="tab-btn active" data-tab="workplan">Work Plan</button>
+      <button class="tab-btn" data-tab="regcheck">Reg. Checkpoints</button>
+      <button class="tab-btn" data-tab="risk">Risk Registry</button>
+      <button class="tab-btn" data-tab="kpi">KPI Tracker</button>
+      <button class="tab-btn" data-tab="quality">Quality</button>
+      <button class="tab-btn" data-tab="fr">FR Updates</button>
+    </div>
+
+    <!-- EMPTY STATE -->
+    <div class="tab-content active" id="empty-state-panel">
+      <div class="empty-state">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
+        <h3>Configure your plan</h3>
+        <p>Select your organization type, condition tracks, and readiness gaps, then click Generate.</p>
+      </div>
+    </div>
+
+    <!-- WORK PLAN -->
+    <div class="tab-content" id="tab-workplan"></div>
+
+    <!-- REG CHECKPOINTS -->
+    <div class="tab-content" id="tab-regcheck"></div>
+
+    <!-- RISK REGISTRY -->
+    <div class="tab-content" id="tab-risk"></div>
+
+    <!-- KPI -->
+    <div class="tab-content" id="tab-kpi"></div>
+
+    <!-- QUALITY -->
+    <div class="tab-content" id="tab-quality"></div>
+
+    <!-- FR UPDATES -->
+    <div class="tab-content" id="tab-fr"></div>
+  </main>
+</div>
+
+<script>
+// ---- THEME TOGGLE ----
+(function(){
+  const t=document.querySelector('[data-theme-toggle]'),r=document.documentElement;
+  let d=matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';
+  r.setAttribute('data-theme',d);
+  const sunIcon='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
+  const moonIcon='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+  if(t) t.addEventListener('click',()=>{
+    d=d==='dark'?'light':'dark';
+    r.setAttribute('data-theme',d);
+    t.innerHTML=d==='dark'?sunIcon:moonIcon;
+  });
+})();
+
+// ---- PHASE BUTTONS ----
+document.getElementById('phase-grid').addEventListener('click',e=>{
+  const btn=e.target.closest('.phase-btn');
+  if(!btn)return;
+  document.querySelectorAll('.phase-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+});
+
+// ---- GAP CHIPS ----
+document.getElementById('gap-grid').addEventListener('click',e=>{
+  const chip=e.target.closest('.gap-chip');
+  if(!chip)return;
+  chip.classList.toggle('selected');
+});
+
+// ---- DATA ----
+const PHASES = [
+  {
+    id:1, title:'Phase 1 — Pre-Launch', duration:'Months 1–3',
+    tasks:[
+      'Conduct organizational readiness assessment',
+      'Identify executive sponsor and steering committee',
+      'Review CMS GUIDE Model participation requirements',
+      'Map current state patient population (CKM/MSK/BH/Onc)',
+      'Assess EHR capabilities and data infrastructure',
+      'Establish preliminary P&L model and budget projections',
+      'Develop governance charter and RACI matrix',
+      'Identify care navigator staffing requirements',
+    ],
+    checkpoints:[
+      {id:'c1',label:'Readiness Assessment Submitted to CMS'},
+      {id:'c2',label:'LOI / Application Deadline Met'},
+      {id:'c3',label:'Governance Charter Approved'},
+    ]
+  },
+  {
+    id:2, title:'Phase 2 — Launch', duration:'Months 4–6',
+    tasks:[
+      'Finalize participation agreement with CMS',
+      'Complete EHR workflow build and testing',
+      'Train care navigators on ACCESS model protocols',
+      'Configure patient registry and risk stratification tools',
+      'Launch beneficiary outreach and enrollment',
+      'Establish claims data feed and reconciliation process',
+      'Activate care coordination workflows',
+      'Implement SDOH screening protocols',
+    ],
+    checkpoints:[
+      {id:'c4',label:'Participation Agreement Executed'},
+      {id:'c5',label:'EHR Build Sign-Off Complete'},
+      {id:'c6',label:'First Beneficiary Enrolled'},
+    ]
+  },
+  {
+    id:3, title:'Phase 3 — Scaling', duration:'Months 7–12',
+    tasks:[
+      'Expand care navigator caseloads to target capacity',
+      'Launch condition-specific care pathways (per tracks)',
+      'Integrate behavioral health screening into workflows',
+      'Stand up population health dashboard with KPI tracking',
+      'Begin quarterly financial performance review cycles',
+      'Activate specialist referral networks and SLAs',
+      'Conduct mid-year CMS reporting submission',
+      'Refine risk stratification model based on encounter data',
+    ],
+    checkpoints:[
+      {id:'c7',label:'Mid-Year CMS Data Submission'},
+      {id:'c8',label:'Population Health Dashboard Live'},
+    ]
+  },
+  {
+    id:4, title:'Phase 4 — Optimization', duration:'Months 13–18',
+    tasks:[
+      'Analyze Year 1 utilization and quality data',
+      'Identify high-risk cohorts for intensified intervention',
+      'Renegotiate specialist and ancillary contracts if needed',
+      'Conduct staff performance reviews and competency checks',
+      'Update P&L model with actual vs. projected benchmarks',
+      'Present board-level performance report',
+      'Adjust care protocols based on outcomes data',
+      'Prepare for Year 2 CMS participation renewal',
+    ],
+    checkpoints:[
+      {id:'c9',label:'Year 1 Quality Measure Attestation'},
+      {id:'c10',label:'Year 2 Renewal Application Submitted'},
+    ]
+  },
+  {
+    id:5, title:'Phase 5 — Sustainment', duration:'Month 19+',
+    tasks:[
+      'Embed ACCESS workflows into standard operating procedures',
+      'Transition from project management to operations cadence',
+      'Develop internal training program for new hires',
+      'Monitor Federal Register for CMS rulemaking updates',
+      'Pursue expanded track participation if applicable',
+      'Publish outcomes report for stakeholder transparency',
+      'Evaluate ACO/MSSP alignment opportunities',
+      'Plan next innovation cycle based on VBC landscape',
+    ],
+    checkpoints:[
+      {id:'c11',label:'SOPs Finalized and Distributed'},
+      {id:'c12',label:'Annual CMS Performance Report Filed'},
+    ]
+  }
+];
+
+const ALL_RISKS = [
+  {id:'r1',risk:'Insufficient care navigator capacity at launch',likelihood:'H',impact:'H',mitigation:'Hire 60 days pre-launch; build float pool',gaps:['workforce']},
+  {id:'r2',risk:'EHR integration delays blocking enrollment',likelihood:'H',impact:'H',mitigation:'Engage IT 90 days prior; parallel testing environment',gaps:['interop','data']},
+  {id:'r3',risk:'CMS benchmark methodology change',likelihood:'M',impact:'H',mitigation:'Monitor FR weekly; scenario model two benchmarks',gaps:[]},
+  {id:'r4',risk:'Beneficiary attribution errors reducing panel size',likelihood:'M',impact:'H',mitigation:'Monthly reconciliation against CMS claims feed',gaps:['data']},
+  {id:'r5',risk:'P&L shortfall from shared savings timing lag',likelihood:'M',impact:'H',mitigation:'Maintain 6-month operating reserve; phase expenditures',gaps:['finance']},
+  {id:'r6',risk:'Governance misalignment among steering committee',likelihood:'M',impact:'M',mitigation:'RACI matrix + monthly steering cadence',gaps:['governance']},
+  {id:'r7',risk:'Low SDOH screening completion rates',likelihood:'H',impact:'M',mitigation:'Embed screening in annual wellness visit workflow',gaps:['workforce']},
+  {id:'r8',risk:'Specialist network gaps for MSK track',likelihood:'M',impact:'M',mitigation:'Contract with 2 MSK groups pre-launch',gaps:[]},
+  {id:'r9',risk:'Data feed latency from claims > 30 days',likelihood:'H',impact:'M',mitigation:'Use 837/835 real-time feeds; set SLA with clearinghouse',gaps:['data','interop']},
+  {id:'r10',risk:'Staff turnover disrupting care navigator continuity',likelihood:'M',impact:'M',mitigation:'Retention bonus tied to 12-month milestone',gaps:['workforce']},
+  {id:'r11',risk:'Behavioral health prescriber shortages (BH track)',likelihood:'H',impact:'M',mitigation:'Telehealth BH partnerships as primary coverage',gaps:[]},
+  {id:'r12',risk:'Quality measure reporting errors to CMS',likelihood:'L',impact:'H',mitigation:'Independent QA review before each submission',gaps:[]},
+  {id:'r13',risk:'Federal Register rule change mid-year',likelihood:'L',impact:'H',mitigation:'Legal/compliance review within 30 days of final rule',gaps:[]},
+  {id:'r14',risk:'Patient engagement below 60% activation threshold',likelihood:'M',impact:'M',mitigation:'Multi-channel outreach; CHW-led community sessions',gaps:[]},
+  {id:'r15',risk:'Insufficient interoperability with external labs/imaging',likelihood:'M',impact:'L',mitigation:'FHIR API connections; TEFCA onboarding plan',gaps:['interop']},
+];
+
+const KPIS = [
+  {title:'Beneficiary Enrollment Rate',target:'≥ 80% of attributed panel',owner:'Care Navigation Lead',freq:'Monthly',pct:0},
+  {title:'Care Navigator Caseload Utilization',target:'≥ 90% of target caseload',owner:'Operations Director',freq:'Monthly',pct:0},
+  {title:'SDOH Screening Completion',target:'≥ 85% of enrolled beneficiaries',owner:'Quality Manager',freq:'Quarterly',pct:0},
+  {title:'30-Day Readmission Rate',target:'< 12% (MSSP benchmark)',owner:'Clinical Lead',freq:'Monthly',pct:0},
+  {title:'Shared Savings Performance vs. Benchmark',target:'≥ 2% net savings',owner:'CFO / Finance',freq:'Quarterly',pct:0},
+];
+
+const QUALITY_MEASURES = [
+  {title:'Diabetes HbA1c Control (CKM)',target:'> 70% of diabetic panel at goal',owner:'CKM Track Lead',pct:0},
+  {title:'Blood Pressure Control (CKM)',target:'> 65% at < 140/90',owner:'CKM Track Lead',pct:0},
+  {title:'Depression Screening (BH)',target:'≥ 90% screened annually',owner:'BH Track Lead',pct:0},
+  {title:'Conservative MSK Care Rate',target:'> 75% non-surgical pathway',owner:'MSK Track Lead',pct:0},
+  {title:'Patient Experience Score (CAHPS)',target:'≥ 4.0 / 5.0',owner:'Quality Manager',pct:0},
+];
+
+const FR_UPDATES_DEFAULT = [
+  {id:'fr1',title:'CMS GUIDE Model — Final Participation Requirements (CY2026)',meta:'Federal Register Vol. 91 | Published March 2026',dismissed:false},
+  {id:'fr2',title:'Physician Fee Schedule Final Rule — Care Management Code Updates',meta:'Federal Register Vol. 90 | Published November 2025',dismissed:false},
+  {id:'fr3',title:'MSSP Pathways to Success — Benchmark Methodology Update',meta:'Federal Register Vol. 91 | Published January 2026',dismissed:false},
+  {id:'fr4',title:'Interoperability and Prior Auth Rule — FHIR API Requirements',meta:'Federal Register Vol. 89 | CMS-0057-F | Effective July 2024',dismissed:false},
+  {id:'fr5',title:'CMS REACH ACO — Performance Year 5 Parameters',meta:'Federal Register Vol. 91 | Published February 2026',dismissed:false},
+];
+
+let frUpdates = [...FR_UPDATES_DEFAULT];
+let taskState = {};
+let checkpointState = {};
+let planGenerated = false;
+
+function getSelectedGaps(){
+  return [...document.querySelectorAll('.gap-chip.selected')].map(c=>c.dataset.gap);
+}
+function getSelectedTracks(){
+  return [...document.querySelectorAll('#tracks input:checked')].map(i=>i.value);
+}
+function getSelectedPhase(){
+  const btn=document.querySelector('.phase-btn.active');
+  return btn?parseInt(btn.dataset.phase):1;
+}
+function getOrgType(){
+  return document.getElementById('org-type').value;
+}
+
+function cycleStatus(el){
+  const states=['ns','ip','done'];
+  const cur=el.dataset.status||'ns';
+  const next=states[(states.indexOf(cur)+1)%3];
+  el.dataset.status=next;
+  el.className='status-cycle status-'+next;
+  el.textContent=next==='ns'?'Not Started':next==='ip'?'In Progress':'Complete';
+  updateProgress();
+}
+
+function updateProgress(){
+  const checkboxes=document.querySelectorAll('#tab-workplan input[type=checkbox]');
+  if(!checkboxes.length)return;
+  const done=[...checkboxes].filter(c=>c.checked).length;
+  const pct=Math.round(done/checkboxes.length*100);
+  document.getElementById('progress-fill').style.width=pct+'%';
+  document.getElementById('progress-pct').textContent=pct+'%';
+}
+
+function renderWorkPlan(){
+  const el=document.getElementById('tab-workplan');
+  const gaps=getSelectedGaps();
+  let html='';
+  PHASES.forEach(p=>{
+    const bodyId='acc-body-'+p.id;
+    const headId='acc-head-'+p.id;
+    let tasks=p.tasks.map((t,i)=>{
+      const id='task-'+p.id+'-'+i;
+      return `<li class="task-item" id="ti-${id}"><input type="checkbox" id="${id}" onchange="document.getElementById('ti-${id}').classList.toggle('done',this.checked);updateProgress()"><label for="${id}">${t}</label></li>`;
+    }).join('');
+    let cps=p.checkpoints.map(c=>{
+      return `<div class="checkpoint-item"><span class="checkpoint-label">📋 ${c.label}</span><button class="status-cycle status-ns" data-status="ns" onclick="cycleStatus(this)">Not Started</button></div>`;
+    }).join('');
+    html+=`<div class="phase-accordion">
+      <div class="phase-acc-header" id="${headId}" onclick="toggleAcc('${bodyId}','${headId}')">
+        <span class="phase-num">${p.id}</span>
+        <span class="phase-acc-title">${p.title}</span>
+        <span class="phase-acc-badge">${p.duration}</span>
+        <svg class="phase-acc-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <div class="phase-acc-body" id="${bodyId}">
+        <ul class="task-list">${tasks}</ul>
+        <div class="phase-checkpoints">${cps}</div>
+      </div>
+    </div>`;
+  });
+  el.innerHTML=html;
+  // Open current phase
+  const ph=getSelectedPhase();
+  const bi='acc-body-'+ph,hi='acc-head-'+ph;
+  document.getElementById(bi).classList.add('open');
+  document.getElementById(hi).classList.add('open');
+}
+
+function toggleAcc(bodyId,headId){
+  const body=document.getElementById(bodyId);
+  const head=document.getElementById(headId);
+  body.classList.toggle('open');
+  head.classList.toggle('open');
+}
+
+function renderRegCheckpoints(){
+  const el=document.getElementById('tab-regcheck');
+  const all=PHASES.flatMap(p=>p.checkpoints.map(c=>({...c,phase:p.title})));
+  let rows=all.map(c=>`<tr><td>${c.phase}</td><td>${c.label}</td><td>CMS GUIDE Model / Federal Register</td><td><button class="status-cycle status-ns" data-status="ns" onclick="cycleStatus(this)">Not Started</button></td></tr>`).join('');
+  el.innerHTML=`<table class="reg-table"><thead><tr><th>Phase</th><th>Checkpoint</th><th>Regulatory Basis</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+function renderRisk(){
+  const el=document.getElementById('tab-risk');
+  const gaps=getSelectedGaps();
+  let risks=[...ALL_RISKS];
+  // Sort: flagged first
+  risks.sort((a,b)=>{
+    const af=a.gaps.some(g=>gaps.includes(g))?0:1;
+    const bf=b.gaps.some(g=>gaps.includes(g))?0:1;
+    return af-bf;
+  });
+  let rows=risks.map(r=>{
+    const flagged=r.gaps.some(g=>gaps.includes(g));
+    const flag=flagged?'⚠ ':'';
+    return `<tr class="${flagged?'flagged':''}"><td>${flag}${r.risk}</td><td><span class="risk-badge risk-${r.likelihood.toLowerCase()}">${r.likelihood}</span></td><td><span class="risk-badge risk-${r.impact.toLowerCase()}">${r.impact}</span></td><td>${r.mitigation}</td></tr>`;
+  }).join('');
+  el.innerHTML=`<p style="font-size:var(--text-xs);color:var(--color-text-muted);margin-bottom:var(--space-3)">⚠ Highlighted rows are elevated based on your selected readiness gaps.</p><table class="risk-table"><thead><tr><th>Risk</th><th>Likelihood</th><th>Impact</th><th>Mitigation Strategy</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+function renderKPI(){
+  const el=document.getElementById('tab-kpi');
+  let cards=KPIS.map((k,i)=>{
+    const pctId='kpi-bar-'+i;
+    return `<div class="kpi-card">
+      <div class="kpi-card-title">${k.title}</div>
+      <div class="kpi-meta">Target: ${k.target} &nbsp;|&nbsp; Owner: ${k.owner} &nbsp;|&nbsp; ${k.freq}</div>
+      <div class="kpi-bar-wrap"><div class="kpi-bar-fill" id="${pctId}" style="width:0%"></div></div>
+      <div class="kpi-pct">Tracking in progress</div>
+    </div>`;
+  }).join('');
+  el.innerHTML=`<div class="kpi-grid">${cards}</div>`;
+  // Animate bars on render
+  setTimeout(()=>{
+    KPIS.forEach((_,i)=>{
+      document.getElementById('kpi-bar-'+i).style.width='0%';
+    });
+  },100);
+}
+
+function renderQuality(){
+  const el=document.getElementById('tab-quality');
+  let cards=QUALITY_MEASURES.map((q,i)=>{
+    return `<div class="quality-card">
+      <div class="kpi-card-title">${q.title}</div>
+      <div class="kpi-meta">Target: ${q.target} &nbsp;|&nbsp; Owner: ${q.owner}</div>
+      <div class="kpi-bar-wrap"><div class="kpi-bar-fill" style="width:0%"></div></div>
+      <div class="kpi-pct">Baseline measurement pending</div>
+    </div>`;
+  }).join('');
+  el.innerHTML=`<div class="quality-grid">${cards}</div>`;
+}
+
+function renderFR(){
+  const el=document.getElementById('tab-fr');
+  const visible=frUpdates.filter(f=>!f.dismissed);
+  if(!visible.length){
+    el.innerHTML='<div class="empty-state" style="min-height:200px"><p>All Federal Register updates dismissed.</p></div>';
+    return;
+  }
+  let items=visible.map(f=>`<div class="fr-item" id="fr-${f.id}">
+    <div class="fr-dot"></div>
+    <div class="fr-body"><div class="fr-title">${f.title}</div><div class="fr-meta">${f.meta}</div></div>
+    <button class="fr-dismiss" onclick="dismissFR('${f.id}')" aria-label="Dismiss"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+  </div>`).join('');
+  el.innerHTML=`<div style="font-size:var(--text-xs);color:var(--color-text-muted);margin-bottom:var(--space-4)">Showing ${visible.length} active CMS / Federal Register notices relevant to ACCESS implementation.</div><div class="fr-list">${items}</div>`;
+}
+
+function dismissFR(id){
+  const item=frUpdates.find(f=>f.id===id);
+  if(item)item.dismissed=true;
+  renderFR();
+}
+
+function buildPlanHeader(){
+  const org=getOrgType();
+  const orgMap={aco:'ACO / MSSP',fqhc:'FQHC / Rural Health Clinic',hospital:'Hospital / Health System',practice:'Independent Practice',dpo:'DCE / REACH Entity'};
+  const tracks=getSelectedTracks();
+  const trackMap={ckm:'CKM',msk:'MSK',bh:'Behavioral Health',onc:'Oncology'};
+  const gaps=getSelectedGaps();
+  const phase=getSelectedPhase();
+  const orgLabel=orgMap[org]||'Organization';
+  const trackLabels=tracks.map(t=>trackMap[t]).join(', ')||'All Tracks';
+  document.getElementById('plan-title').textContent=`ACCESS Rollout Plan — ${orgLabel}`;
+  let metaHtml=`<span class="badge" style="background:var(--color-primary-highlight);color:var(--color-primary)">${trackLabels}</span>`;
+  metaHtml+=`<span class="badge" style="background:var(--color-surface-offset);color:var(--color-text-muted)">Phase ${phase}</span>`;
+  gaps.forEach(g=>{
+    const gMap={data:'Data & Analytics',workforce:'Workforce',interop:'Interoperability',finance:'Finance / P&L',governance:'Governance'};
+    metaHtml+=`<span class="plan-gap-tag">⚠ Gap: ${gMap[g]||g}</span>`;
+  });
+  document.getElementById('plan-meta').innerHTML=metaHtml;
+  document.getElementById('plan-header').style.display='block';
+  document.getElementById('tabs-bar').style.display='flex';
+  document.getElementById('empty-state-panel').style.display='none';
+}
+
+function switchTab(tabId){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tabId));
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  document.getElementById('tab-'+tabId).classList.add('active');
+}
+
+document.getElementById('tabs-bar').addEventListener('click',e=>{
+  const btn=e.target.closest('.tab-btn');
+  if(btn) switchTab(btn.dataset.tab);
+});
+
+document.getElementById('btn-generate').addEventListener('click',()=>{
+  buildPlanHeader();
+  renderWorkPlan();
+  renderRegCheckpoints();
+  renderRisk();
+  renderKPI();
+  renderQuality();
+  renderFR();
+  planGenerated=true;
+  switchTab('workplan');
+  updateProgress();
+});
+
+// Init lucide icons
+if(typeof lucide!=='undefined') lucide.createIcons();
+</script>
+</body>
+</html>
