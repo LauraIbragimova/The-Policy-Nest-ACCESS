@@ -1,102 +1,95 @@
-# The Policy Nest — ACCESS Rollout Planner
+# ACCESS Rollout Planner
+### A Policy Nest Digital Product
 
-> AI-assisted implementation planning tool for the CMS ACCESS (Advancing Chronic Care with Effective, Scalable Solutions) Model
-
----
-
-## What This Is
-
-The ACCESS Rollout Planner is a lightweight, interactive web app that helps healthcare organizations translate the CMS ACCESS Model requirements into a structured, operational implementation roadmap. Users answer a short intake about their organization and readiness, and the app generates a phased rollout plan with tasks, suggested owners, risks, and regulatory checkpoints.
-
-The app also monitors publicly available federal and CMS sources for ACCESS program updates, and flags which plan sections may be affected — surfacing suggested revisions for human review rather than automatically overwriting content.
+> AI-powered implementation planning tool for CMS ACCESS Model participants
 
 ---
 
-## Problem It Solves
+## What It Does
 
-The CMS ACCESS Model is a 10-year voluntary payment model for technology-enabled chronic care. Organizations that want to participate need to understand program requirements, sequence their operational steps, and stay current as guidance evolves. Most teams lack a structured planning tool that is specific to ACCESS — generic project plan generators do not understand the program's tracks, timelines, or regulatory structure.
+The ACCESS Rollout Planner converts an organization's profile — type, track selection, phase, and readiness gaps — into a structured, phase-by-phase implementation roadmap aligned with CMS ACCESS Model requirements.
 
-This tool bridges the gap between policy text and operational execution.
+It is designed for value-based care operations leads, ACO administrators, and healthcare consultants who need to move from CMS guidance to executable action fast.
+
+---
+
+## The Problem
+
+The CMS ACCESS Model (Advancing Chronic Care with Effective, Scalable Solutions) launched July 5, 2026 and runs through 2036. It introduces 10 chronic condition tracks, outcome attainment thresholds, G-code billing requirements, 425-day reporting deadlines, and HIE integration mandates. Most participating organizations lack a structured operational playbook to translate that policy complexity into day-to-day execution.
 
 ---
 
 ## Target User
 
-- ACO directors and operations leads preparing for ACCESS participation
-- NP-led practices and federally qualified health centers evaluating the model
-- VBC strategy consultants supporting provider onboarding
-- Healthcare policy and implementation teams at health systems
+- ACO administrators and operations directors
+- Value-based care program managers at FQHCs, health systems, and physician groups
+- Healthcare consultants supporting ACCESS applicants
+- Policy Nest customers building implementation capacity
 
 ---
 
-## MVP Features (Version 1)
+## MVP Features
 
-- [ ] Organization intake form (type, track, timeline, readiness)
-- [ ] Phased rollout plan generated from inputs
-- [ ] Editable task list with suggested owners, risks, and checkpoints
-- [ ] "Recent Updates" panel flagging new CMS ACCESS guidance
-- [ ] Export-ready plan summary view
-
----
-
-## Planned Features (Future Builds)
-
-- Federal Register API integration for automated regulatory monitoring
-- CMS ACCESS page change detection and impact mapping
-- Multi-track comparison view (chronic condition tracks)
-- Payer alignment pathway module
-- Plan versioning and change log
+- [ ] Organization type selector (ACO, FQHC, Health System, Physician Group, Rural Health Clinic)
+- [ ] Track selector (CKM, MSK, BH, Oncology)
+- [ ] Phase selector (Phases 1–5)
+- [ ] Readiness gap flags (5 categories)
+- [ ] AI-generated phase-by-phase rollout plan
+- [ ] Risk registry with gap-prioritized risks surfaced first
+- [ ] Regulatory checkpoint log (12 checkpoints)
+- [ ] KPI tracker (OAT rate, 425-day compliance, alignment volume, withheld payment recovery, co-management billing)
+- [ ] Quality tracker (measure submission, baseline capture, care update transmission)
+- [ ] Work breakdown structure with 40+ tasks across 5 phases
+- [ ] Federal Register live updates panel
+- [ ] Export to text / Print to PDF
+- [ ] Light and dark mode
+- [ ] Mobile responsive
 
 ---
 
 ## Data Sources
 
-| Source | Type | Use |
-|--------|------|-----|
-| [CMS ACCESS Model Page](https://www.cms.gov/priorities/innovation/innovation-models/access) | Public CMS webpage | Program requirements, eligibility, deadlines |
-| [CMS ACCESS Technical FAQ](https://www.cms.gov/priorities/innovation/access-technical-frequently-asked-questions) | Public CMS webpage | Implementation guidance |
-| [Federal Register API](https://www.federalregister.gov/developers/documentation/api/v1) | Public REST API | Regulatory rule monitoring |
-
-All data sources are publicly available. No PHI is collected or processed.
+| Source | Use |
+|--------|-----|
+| CMS ACCESS Model RFA | Track requirements, eligibility, payment rules |
+| CMS ACCESS Technical FAQ | Billing codes, HIE requirements, device policy |
+| ArentFox Schiff Payment Guidance | OAT thresholds, 425-day deadlines, substitute spend |
+| Federal Register API | Live rulemaking updates surfaced in the app |
 
 ---
 
-## Project Structure
+## File Structure
 
 ```
 The-Policy-Nest-ACCESS/
-├── index.html                  # Main app shell
-├── style.css                   # Layout and design
-├── app.js                      # Input handling, plan generation, update logic
+├── README.md                   ← Project overview
+├── index.html                  ← Main app (single-file, pending approval)
+├── assets/
+│   └── policy-nest-logo.jpg   ← Brand logo
 ├── data/
-│   ├── access-template.json    # Base rollout phases, tasks, risks, checkpoints
-│   └── source-config.json      # Source URLs and monitoring rules
-├── notes/
-│   ├── mvp-scope.md            # MVP scope and decision log
-│   ├── access-workflow.md      # ACCESS planning framework
-│   └── update-logic.md        # Update monitoring approach
-└── README.md
+│   └── access-tracks.json     ← Track/condition reference data
+└── notes/
+    └── mvp-scope.md           ← Full product blueprint (WBS, risks, KPIs)
 ```
 
 ---
 
-## Build Phases
+## Build Roadmap
 
-| Phase | Goal | Status |
-|-------|------|--------|
-| 1 | Project blueprint and documentation | 🔄 In Progress |
-| 2 | Static planner — form + generated plan view | ⬜ Not Started |
-| 3 | Update monitor — CMS/Federal Register flag panel | ⬜ Not Started |
-| 4 | UI polish and export summary | ⬜ Not Started |
-
----
-
-## Built By
-
-**The Policy Nest** — a healthcare policy and operations studio building the toolkits ACO directors, NP-led practices, and VBC strategists need for CMS model transitions.
+| Phase | Description | Status |
+|-------|-------------|--------|
+| 1 | README + Project Blueprint | ✅ Complete |
+| 2 | App scaffold + design system | ⏳ Pending approval |
+| 3 | Plan generation logic + risk/KPI/quality panels | ⏳ Pending |
+| 4 | Federal Register API integration | ⏳ Pending |
+| 5 | Export, polish, QA | ⏳ Pending |
 
 ---
 
-## License
+## About The Policy Nest
 
-© 2026 The Policy Nest. All Rights Reserved.
+The Policy Nest creates digital tools and frameworks that help healthcare organizations implement CMS policy with confidence. This product is part of the ACCESS Implementation Series.
+
+---
+
+*Built with AI assistance. Not legal or clinical advice. Always verify against current CMS guidance.*
