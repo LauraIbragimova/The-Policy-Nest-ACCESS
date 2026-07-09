@@ -162,7 +162,7 @@ select:focus,input:focus{outline:2px solid var(--color-primary);outline-offset:2
 <body>
 
 <header class="header">
-  <img src="./assets/policy-nest-logo.jpg" alt="The Policy Nest" class="header-logo">
+  <img src="./assets/Policy Nest Logo.png" alt="The Policy Nest" class="header-logo">
   <div class="header-title">
     <h1>ACCESS Rollout Planner</h1>
     <span>CMS GUIDE-Care Model Implementation Tool</span>
@@ -281,28 +281,16 @@ select:focus,input:focus{outline:2px solid var(--color-primary);outline-offset:2
       </div>
     </div>
 
-    <!-- WORK PLAN -->
     <div class="tab-content" id="tab-workplan"></div>
-
-    <!-- REG CHECKPOINTS -->
     <div class="tab-content" id="tab-regcheck"></div>
-
-    <!-- RISK REGISTRY -->
     <div class="tab-content" id="tab-risk"></div>
-
-    <!-- KPI -->
     <div class="tab-content" id="tab-kpi"></div>
-
-    <!-- QUALITY -->
     <div class="tab-content" id="tab-quality"></div>
-
-    <!-- FR UPDATES -->
     <div class="tab-content" id="tab-fr"></div>
   </main>
 </div>
 
 <script>
-// ---- THEME TOGGLE ----
 (function(){
   const t=document.querySelector('[data-theme-toggle]'),r=document.documentElement;
   let d=matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';
@@ -316,7 +304,6 @@ select:focus,input:focus{outline:2px solid var(--color-primary);outline-offset:2
   });
 })();
 
-// ---- PHASE BUTTONS ----
 document.getElementById('phase-grid').addEventListener('click',e=>{
   const btn=e.target.closest('.phase-btn');
   if(!btn)return;
@@ -324,105 +311,21 @@ document.getElementById('phase-grid').addEventListener('click',e=>{
   btn.classList.add('active');
 });
 
-// ---- GAP CHIPS ----
 document.getElementById('gap-grid').addEventListener('click',e=>{
   const chip=e.target.closest('.gap-chip');
   if(!chip)return;
   chip.classList.toggle('selected');
 });
 
-// ---- DATA ----
-const PHASES = [
-  {
-    id:1, title:'Phase 1 — Pre-Launch', duration:'Months 1–3',
-    tasks:[
-      'Conduct organizational readiness assessment',
-      'Identify executive sponsor and steering committee',
-      'Review CMS GUIDE Model participation requirements',
-      'Map current state patient population (CKM/MSK/BH/Onc)',
-      'Assess EHR capabilities and data infrastructure',
-      'Establish preliminary P&L model and budget projections',
-      'Develop governance charter and RACI matrix',
-      'Identify care navigator staffing requirements',
-    ],
-    checkpoints:[
-      {id:'c1',label:'Readiness Assessment Submitted to CMS'},
-      {id:'c2',label:'LOI / Application Deadline Met'},
-      {id:'c3',label:'Governance Charter Approved'},
-    ]
-  },
-  {
-    id:2, title:'Phase 2 — Launch', duration:'Months 4–6',
-    tasks:[
-      'Finalize participation agreement with CMS',
-      'Complete EHR workflow build and testing',
-      'Train care navigators on ACCESS model protocols',
-      'Configure patient registry and risk stratification tools',
-      'Launch beneficiary outreach and enrollment',
-      'Establish claims data feed and reconciliation process',
-      'Activate care coordination workflows',
-      'Implement SDOH screening protocols',
-    ],
-    checkpoints:[
-      {id:'c4',label:'Participation Agreement Executed'},
-      {id:'c5',label:'EHR Build Sign-Off Complete'},
-      {id:'c6',label:'First Beneficiary Enrolled'},
-    ]
-  },
-  {
-    id:3, title:'Phase 3 — Scaling', duration:'Months 7–12',
-    tasks:[
-      'Expand care navigator caseloads to target capacity',
-      'Launch condition-specific care pathways (per tracks)',
-      'Integrate behavioral health screening into workflows',
-      'Stand up population health dashboard with KPI tracking',
-      'Begin quarterly financial performance review cycles',
-      'Activate specialist referral networks and SLAs',
-      'Conduct mid-year CMS reporting submission',
-      'Refine risk stratification model based on encounter data',
-    ],
-    checkpoints:[
-      {id:'c7',label:'Mid-Year CMS Data Submission'},
-      {id:'c8',label:'Population Health Dashboard Live'},
-    ]
-  },
-  {
-    id:4, title:'Phase 4 — Optimization', duration:'Months 13–18',
-    tasks:[
-      'Analyze Year 1 utilization and quality data',
-      'Identify high-risk cohorts for intensified intervention',
-      'Renegotiate specialist and ancillary contracts if needed',
-      'Conduct staff performance reviews and competency checks',
-      'Update P&L model with actual vs. projected benchmarks',
-      'Present board-level performance report',
-      'Adjust care protocols based on outcomes data',
-      'Prepare for Year 2 CMS participation renewal',
-    ],
-    checkpoints:[
-      {id:'c9',label:'Year 1 Quality Measure Attestation'},
-      {id:'c10',label:'Year 2 Renewal Application Submitted'},
-    ]
-  },
-  {
-    id:5, title:'Phase 5 — Sustainment', duration:'Month 19+',
-    tasks:[
-      'Embed ACCESS workflows into standard operating procedures',
-      'Transition from project management to operations cadence',
-      'Develop internal training program for new hires',
-      'Monitor Federal Register for CMS rulemaking updates',
-      'Pursue expanded track participation if applicable',
-      'Publish outcomes report for stakeholder transparency',
-      'Evaluate ACO/MSSP alignment opportunities',
-      'Plan next innovation cycle based on VBC landscape',
-    ],
-    checkpoints:[
-      {id:'c11',label:'SOPs Finalized and Distributed'},
-      {id:'c12',label:'Annual CMS Performance Report Filed'},
-    ]
-  }
+const PHASES=[
+  {id:1,title:'Phase 1 — Pre-Launch',duration:'Months 1–3',tasks:['Conduct organizational readiness assessment','Identify executive sponsor and steering committee','Review CMS GUIDE Model participation requirements','Map current state patient population (CKM/MSK/BH/Onc)','Assess EHR capabilities and data infrastructure','Establish preliminary P&L model and budget projections','Develop governance charter and RACI matrix','Identify care navigator staffing requirements'],checkpoints:[{id:'c1',label:'Readiness Assessment Submitted to CMS'},{id:'c2',label:'LOI / Application Deadline Met'},{id:'c3',label:'Governance Charter Approved'}]},
+  {id:2,title:'Phase 2 — Launch',duration:'Months 4–6',tasks:['Finalize participation agreement with CMS','Complete EHR workflow build and testing','Train care navigators on ACCESS model protocols','Configure patient registry and risk stratification tools','Launch beneficiary outreach and enrollment','Establish claims data feed and reconciliation process','Activate care coordination workflows','Implement SDOH screening protocols'],checkpoints:[{id:'c4',label:'Participation Agreement Executed'},{id:'c5',label:'EHR Build Sign-Off Complete'},{id:'c6',label:'First Beneficiary Enrolled'}]},
+  {id:3,title:'Phase 3 — Scaling',duration:'Months 7–12',tasks:['Expand care navigator caseloads to target capacity','Launch condition-specific care pathways (per tracks)','Integrate behavioral health screening into workflows','Stand up population health dashboard with KPI tracking','Begin quarterly financial performance review cycles','Activate specialist referral networks and SLAs','Conduct mid-year CMS reporting submission','Refine risk stratification model based on encounter data'],checkpoints:[{id:'c7',label:'Mid-Year CMS Data Submission'},{id:'c8',label:'Population Health Dashboard Live'}]},
+  {id:4,title:'Phase 4 — Optimization',duration:'Months 13–18',tasks:['Analyze Year 1 utilization and quality data','Identify high-risk cohorts for intensified intervention','Renegotiate specialist and ancillary contracts if needed','Conduct staff performance reviews and competency checks','Update P&L model with actual vs. projected benchmarks','Present board-level performance report','Adjust care protocols based on outcomes data','Prepare for Year 2 CMS participation renewal'],checkpoints:[{id:'c9',label:'Year 1 Quality Measure Attestation'},{id:'c10',label:'Year 2 Renewal Application Submitted'}]},
+  {id:5,title:'Phase 5 — Sustainment',duration:'Month 19+',tasks:['Embed ACCESS workflows into standard operating procedures','Transition from project management to operations cadence','Develop internal training program for new hires','Monitor Federal Register for CMS rulemaking updates','Pursue expanded track participation if applicable','Publish outcomes report for stakeholder transparency','Evaluate ACO/MSSP alignment opportunities','Plan next innovation cycle based on VBC landscape'],checkpoints:[{id:'c11',label:'SOPs Finalized and Distributed'},{id:'c12',label:'Annual CMS Performance Report Filed'}]}
 ];
 
-const ALL_RISKS = [
+const ALL_RISKS=[
   {id:'r1',risk:'Insufficient care navigator capacity at launch',likelihood:'H',impact:'H',mitigation:'Hire 60 days pre-launch; build float pool',gaps:['workforce']},
   {id:'r2',risk:'EHR integration delays blocking enrollment',likelihood:'H',impact:'H',mitigation:'Engage IT 90 days prior; parallel testing environment',gaps:['interop','data']},
   {id:'r3',risk:'CMS benchmark methodology change',likelihood:'M',impact:'H',mitigation:'Monitor FR weekly; scenario model two benchmarks',gaps:[]},
@@ -440,23 +343,23 @@ const ALL_RISKS = [
   {id:'r15',risk:'Insufficient interoperability with external labs/imaging',likelihood:'M',impact:'L',mitigation:'FHIR API connections; TEFCA onboarding plan',gaps:['interop']},
 ];
 
-const KPIS = [
-  {title:'Beneficiary Enrollment Rate',target:'≥ 80% of attributed panel',owner:'Care Navigation Lead',freq:'Monthly',pct:0},
-  {title:'Care Navigator Caseload Utilization',target:'≥ 90% of target caseload',owner:'Operations Director',freq:'Monthly',pct:0},
-  {title:'SDOH Screening Completion',target:'≥ 85% of enrolled beneficiaries',owner:'Quality Manager',freq:'Quarterly',pct:0},
-  {title:'30-Day Readmission Rate',target:'< 12% (MSSP benchmark)',owner:'Clinical Lead',freq:'Monthly',pct:0},
-  {title:'Shared Savings Performance vs. Benchmark',target:'≥ 2% net savings',owner:'CFO / Finance',freq:'Quarterly',pct:0},
+const KPIS=[
+  {title:'Beneficiary Enrollment Rate',target:'≥ 80% of attributed panel',owner:'Care Navigation Lead',freq:'Monthly'},
+  {title:'Care Navigator Caseload Utilization',target:'≥ 90% of target caseload',owner:'Operations Director',freq:'Monthly'},
+  {title:'SDOH Screening Completion',target:'≥ 85% of enrolled beneficiaries',owner:'Quality Manager',freq:'Quarterly'},
+  {title:'30-Day Readmission Rate',target:'< 12% (MSSP benchmark)',owner:'Clinical Lead',freq:'Monthly'},
+  {title:'Shared Savings Performance vs. Benchmark',target:'≥ 2% net savings',owner:'CFO / Finance',freq:'Quarterly'},
 ];
 
-const QUALITY_MEASURES = [
-  {title:'Diabetes HbA1c Control (CKM)',target:'> 70% of diabetic panel at goal',owner:'CKM Track Lead',pct:0},
-  {title:'Blood Pressure Control (CKM)',target:'> 65% at < 140/90',owner:'CKM Track Lead',pct:0},
-  {title:'Depression Screening (BH)',target:'≥ 90% screened annually',owner:'BH Track Lead',pct:0},
-  {title:'Conservative MSK Care Rate',target:'> 75% non-surgical pathway',owner:'MSK Track Lead',pct:0},
-  {title:'Patient Experience Score (CAHPS)',target:'≥ 4.0 / 5.0',owner:'Quality Manager',pct:0},
+const QUALITY_MEASURES=[
+  {title:'Diabetes HbA1c Control (CKM)',target:'> 70% of diabetic panel at goal',owner:'CKM Track Lead'},
+  {title:'Blood Pressure Control (CKM)',target:'> 65% at < 140/90',owner:'CKM Track Lead'},
+  {title:'Depression Screening (BH)',target:'≥ 90% screened annually',owner:'BH Track Lead'},
+  {title:'Conservative MSK Care Rate',target:'> 75% non-surgical pathway',owner:'MSK Track Lead'},
+  {title:'Patient Experience Score (CAHPS)',target:'≥ 4.0 / 5.0',owner:'Quality Manager'},
 ];
 
-const FR_UPDATES_DEFAULT = [
+const FR_UPDATES_DEFAULT=[
   {id:'fr1',title:'CMS GUIDE Model — Final Participation Requirements (CY2026)',meta:'Federal Register Vol. 91 | Published March 2026',dismissed:false},
   {id:'fr2',title:'Physician Fee Schedule Final Rule — Care Management Code Updates',meta:'Federal Register Vol. 90 | Published November 2025',dismissed:false},
   {id:'fr3',title:'MSSP Pathways to Success — Benchmark Methodology Update',meta:'Federal Register Vol. 91 | Published January 2026',dismissed:false},
@@ -464,24 +367,12 @@ const FR_UPDATES_DEFAULT = [
   {id:'fr5',title:'CMS REACH ACO — Performance Year 5 Parameters',meta:'Federal Register Vol. 91 | Published February 2026',dismissed:false},
 ];
 
-let frUpdates = [...FR_UPDATES_DEFAULT];
-let taskState = {};
-let checkpointState = {};
-let planGenerated = false;
+let frUpdates=[...FR_UPDATES_DEFAULT];
 
-function getSelectedGaps(){
-  return [...document.querySelectorAll('.gap-chip.selected')].map(c=>c.dataset.gap);
-}
-function getSelectedTracks(){
-  return [...document.querySelectorAll('#tracks input:checked')].map(i=>i.value);
-}
-function getSelectedPhase(){
-  const btn=document.querySelector('.phase-btn.active');
-  return btn?parseInt(btn.dataset.phase):1;
-}
-function getOrgType(){
-  return document.getElementById('org-type').value;
-}
+function getSelectedGaps(){return[...document.querySelectorAll('.gap-chip.selected')].map(c=>c.dataset.gap);}
+function getSelectedTracks(){return[...document.querySelectorAll('#tracks input:checked')].map(i=>i.value);}
+function getSelectedPhase(){const btn=document.querySelector('.phase-btn.active');return btn?parseInt(btn.dataset.phase):1;}
+function getOrgType(){return document.getElementById('org-type').value;}
 
 function cycleStatus(el){
   const states=['ns','ip','done'];
@@ -504,124 +395,66 @@ function updateProgress(){
 
 function renderWorkPlan(){
   const el=document.getElementById('tab-workplan');
-  const gaps=getSelectedGaps();
   let html='';
   PHASES.forEach(p=>{
-    const bodyId='acc-body-'+p.id;
-    const headId='acc-head-'+p.id;
+    const bodyId='acc-body-'+p.id,headId='acc-head-'+p.id;
     let tasks=p.tasks.map((t,i)=>{
       const id='task-'+p.id+'-'+i;
       return `<li class="task-item" id="ti-${id}"><input type="checkbox" id="${id}" onchange="document.getElementById('ti-${id}').classList.toggle('done',this.checked);updateProgress()"><label for="${id}">${t}</label></li>`;
     }).join('');
-    let cps=p.checkpoints.map(c=>{
-      return `<div class="checkpoint-item"><span class="checkpoint-label">📋 ${c.label}</span><button class="status-cycle status-ns" data-status="ns" onclick="cycleStatus(this)">Not Started</button></div>`;
-    }).join('');
-    html+=`<div class="phase-accordion">
-      <div class="phase-acc-header" id="${headId}" onclick="toggleAcc('${bodyId}','${headId}')">
-        <span class="phase-num">${p.id}</span>
-        <span class="phase-acc-title">${p.title}</span>
-        <span class="phase-acc-badge">${p.duration}</span>
-        <svg class="phase-acc-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-      </div>
-      <div class="phase-acc-body" id="${bodyId}">
-        <ul class="task-list">${tasks}</ul>
-        <div class="phase-checkpoints">${cps}</div>
-      </div>
-    </div>`;
+    let cps=p.checkpoints.map(c=>`<div class="checkpoint-item"><span class="checkpoint-label">📋 ${c.label}</span><button class="status-cycle status-ns" data-status="ns" onclick="cycleStatus(this)">Not Started</button></div>`).join('');
+    html+=`<div class="phase-accordion"><div class="phase-acc-header" id="${headId}" onclick="toggleAcc('${bodyId}','${headId}')"><span class="phase-num">${p.id}</span><span class="phase-acc-title">${p.title}</span><span class="phase-acc-badge">${p.duration}</span><svg class="phase-acc-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div><div class="phase-acc-body" id="${bodyId}"><ul class="task-list">${tasks}</ul><div class="phase-checkpoints">${cps}</div></div></div>`;
   });
   el.innerHTML=html;
-  // Open current phase
   const ph=getSelectedPhase();
-  const bi='acc-body-'+ph,hi='acc-head-'+ph;
-  document.getElementById(bi).classList.add('open');
-  document.getElementById(hi).classList.add('open');
+  document.getElementById('acc-body-'+ph).classList.add('open');
+  document.getElementById('acc-head-'+ph).classList.add('open');
 }
 
 function toggleAcc(bodyId,headId){
-  const body=document.getElementById(bodyId);
-  const head=document.getElementById(headId);
-  body.classList.toggle('open');
-  head.classList.toggle('open');
+  document.getElementById(bodyId).classList.toggle('open');
+  document.getElementById(headId).classList.toggle('open');
 }
 
 function renderRegCheckpoints(){
   const el=document.getElementById('tab-regcheck');
   const all=PHASES.flatMap(p=>p.checkpoints.map(c=>({...c,phase:p.title})));
-  let rows=all.map(c=>`<tr><td>${c.phase}</td><td>${c.label}</td><td>CMS GUIDE Model / Federal Register</td><td><button class="status-cycle status-ns" data-status="ns" onclick="cycleStatus(this)">Not Started</button></td></tr>`).join('');
+  const rows=all.map(c=>`<tr><td>${c.phase}</td><td>${c.label}</td><td>CMS GUIDE Model / Federal Register</td><td><button class="status-cycle status-ns" data-status="ns" onclick="cycleStatus(this)">Not Started</button></td></tr>`).join('');
   el.innerHTML=`<table class="reg-table"><thead><tr><th>Phase</th><th>Checkpoint</th><th>Regulatory Basis</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
 
 function renderRisk(){
   const el=document.getElementById('tab-risk');
   const gaps=getSelectedGaps();
-  let risks=[...ALL_RISKS];
-  // Sort: flagged first
-  risks.sort((a,b)=>{
-    const af=a.gaps.some(g=>gaps.includes(g))?0:1;
-    const bf=b.gaps.some(g=>gaps.includes(g))?0:1;
-    return af-bf;
-  });
-  let rows=risks.map(r=>{
+  const risks=[...ALL_RISKS].sort((a,b)=>(a.gaps.some(g=>gaps.includes(g))?0:1)-(b.gaps.some(g=>gaps.includes(g))?0:1));
+  const rows=risks.map(r=>{
     const flagged=r.gaps.some(g=>gaps.includes(g));
-    const flag=flagged?'⚠ ':'';
-    return `<tr class="${flagged?'flagged':''}"><td>${flag}${r.risk}</td><td><span class="risk-badge risk-${r.likelihood.toLowerCase()}">${r.likelihood}</span></td><td><span class="risk-badge risk-${r.impact.toLowerCase()}">${r.impact}</span></td><td>${r.mitigation}</td></tr>`;
+    return `<tr class="${flagged?'flagged':''}"><td>${flagged?'⚠ ':''}${r.risk}</td><td><span class="risk-badge risk-${r.likelihood.toLowerCase()}">${r.likelihood}</span></td><td><span class="risk-badge risk-${r.impact.toLowerCase()}">${r.impact}</span></td><td>${r.mitigation}</td></tr>`;
   }).join('');
-  el.innerHTML=`<p style="font-size:var(--text-xs);color:var(--color-text-muted);margin-bottom:var(--space-3)">⚠ Highlighted rows are elevated based on your selected readiness gaps.</p><table class="risk-table"><thead><tr><th>Risk</th><th>Likelihood</th><th>Impact</th><th>Mitigation Strategy</th></tr></thead><tbody>${rows}</tbody></table>`;
+  el.innerHTML=`<p style="font-size:var(--text-xs);color:var(--color-text-muted);margin-bottom:var(--space-3)">⚠ Highlighted rows elevated by your selected readiness gaps.</p><table class="risk-table"><thead><tr><th>Risk</th><th>Likelihood</th><th>Impact</th><th>Mitigation Strategy</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
 
 function renderKPI(){
   const el=document.getElementById('tab-kpi');
-  let cards=KPIS.map((k,i)=>{
-    const pctId='kpi-bar-'+i;
-    return `<div class="kpi-card">
-      <div class="kpi-card-title">${k.title}</div>
-      <div class="kpi-meta">Target: ${k.target} &nbsp;|&nbsp; Owner: ${k.owner} &nbsp;|&nbsp; ${k.freq}</div>
-      <div class="kpi-bar-wrap"><div class="kpi-bar-fill" id="${pctId}" style="width:0%"></div></div>
-      <div class="kpi-pct">Tracking in progress</div>
-    </div>`;
-  }).join('');
+  const cards=KPIS.map((k,i)=>`<div class="kpi-card"><div class="kpi-card-title">${k.title}</div><div class="kpi-meta">Target: ${k.target} &nbsp;|&nbsp; Owner: ${k.owner} &nbsp;|&nbsp; ${k.freq}</div><div class="kpi-bar-wrap"><div class="kpi-bar-fill" id="kpi-bar-${i}" style="width:0%"></div></div><div class="kpi-pct">Tracking in progress</div></div>`).join('');
   el.innerHTML=`<div class="kpi-grid">${cards}</div>`;
-  // Animate bars on render
-  setTimeout(()=>{
-    KPIS.forEach((_,i)=>{
-      document.getElementById('kpi-bar-'+i).style.width='0%';
-    });
-  },100);
 }
 
 function renderQuality(){
   const el=document.getElementById('tab-quality');
-  let cards=QUALITY_MEASURES.map((q,i)=>{
-    return `<div class="quality-card">
-      <div class="kpi-card-title">${q.title}</div>
-      <div class="kpi-meta">Target: ${q.target} &nbsp;|&nbsp; Owner: ${q.owner}</div>
-      <div class="kpi-bar-wrap"><div class="kpi-bar-fill" style="width:0%"></div></div>
-      <div class="kpi-pct">Baseline measurement pending</div>
-    </div>`;
-  }).join('');
+  const cards=QUALITY_MEASURES.map(q=>`<div class="quality-card"><div class="kpi-card-title">${q.title}</div><div class="kpi-meta">Target: ${q.target} &nbsp;|&nbsp; Owner: ${q.owner}</div><div class="kpi-bar-wrap"><div class="kpi-bar-fill" style="width:0%"></div></div><div class="kpi-pct">Baseline measurement pending</div></div>`).join('');
   el.innerHTML=`<div class="quality-grid">${cards}</div>`;
 }
 
 function renderFR(){
   const el=document.getElementById('tab-fr');
   const visible=frUpdates.filter(f=>!f.dismissed);
-  if(!visible.length){
-    el.innerHTML='<div class="empty-state" style="min-height:200px"><p>All Federal Register updates dismissed.</p></div>';
-    return;
-  }
-  let items=visible.map(f=>`<div class="fr-item" id="fr-${f.id}">
-    <div class="fr-dot"></div>
-    <div class="fr-body"><div class="fr-title">${f.title}</div><div class="fr-meta">${f.meta}</div></div>
-    <button class="fr-dismiss" onclick="dismissFR('${f.id}')" aria-label="Dismiss"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
-  </div>`).join('');
-  el.innerHTML=`<div style="font-size:var(--text-xs);color:var(--color-text-muted);margin-bottom:var(--space-4)">Showing ${visible.length} active CMS / Federal Register notices relevant to ACCESS implementation.</div><div class="fr-list">${items}</div>`;
+  if(!visible.length){el.innerHTML='<div class="empty-state" style="min-height:200px"><p>All Federal Register updates dismissed.</p></div>';return;}
+  const items=visible.map(f=>`<div class="fr-item" id="fr-${f.id}"><div class="fr-dot"></div><div class="fr-body"><div class="fr-title">${f.title}</div><div class="fr-meta">${f.meta}</div></div><button class="fr-dismiss" onclick="dismissFR('${f.id}')" aria-label="Dismiss"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>`).join('');
+  el.innerHTML=`<div style="font-size:var(--text-xs);color:var(--color-text-muted);margin-bottom:var(--space-4)">Showing ${visible.length} active CMS / Federal Register notices.</div><div class="fr-list">${items}</div>`;
 }
 
-function dismissFR(id){
-  const item=frUpdates.find(f=>f.id===id);
-  if(item)item.dismissed=true;
-  renderFR();
-}
+function dismissFR(id){const item=frUpdates.find(f=>f.id===id);if(item)item.dismissed=true;renderFR();}
 
 function buildPlanHeader(){
   const org=getOrgType();
@@ -629,12 +462,11 @@ function buildPlanHeader(){
   const tracks=getSelectedTracks();
   const trackMap={ckm:'CKM',msk:'MSK',bh:'Behavioral Health',onc:'Oncology'};
   const gaps=getSelectedGaps();
-  const phase=getSelectedPhase();
   const orgLabel=orgMap[org]||'Organization';
   const trackLabels=tracks.map(t=>trackMap[t]).join(', ')||'All Tracks';
   document.getElementById('plan-title').textContent=`ACCESS Rollout Plan — ${orgLabel}`;
   let metaHtml=`<span class="badge" style="background:var(--color-primary-highlight);color:var(--color-primary)">${trackLabels}</span>`;
-  metaHtml+=`<span class="badge" style="background:var(--color-surface-offset);color:var(--color-text-muted)">Phase ${phase}</span>`;
+  metaHtml+=`<span class="badge" style="background:var(--color-surface-offset);color:var(--color-text-muted)">Phase ${getSelectedPhase()}</span>`;
   gaps.forEach(g=>{
     const gMap={data:'Data & Analytics',workforce:'Workforce',interop:'Interoperability',finance:'Finance / P&L',governance:'Governance'};
     metaHtml+=`<span class="plan-gap-tag">⚠ Gap: ${gMap[g]||g}</span>`;
@@ -653,7 +485,7 @@ function switchTab(tabId){
 
 document.getElementById('tabs-bar').addEventListener('click',e=>{
   const btn=e.target.closest('.tab-btn');
-  if(btn) switchTab(btn.dataset.tab);
+  if(btn)switchTab(btn.dataset.tab);
 });
 
 document.getElementById('btn-generate').addEventListener('click',()=>{
@@ -664,13 +496,11 @@ document.getElementById('btn-generate').addEventListener('click',()=>{
   renderKPI();
   renderQuality();
   renderFR();
-  planGenerated=true;
   switchTab('workplan');
   updateProgress();
 });
 
-// Init lucide icons
-if(typeof lucide!=='undefined') lucide.createIcons();
+if(typeof lucide!=='undefined')lucide.createIcons();
 </script>
 </body>
 </html>
