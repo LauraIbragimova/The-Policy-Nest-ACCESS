@@ -4,17 +4,16 @@
   <meta charset="UTF-8">
   <title>ACCESS Rollout Planner | The Policy Nest</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;600;700&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
-
   <style>
     :root {
       --aubergine: #4a2e4f;
+      --aubergine-light: #7a5a80;
       --bone: #f3eee6;
       --clay: #c96a4a;
+      --clay-light: #e08060;
       --azure: #1f4e79;
       --sage: #8fa88f;
       --text-main: #1e1b26;
@@ -23,598 +22,172 @@
       --surface-soft: #faf7f2;
       --surface-accent: #f6efe9;
       --border-subtle: #e0d8ca;
-      --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.08);
+      --shadow-soft: 0 10px 30px rgba(0,0,0,0.08);
       --success: #3d6a3f;
       --warning: #8a5a00;
       --danger: #8a3040;
     }
-
     [data-theme="dark"] {
+      --aubergine: #c9a8d4;
+      --aubergine-light: #ddc0e5;
       --bone: #17141b;
+      --clay: #e88a6a;
+      --clay-light: #f0a080;
       --text-main: #f5f1f8;
       --text-muted: #c2b9cc;
       --surface: #231d29;
       --surface-soft: #2b2432;
       --surface-accent: #362a37;
       --border-subtle: #4f4456;
-      --shadow-soft: 0 14px 34px rgba(0, 0, 0, 0.35);
+      --shadow-soft: 0 14px 34px rgba(0,0,0,0.35);
       --success: #9ccf9d;
       --warning: #f2c46d;
       --danger: #f4a5b2;
     }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      margin: 0;
-      font-family: "Source Sans 3", system-ui, sans-serif;
-      background: var(--bone);
-      color: var(--text-main);
-      min-height: 100vh;
-    }
-
-    button,
-    input,
-    select,
-    textarea {
-      font: inherit;
-    }
-
-    button {
-      cursor: pointer;
-    }
-
-    .app-shell {
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 1.5rem;
-    }
-
-    .app-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-      flex-wrap: wrap;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    .brand-mark {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, var(--aubergine), var(--clay));
-      color: white;
-      display: grid;
-      place-items: center;
-      font-weight: 700;
-      box-shadow: var(--shadow-soft);
-    }
-
-    .brand-title {
-      font-family: "Bricolage Grotesque", system-ui, sans-serif;
-      font-size: 1.15rem;
-      color: var(--aubergine);
-    }
-
-    .brand-subtitle {
-      color: var(--text-muted);
-      font-size: 0.92rem;
-    }
-
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      flex-wrap: wrap;
-    }
-
-    .badge {
-      font-size: 0.8rem;
-      padding: 0.25rem 0.65rem;
-      border-radius: 999px;
-      background: rgba(31,78,121,0.08);
-      color: var(--azure);
-      border: 1px solid rgba(31,78,121,0.22);
-    }
-
-    .toggle-dark {
-      border-radius: 999px;
-      border: 1px solid var(--border-subtle);
-      background: var(--surface);
-      padding: 0.5rem 0.8rem;
-      color: var(--text-main);
-      min-height: 44px;
-      display: inline-flex;
-      gap: 0.45rem;
-      align-items: center;
-    }
-
-    .layout {
-      display: grid;
-      grid-template-columns: minmax(300px, 360px) minmax(0, 1fr);
-      gap: 1.5rem;
-      align-items: flex-start;
-    }
-
-    .left-panel,
-    .right-panel {
-      background: var(--surface);
-      border: 1px solid var(--border-subtle);
-      border-radius: 18px;
-      box-shadow: var(--shadow-soft);
-    }
-
-    .left-panel {
-      padding: 1.25rem;
-      position: sticky;
-      top: 1rem;
-    }
-
-    .right-panel {
-      padding: 1.25rem;
-      min-height: 720px;
-    }
-
-    .panel-section + .panel-section {
-      margin-top: 1.2rem;
-    }
-
-    .panel-section-title {
-      font-size: 0.82rem;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 0.5rem;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 0.35rem;
-      font-weight: 600;
-    }
-
-    select {
-      width: 100%;
-      min-height: 44px;
-      padding: 0.7rem 0.8rem;
-      border-radius: 12px;
-      border: 1px solid var(--border-subtle);
-      background: var(--surface-soft);
-      color: var(--text-main);
-    }
-
-    .helper-copy {
-      color: var(--text-muted);
-      font-size: 0.9rem;
-      margin-top: 0.4rem;
-    }
-
-    .track-grid,
-    .phase-grid {
-      display: grid;
-      gap: 0.6rem;
-    }
-
-    .track-chip,
-    .phase-pill,
-    .gap-chip,
-    .tab-btn {
-      transition:
-        transform 160ms ease,
-        background 160ms ease,
-        border-color 160ms ease,
-        color 160ms ease,
-        box-shadow 160ms ease;
-    }
-
-    .track-chip:hover,
-    .phase-pill:hover,
-    .gap-chip:hover,
-    .tab-btn:hover {
-      transform: translateY(-1px);
-    }
-
-    .track-chip {
-      width: 100%;
-      text-align: left;
-      border-radius: 14px;
-      padding: 0.75rem 0.85rem;
-      border: 1px solid var(--border-subtle);
-      background: var(--surface-soft);
-      color: var(--text-main);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 0.75rem;
-      min-height: 52px;
-    }
-
-    .track-chip .label {
-      font-weight: 700;
-    }
-
-    .track-chip small {
-      display: block;
-      font-size: 0.78rem;
-      color: var(--text-muted);
-    }
-
-    .track-chip .pill {
-      font-size: 0.75rem;
-      padding: 0.2rem 0.45rem;
-      border-radius: 999px;
-      background: rgba(143,168,143,0.16);
-      color: var(--success);
-    }
-
-    .track-chip.active,
-    .phase-pill.active,
-    .gap-chip.active {
-      border-color: var(--clay);
-      background: var(--surface-accent);
-      box-shadow: 0 0 0 2px rgba(201,106,74,0.08);
-    }
-
-    .phase-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .phase-pill {
-      border-radius: 14px;
-      border: 1px solid var(--border-subtle);
-      padding: 0.7rem;
-      background: var(--surface-soft);
-      color: var(--text-main);
-      display: flex;
-      align-items: center;
-      gap: 0.55rem;
-      min-height: 50px;
-    }
-
-    .phase-pill .num {
-      width: 24px;
-      height: 24px;
-      border-radius: 999px;
-      display: inline-grid;
-      place-items: center;
-      background: var(--aubergine);
-      color: #fff;
-      font-size: 0.78rem;
-      font-weight: 700;
-    }
-
-    .gap-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.45rem;
-    }
-
-    .gap-chip {
-      border-radius: 999px;
-      border: 1px solid var(--border-subtle);
-      padding: 0.55rem 0.8rem;
-      background: var(--surface-soft);
-      color: var(--text-main);
-      min-height: 44px;
-    }
-
-    .btn-generate {
-      width: 100%;
-      margin-top: 1rem;
-      border: none;
-      border-radius: 999px;
-      min-height: 48px;
-      background: linear-gradient(135deg, var(--clay), #b85737);
-      color: white;
-      font-weight: 700;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      box-shadow: var(--shadow-soft);
-    }
-
-    .summary-row {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 0.85rem;
-      margin: 1rem 0 1.25rem;
-    }
-
-    .summary-card {
-      border: 1px solid var(--border-subtle);
-      border-radius: 16px;
-      background: var(--surface-soft);
-      padding: 0.9rem;
-    }
-
-    .summary-kicker {
-      color: var(--text-muted);
-      font-size: 0.78rem;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-    }
-
-    .summary-value {
-      font-family: "Bricolage Grotesque", system-ui, sans-serif;
-      font-size: 1.35rem;
-      margin-top: 0.3rem;
-    }
-
-    .plan-header {
-      margin-bottom: 1rem;
-    }
-
-    .plan-title {
-      font-family: "Bricolage Grotesque", system-ui, sans-serif;
-      font-size: 1.35rem;
-      color: var(--aubergine);
-      margin-bottom: 0.2rem;
-    }
-
-    .plan-meta {
-      color: var(--text-muted);
-    }
-
-    .progress-bar-wrap {
-      margin-top: 0.9rem;
-    }
-
-    .progress-bar-label {
-      display: flex;
-      justify-content: space-between;
-      color: var(--text-muted);
-      font-size: 0.88rem;
-      margin-bottom: 0.35rem;
-    }
-
-    .progress-bar {
-      width: 100%;
-      height: 10px;
-      border-radius: 999px;
-      background: var(--surface-soft);
-      overflow: hidden;
-    }
-
-    .progress-bar-fill {
-      height: 100%;
-      width: 0;
-      background: linear-gradient(90deg, var(--clay), var(--sage), var(--azure));
-      transition: width 420ms ease;
-    }
-
-    .tabs-bar {
-      display: grid;
-      grid-template-columns: repeat(6, minmax(0, 1fr));
-      gap: 0.55rem;
-      margin-bottom: 1rem;
-      padding-bottom: 1rem;
-      border-bottom: 1px solid var(--border-subtle);
-    }
-
-    .tab-btn {
-      border: 1px solid var(--border-subtle);
-      background: var(--surface-soft);
-      color: var(--text-muted);
-      border-radius: 999px;
-      min-height: 44px;
-      padding: 0.55rem 0.75rem;
-      font-weight: 600;
-    }
-
-    .tab-btn.active {
-      color: var(--aubergine);
-      border-color: var(--clay);
-      background: var(--surface-accent);
-    }
-
-    .tab-panel {
-      display: none;
-      animation: fadeIn 220ms ease;
-    }
-
-    .tab-panel.active {
-      display: block;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(4px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .empty-state {
-      border: 1px dashed var(--border-subtle);
-      border-radius: 18px;
-      padding: 1.25rem;
-      background: var(--surface-soft);
-    }
-
-    .empty-state h2 {
-      margin-top: 0;
-      font-family: "Bricolage Grotesque", system-ui, sans-serif;
-      color: var(--aubergine);
-    }
-
-    .phase-card,
-    .detail-card,
-    .risk-card,
-    .kpi-card {
-      border: 1px solid var(--border-subtle);
-      border-radius: 16px;
-      background: var(--surface-soft);
-      padding: 1rem;
-      margin-bottom: 0.9rem;
-    }
-
-    .phase-card-header {
-      display: flex;
-      justify-content: space-between;
-      gap: 1rem;
-      align-items: flex-start;
-      margin-bottom: 0.7rem;
-    }
-
-    .phase-card h3,
-    .detail-card h3,
-    .risk-card h3,
-    .kpi-card h3 {
-      margin: 0;
-      font-size: 1.02rem;
-      color: var(--aubergine);
-    }
-
-    .phase-badge,
-    .severity-pill,
-    .metric-status {
-      border-radius: 999px;
-      padding: 0.2rem 0.55rem;
-      font-size: 0.75rem;
-      font-weight: 700;
-    }
-
-    .phase-badge {
-      background: rgba(31,78,121,0.1);
-      color: var(--azure);
-    }
-
-    .task-list {
-      display: grid;
-      gap: 0.55rem;
-    }
-
-    .task-item {
-      display: flex;
-      gap: 0.75rem;
-      align-items: flex-start;
-      padding: 0.7rem 0.75rem;
-      border-radius: 14px;
-      background: var(--surface);
-      border: 1px solid var(--border-subtle);
-    }
-
-    .task-check {
-      margin-top: 0.15rem;
-      width: 18px;
-      height: 18px;
-      border-radius: 6px;
-      border: 1.5px solid var(--clay);
-      flex: 0 0 auto;
-      background: transparent;
-    }
-
-    .task-copy strong {
-      display: block;
-      margin-bottom: 0.15rem;
-    }
-
-    .task-meta {
-      color: var(--text-muted);
-      font-size: 0.85rem;
-    }
-
-    .two-col {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 0.9rem;
-    }
-
-    .risk-grid,
-    .kpi-grid {
-      display: grid;
-      gap: 0.85rem;
-    }
-
-    .severity-high {
-      background: rgba(138,48,64,0.12);
-      color: var(--danger);
-    }
-
-    .severity-medium {
-      background: rgba(138,90,0,0.12);
-      color: var(--warning);
-    }
-
-    .severity-low {
-      background: rgba(61,106,63,0.12);
-      color: var(--success);
-    }
-
-    .metric-status.on-track {
-      background: rgba(61,106,63,0.12);
-      color: var(--success);
-    }
-
-    .metric-status.watch {
-      background: rgba(138,90,0,0.12);
-      color: var(--warning);
-    }
-
-    .resource-list {
-      display: grid;
-      gap: 0.7rem;
-    }
-
-    .resource-link {
-      display: block;
-      text-decoration: none;
-      color: var(--text-main);
-      border: 1px solid var(--border-subtle);
-      background: var(--surface-soft);
-      border-radius: 14px;
-      padding: 0.9rem;
-    }
-
-    .resource-link span {
-      display: block;
-      color: var(--text-muted);
-      margin-top: 0.18rem;
-      font-size: 0.9rem;
-    }
-
-    @media (max-width: 1080px) {
-      .layout {
-        grid-template-columns: 1fr;
-      }
-      .left-panel {
-        position: static;
-      }
-      .tabs-bar {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-      .summary-row,
-      .two-col {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    @media (max-width: 700px) {
-      .app-shell {
-        padding: 1rem;
-      }
-      .phase-grid {
-        grid-template-columns: 1fr;
-      }
-      .tabs-bar {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-      .track-chip {
-        flex-direction: column;
-        align-items: flex-start;
-      }
+    *{box-sizing:border-box;}
+    html{scroll-behavior:smooth;}
+    body{margin:0;font-family:"Source Sans 3",system-ui,sans-serif;background:var(--bone);color:var(--text-main);min-height:100vh;}
+    button,input,select,textarea{font:inherit;}
+    button{cursor:pointer;}
+
+    .app-shell{max-width:1280px;margin:0 auto;padding:1.5rem;}
+    .app-header{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap;}
+    .brand{display:flex;align-items:center;gap:0.75rem;}
+    .brand-mark{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--aubergine),var(--clay));color:white;display:grid;place-items:center;font-weight:700;box-shadow:var(--shadow-soft);}
+    .brand-title{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-size:1.15rem;color:var(--aubergine);}
+    .brand-subtitle{color:var(--text-muted);font-size:0.92rem;}
+    .header-right{display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;}
+    .badge{font-size:0.8rem;padding:0.25rem 0.65rem;border-radius:999px;background:rgba(31,78,121,0.08);color:var(--azure);border:1px solid rgba(31,78,121,0.22);}
+    .toggle-dark{border-radius:999px;border:1px solid var(--border-subtle);background:var(--surface);padding:0.5rem 0.8rem;color:var(--text-main);min-height:44px;display:inline-flex;gap:0.45rem;align-items:center;}
+    .btn-icon{border-radius:999px;border:1px solid var(--border-subtle);background:var(--surface);padding:0.5rem 0.9rem;color:var(--text-main);min-height:44px;display:inline-flex;gap:0.45rem;align-items:center;font-size:0.9rem;font-weight:600;transition:background 160ms ease,border-color 160ms ease;}
+    .btn-icon:hover{background:var(--surface-accent);border-color:var(--clay);}
+
+    .layout{display:grid;grid-template-columns:minmax(300px,360px) minmax(0,1fr);gap:1.5rem;align-items:flex-start;}
+    .left-panel,.right-panel{background:var(--surface);border:1px solid var(--border-subtle);border-radius:18px;box-shadow:var(--shadow-soft);}
+    .left-panel{padding:1.25rem;position:sticky;top:1rem;}
+    .right-panel{padding:1.25rem;min-height:720px;}
+    .panel-section+.panel-section{margin-top:1.2rem;}
+    .panel-section-title{font-size:0.82rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.5rem;}
+    label{display:block;margin-bottom:0.35rem;font-weight:600;}
+    select{width:100%;min-height:44px;padding:0.7rem 0.8rem;border-radius:12px;border:1px solid var(--border-subtle);background:var(--surface-soft);color:var(--text-main);}
+    .helper-copy{color:var(--text-muted);font-size:0.9rem;margin-top:0.4rem;}
+    .track-grid,.phase-grid{display:grid;gap:0.6rem;}
+    .track-chip,.phase-pill,.gap-chip,.tab-btn{transition:transform 160ms ease,background 160ms ease,border-color 160ms ease,color 160ms ease,box-shadow 160ms ease;}
+    .track-chip:hover,.phase-pill:hover,.gap-chip:hover,.tab-btn:hover{transform:translateY(-1px);}
+    .track-chip{width:100%;text-align:left;border-radius:14px;padding:0.75rem 0.85rem;border:1px solid var(--border-subtle);background:var(--surface-soft);color:var(--text-main);display:flex;justify-content:space-between;align-items:center;gap:0.75rem;min-height:52px;}
+    .track-chip .label{font-weight:700;}
+    .track-chip small{display:block;font-size:0.78rem;color:var(--text-muted);}
+    .track-chip .pill{font-size:0.75rem;padding:0.2rem 0.45rem;border-radius:999px;background:rgba(143,168,143,0.16);color:var(--success);}
+    .track-chip.active,.phase-pill.active,.gap-chip.active{border-color:var(--clay);background:var(--surface-accent);box-shadow:0 0 0 2px rgba(201,106,74,0.08);}
+    .phase-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+    .phase-pill{border-radius:14px;border:1px solid var(--border-subtle);padding:0.7rem;background:var(--surface-soft);color:var(--text-main);display:flex;align-items:center;gap:0.55rem;min-height:50px;}
+    .phase-pill .num{width:24px;height:24px;border-radius:999px;display:inline-grid;place-items:center;background:var(--aubergine);color:#fff;font-size:0.78rem;font-weight:700;}
+    .gap-grid{display:flex;flex-wrap:wrap;gap:0.45rem;}
+    .gap-chip{border-radius:999px;border:1px solid var(--border-subtle);padding:0.55rem 0.8rem;background:var(--surface-soft);color:var(--text-main);min-height:44px;}
+    .btn-generate{width:100%;margin-top:1rem;border:none;border-radius:999px;min-height:48px;background:linear-gradient(135deg,var(--clay),#b85737);color:white;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;box-shadow:var(--shadow-soft);transition:opacity 160ms ease,transform 160ms ease;}
+    .btn-generate:hover{opacity:0.9;transform:translateY(-1px);}
+    .btn-reset{width:100%;margin-top:0.55rem;border:1px solid var(--border-subtle);border-radius:999px;min-height:44px;background:var(--surface-soft);color:var(--text-muted);font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;transition:background 160ms ease,color 160ms ease;}
+    .btn-reset:hover{background:var(--surface-accent);color:var(--text-main);}
+
+    .warn-banner{background:rgba(138,90,0,0.09);border:1px solid rgba(138,90,0,0.22);border-radius:12px;padding:0.65rem 0.85rem;color:var(--warning);font-size:0.88rem;margin-top:0.75rem;display:none;}
+    .warn-banner.visible{display:block;}
+
+    .summary-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0.85rem;margin:1rem 0 1.25rem;}
+    .summary-card{border:1px solid var(--border-subtle);border-radius:16px;background:var(--surface-soft);padding:0.9rem;}
+    .summary-kicker{color:var(--text-muted);font-size:0.78rem;text-transform:uppercase;letter-spacing:0.06em;}
+    .summary-value{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-size:1.35rem;margin-top:0.3rem;}
+
+    .plan-header{margin-bottom:1rem;}
+    .plan-header-top{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap;margin-bottom:0.4rem;}
+    .plan-title{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-size:1.35rem;color:var(--aubergine);}
+    .plan-meta{color:var(--text-muted);}
+    .progress-bar-wrap{margin-top:0.9rem;}
+    .progress-bar-label{display:flex;justify-content:space-between;color:var(--text-muted);font-size:0.88rem;margin-bottom:0.35rem;}
+    .progress-bar{width:100%;height:10px;border-radius:999px;background:var(--surface-soft);overflow:hidden;}
+    .progress-bar-fill{height:100%;width:0;background:linear-gradient(90deg,var(--clay),var(--sage),var(--azure));transition:width 520ms cubic-bezier(0.16,1,0.3,1);}
+
+    .tabs-bar{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:0.55rem;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid var(--border-subtle);}
+    .tab-btn{border:1px solid var(--border-subtle);background:var(--surface-soft);color:var(--text-muted);border-radius:999px;min-height:44px;padding:0.55rem 0.75rem;font-weight:600;font-size:0.85rem;}
+    .tab-btn.active{color:var(--aubergine);border-color:var(--clay);background:var(--surface-accent);}
+
+    .tab-panel{display:none;animation:fadeIn 220ms ease;}
+    .tab-panel.active{display:block;}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+
+    .empty-state{border:1px dashed var(--border-subtle);border-radius:18px;padding:1.25rem;background:var(--surface-soft);}
+    .empty-state h2{margin-top:0;font-family:"Bricolage Grotesque",system-ui,sans-serif;color:var(--aubergine);}
+    .phase-card,.detail-card,.risk-card,.kpi-card{border:1px solid var(--border-subtle);border-radius:16px;background:var(--surface-soft);padding:1rem;margin-bottom:0.9rem;}
+    .phase-card-header{display:flex;justify-content:space-between;gap:1rem;align-items:flex-start;margin-bottom:0.7rem;}
+    .phase-card h3,.detail-card h3,.risk-card h3,.kpi-card h3{margin:0;font-size:1.02rem;color:var(--aubergine);}
+    .phase-badge,.severity-pill,.metric-status{border-radius:999px;padding:0.2rem 0.55rem;font-size:0.75rem;font-weight:700;}
+    .phase-badge{background:rgba(31,78,121,0.1);color:var(--azure);}
+
+    /* Task list with interactive checkboxes */
+    .task-list{display:grid;gap:0.55rem;}
+    .task-item{display:flex;gap:0.75rem;align-items:flex-start;padding:0.7rem 0.75rem;border-radius:14px;background:var(--surface);border:1px solid var(--border-subtle);transition:background 180ms ease,opacity 180ms ease;cursor:pointer;}
+    .task-item:hover{background:var(--surface-accent);}
+    .task-item.done{opacity:0.55;}
+    .task-item.done .task-check{background:var(--clay);border-color:var(--clay);}
+    .task-item.done .task-check::after{content:'✓';color:#fff;font-size:11px;display:block;text-align:center;line-height:16px;}
+    .task-item.done strong{text-decoration:line-through;color:var(--text-muted);}
+    .task-check{margin-top:0.15rem;width:18px;height:18px;border-radius:6px;border:1.5px solid var(--clay);flex:0 0 auto;background:transparent;transition:background 180ms ease;}
+    .task-copy strong{display:block;margin-bottom:0.15rem;}
+    .task-meta{color:var(--text-muted);font-size:0.85rem;}
+
+    .two-col{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0.9rem;}
+    .risk-grid,.kpi-grid{display:grid;gap:0.85rem;}
+
+    .severity-high{background:rgba(138,48,64,0.12);color:var(--danger);}
+    .severity-medium{background:rgba(138,90,0,0.12);color:var(--warning);}
+    .severity-low{background:rgba(61,106,63,0.12);color:var(--success);}
+    .metric-status.on-track{background:rgba(61,106,63,0.12);color:var(--success);}
+    .metric-status.watch{background:rgba(138,90,0,0.12);color:var(--warning);}
+    .metric-status.behind{background:rgba(138,48,64,0.12);color:var(--danger);}
+
+    /* Risk owner input */
+    .risk-owner-row{display:flex;gap:0.5rem;align-items:center;margin-top:0.75rem;flex-wrap:wrap;}
+    .risk-owner-input{flex:1;min-width:160px;padding:0.45rem 0.7rem;border-radius:10px;border:1px solid var(--border-subtle);background:var(--surface);color:var(--text-main);font-size:0.88rem;min-height:38px;}
+    .risk-owner-input:focus{outline:2px solid var(--clay);outline-offset:2px;}
+    .risk-save-btn{padding:0.45rem 0.85rem;border-radius:10px;border:1px solid var(--clay);background:transparent;color:var(--clay);font-size:0.85rem;font-weight:600;transition:background 160ms ease,color 160ms ease;}
+    .risk-save-btn:hover{background:var(--clay);color:#fff;}
+    .risk-owner-saved{font-size:0.82rem;color:var(--success);display:none;margin-left:0.35rem;}
+
+    /* KPI editable inputs */
+    .kpi-input-row{display:flex;gap:0.6rem;align-items:center;margin-top:0.6rem;flex-wrap:wrap;}
+    .kpi-input{width:90px;padding:0.45rem 0.7rem;border-radius:10px;border:1px solid var(--border-subtle);background:var(--surface);color:var(--text-main);font-size:0.95rem;font-weight:700;text-align:center;min-height:38px;}
+    .kpi-input:focus{outline:2px solid var(--clay);outline-offset:2px;}
+    .kpi-status-select{padding:0.45rem 0.7rem;border-radius:10px;border:1px solid var(--border-subtle);background:var(--surface);color:var(--text-main);font-size:0.85rem;min-height:38px;}
+    .kpi-update-btn{padding:0.45rem 0.85rem;border-radius:10px;border:1px solid var(--clay);background:transparent;color:var(--clay);font-size:0.85rem;font-weight:600;transition:background 160ms ease,color 160ms ease;}
+    .kpi-update-btn:hover{background:var(--clay);color:#fff;}
+
+    .resource-list{display:grid;gap:0.7rem;}
+    .resource-link{display:block;text-decoration:none;color:var(--text-main);border:1px solid var(--border-subtle);background:var(--surface-soft);border-radius:14px;padding:0.9rem;}
+    .resource-link span{display:block;color:var(--text-muted);margin-top:0.18rem;font-size:0.9rem;}
+
+    /* Export bar */
+    .export-bar{display:flex;gap:0.65rem;justify-content:flex-end;margin-bottom:1rem;flex-wrap:wrap;}
+
+    /* FR tag chips */
+    .fr-tag{display:inline-block;border-radius:999px;padding:0.18rem 0.55rem;font-size:0.75rem;font-weight:700;background:rgba(31,78,121,0.1);color:var(--azure);margin-right:0.35rem;}
+
+    @media(max-width:1080px){
+      .layout{grid-template-columns:1fr;}
+      .left-panel{position:static;}
+      .tabs-bar{grid-template-columns:repeat(3,minmax(0,1fr));}
+      .summary-row,.two-col{grid-template-columns:1fr;}
+    }
+    @media(max-width:700px){
+      .app-shell{padding:1rem;}
+      .phase-grid{grid-template-columns:1fr;}
+      .tabs-bar{grid-template-columns:repeat(2,minmax(0,1fr));}
+      .track-chip{flex-direction:column;align-items:flex-start;}
+    }
+
+    @media print{
+      .left-panel,.tabs-bar,.export-bar,.toggle-dark,.btn-reset,.btn-generate{display:none!important;}
+      .layout{grid-template-columns:1fr;}
+      .tab-panel{display:block!important;margin-bottom:2rem;}
+      .right-panel{box-shadow:none;border:none;}
     }
   </style>
 </head>
@@ -630,10 +203,7 @@
       </div>
       <div class="header-right">
         <span class="badge">CMS ACCESS Model</span>
-        <button class="toggle-dark" id="toggle-dark" aria-label="Switch theme">
-          <span>🌗</span>
-          <span>Theme</span>
-        </button>
+        <button class="toggle-dark" id="toggle-dark" aria-label="Switch theme">🌗 Theme</button>
       </div>
     </header>
 
@@ -651,74 +221,40 @@
             <option value="health-system">Health System / Hospital</option>
             <option value="digital">Digital Health / Tech-Enabled Provider</option>
           </select>
-          <div class="helper-copy">
-            ACCESS is open to Medicare Part B-enrolled providers and suppliers that designate
-            a physician Clinical Director and meet applicable licensure, HIPAA, and FDA
-            requirements.
-          </div>
+          <div class="helper-copy">ACCESS is open to Medicare Part B-enrolled providers and suppliers that designate a physician Clinical Director and meet applicable licensure, HIPAA, and FDA requirements.</div>
         </div>
 
         <div class="panel-section">
           <div class="panel-section-title">ACCESS Tracks</div>
           <div class="track-grid" id="track-grid">
             <button class="track-chip" data-track="eckm" aria-pressed="false">
-              <span>
-                <span class="label">eCKM</span>
-                <br>
-                <small>Early cardio-kidney-metabolic</small>
-              </span>
+              <span><span class="label">eCKM</span><br><small>Early cardio-kidney-metabolic</small></span>
               <span class="pill">BP, lipids, weight, HbA1c</span>
             </button>
             <button class="track-chip" data-track="ckm" aria-pressed="false">
-              <span>
-                <span class="label">CKM</span>
-                <br>
-                <small>Diabetes, CKD, ASCVD</small>
-              </span>
+              <span><span class="label">CKM</span><br><small>Diabetes, CKD, ASCVD</small></span>
               <span class="pill">Outcome-aligned care</span>
             </button>
             <button class="track-chip" data-track="msk" aria-pressed="false">
-              <span>
-                <span class="label">MSK</span>
-                <br>
-                <small>Chronic musculoskeletal pain</small>
-              </span>
+              <span><span class="label">MSK</span><br><small>Chronic musculoskeletal pain</small></span>
               <span class="pill">Validated PROMs</span>
             </button>
             <button class="track-chip" data-track="bh" aria-pressed="false">
-              <span>
-                <span class="label">BH</span>
-                <br>
-                <small>Depression or anxiety</small>
-              </span>
+              <span><span class="label">BH</span><br><small>Depression or anxiety</small></span>
               <span class="pill">PHQ-9, GAD-7, WHODAS</span>
             </button>
           </div>
+          <div class="warn-banner" id="track-warn">⚠ Consider selecting at least one clinical track for a condition-specific plan.</div>
         </div>
 
         <div class="panel-section">
           <div class="panel-section-title">Implementation Phase</div>
           <div class="phase-grid" id="phase-grid">
-            <button class="phase-pill" data-phase="1" aria-pressed="false">
-              <span class="num">1</span>
-              <span>Readiness</span>
-            </button>
-            <button class="phase-pill" data-phase="2" aria-pressed="false">
-              <span class="num">2</span>
-              <span>Design</span>
-            </button>
-            <button class="phase-pill" data-phase="3" aria-pressed="false">
-              <span class="num">3</span>
-              <span>Tech &amp; Reporting</span>
-            </button>
-            <button class="phase-pill" data-phase="4" aria-pressed="false">
-              <span class="num">4</span>
-              <span>Enrollment</span>
-            </button>
-            <button class="phase-pill" data-phase="5" aria-pressed="false">
-              <span class="num">5</span>
-              <span>Monitoring</span>
-            </button>
+            <button class="phase-pill" data-phase="1" aria-pressed="false"><span class="num">1</span><span>Readiness</span></button>
+            <button class="phase-pill" data-phase="2" aria-pressed="false"><span class="num">2</span><span>Design</span></button>
+            <button class="phase-pill" data-phase="3" aria-pressed="false"><span class="num">3</span><span>Tech &amp; Reporting</span></button>
+            <button class="phase-pill" data-phase="4" aria-pressed="false"><span class="num">4</span><span>Enrollment</span></button>
+            <button class="phase-pill" data-phase="5" aria-pressed="false"><span class="num">5</span><span>Monitoring</span></button>
           </div>
         </div>
 
@@ -733,59 +269,47 @@
           </div>
         </div>
 
-        <button class="btn-generate" id="btn-generate">
-          Generate My Rollout Plan
-        </button>
+        <button class="btn-generate" id="btn-generate">✦ Generate My Rollout Plan</button>
+        <button class="btn-reset" id="btn-reset" style="display:none;">↺ Reset &amp; Reconfigure</button>
       </aside>
 
       <!-- RIGHT PANEL -->
       <main class="right-panel">
-        <!-- Empty state before Generate -->
         <section id="empty-state-panel" class="empty-state">
           <h2>Configure your ACCESS implementation plan</h2>
-          <p>
-            Choose an organization type, one or more clinical tracks, and any readiness gaps.
-            The planner will generate a work plan, regulatory checkpoints, risks, KPIs, quality
-            measures, and federal rulemaking watch items grounded in current CMS ACCESS guidance.
-          </p>
+          <p>Choose an organization type, one or more clinical tracks, and any readiness gaps. The planner will generate a work plan, regulatory checkpoints, risks, KPIs, quality measures, and federal rulemaking watch items grounded in current CMS ACCESS guidance.</p>
           <div class="resource-list">
-            <a
-              class="resource-link"
-              href="https://www.cms.gov/priorities/innovation/innovation-models/access"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <a class="resource-link" href="https://www.cms.gov/priorities/innovation/innovation-models/access" target="_blank" rel="noopener noreferrer">
               <strong>CMS ACCESS Model overview</strong>
               <span>Program summary, rolling start dates, and official application resources.</span>
             </a>
-            <a
-              class="resource-link"
-              href="https://www.cms.gov/priorities/innovation/access-technical-frequently-asked-questions"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <a class="resource-link" href="https://www.cms.gov/priorities/innovation/access-technical-frequently-asked-questions" target="_blank" rel="noopener noreferrer">
               <strong>CMS ACCESS technical FAQs</strong>
               <span>Track definitions, reporting expectations, care coordination, and payment mechanics.</span>
             </a>
           </div>
         </section>
 
-        <!-- Generated plan after user clicks Generate -->
         <section id="generated-plan" style="display:none;">
           <div class="plan-header">
-            <div class="plan-title" id="plan-title">ACCESS Implementation Plan</div>
-            <div class="plan-meta" id="plan-meta"></div>
-
+            <div class="plan-header-top">
+              <div>
+                <div class="plan-title" id="plan-title">ACCESS Implementation Plan</div>
+                <div class="plan-meta" id="plan-meta"></div>
+              </div>
+              <div class="export-bar">
+                <button class="btn-icon" id="btn-print" aria-label="Print plan">🖨 Print</button>
+                <button class="btn-icon" id="btn-copy" aria-label="Copy plan summary">📋 Copy Summary</button>
+              </div>
+            </div>
             <div class="summary-row" id="summary-row"></div>
-
             <div class="progress-bar-wrap">
               <div class="progress-bar-label">
                 <span>Implementation readiness</span>
                 <span id="progress-pct">0%</span>
               </div>
-              <div class="progress-bar">
-                <div class="progress-bar-fill" id="progress-fill"></div>
-              </div>
+              <div class="progress-bar"><div class="progress-bar-fill" id="progress-fill"></div></div>
+              <div style="font-size:0.8rem;color:var(--text-muted);margin-top:0.3rem;">Check off tasks in the Work Plan to update your readiness score.</div>
             </div>
           </div>
 
@@ -810,482 +334,379 @@
   </div>
 
   <script>
-    // Track, phase, and gap libraries with ACCESS-specific logic
     const trackLibrary = {
-      eckm: {
-        label: 'eCKM',
-        outcomes: 'Control or minimum improvement in blood pressure, lipids, weight, and HbA1c.',
-        quality: [
+      eckm:{
+        label:'eCKM',
+        outcomes:'Control or minimum improvement in blood pressure, lipids, weight, and HbA1c.',
+        quality:[
           'Document baseline BP, weight, lipid, and HbA1c capture workflow.',
           'Confirm patient education workflow for self-monitoring and lifestyle support.',
           'Define care milestone updates to PCPs at initiation, milestones, and completion.'
-        ]
+        ],
+        kpiLabel:'eCKM composite outcome rate',
+        frTags:['eCKM','BP/Lipid/Weight/HbA1c thresholds']
       },
-      ckm: {
-        label: 'CKM',
-        outcomes:
-          'Track BP, lipids, weight, and HbA1c; include eGFR and UACR submission for CKD plus diabetes populations.',
-        quality: [
+      ckm:{
+        label:'CKM',
+        outcomes:'Track BP, lipids, weight, and HbA1c; include eGFR and UACR submission for CKD plus diabetes populations.',
+        quality:[
           'Stand up lab integration for eGFR and UACR result exchange.',
           'Define nephrology/cardiology escalation rules for high-risk patients.',
           'Validate condition-specific outcome denominator logic.'
-        ]
+        ],
+        kpiLabel:'CKM outcome attainment rate',
+        frTags:['CKM','eGFR/UACR reporting','CKD/ASCVD']
       },
-      msk: {
-        label: 'MSK',
-        outcomes: 'Use validated PROMs to show improvement in pain intensity, interference, and function.',
-        quality: [
+      msk:{
+        label:'MSK',
+        outcomes:'Use validated PROMs to show improvement in pain intensity, interference, and function.',
+        quality:[
           'Select and standardize the PROM collection cadence.',
           'Train care teams on functional status documentation.',
           'Build patient engagement scripts for the initial care period because MSK has no continuation period.'
-        ]
+        ],
+        kpiLabel:'MSK PROM improvement rate',
+        frTags:['MSK','PROMs','functional status']
       },
-      bh: {
-        label: 'BH',
-        outcomes: 'Show symptom improvement using PHQ-9 or GAD-7 and submit WHODAS 2.0 12-item for function.',
-        quality: [
+      bh:{
+        label:'BH',
+        outcomes:'Show symptom improvement using PHQ-9 or GAD-7 and submit WHODAS 2.0 12-item for function.',
+        quality:[
           'Embed PHQ-9/GAD-7 collection into onboarding and follow-up.',
           'Define behavioral health escalation and crisis workflows.',
           'Confirm closed-loop updates to primary care or referring clinicians.'
-        ]
+        ],
+        kpiLabel:'BH symptom improvement rate (PHQ-9/GAD-7)',
+        frTags:['BH','PHQ-9','GAD-7','WHODAS 2.0']
       }
     };
 
     const phaseLibrary = {
-      1: {
-        title: 'Readiness assessment',
-        badge: 'Foundation',
-        tasks: [
-          [
-            'Confirm Medicare Part B enrollment and active TIN/NPI alignment.',
-            'Compliance / Enrollment'
-          ],
-          [
-            'Designate a physician Clinical Director with clear clinical and compliance authority.',
-            'Executive leadership'
-          ],
-          [
-            'Assess track fit, operational risk, and current technology readiness.',
-            'Strategy / Operations'
-          ]
-        ]
-      },
-      2: {
-        title: 'Operational design',
-        badge: 'Model build',
-        tasks: [
-          [
-            'Define patient onboarding, baseline capture, and care pathway workflows.',
-            'Clinical operations'
-          ],
-          [
-            'Map escalation protocols and care plan update triggers.',
-            'Clinical leadership'
-          ],
-          [
-            'Create governance cadence for implementation decisions and issue resolution.',
-            'PMO / Governance'
-          ]
-        ]
-      },
-      3: {
-        title: 'Technology and reporting',
-        badge: 'Data backbone',
-        tasks: [
-          [
-            'Build standards-based API reporting workflow for CMS-hosted interfaces.',
-            'IT / Interoperability'
-          ],
-          [
-            'Validate secure care-update delivery to PCPs and referring clinicians.',
-            'Interoperability lead'
-          ],
-          [
-            'Test beneficiary-level outcome capture, denominator logic, and QA scripts.',
-            'Analytics / QA'
-          ]
-        ]
-      },
-      4: {
-        title: 'Enrollment launch',
-        badge: 'Go-live',
-        tasks: [
-          [
-            'Launch beneficiary screening, direct enrollment, and referral pathways.',
-            'Care coordination'
-          ],
-          [
-            'Train frontline staff on aligned beneficiary communications and consent steps.',
-            'Operations enablement'
-          ],
-          [
-            'Operationalize control-group and non-aligned patient messaging.',
-            'Patient engagement'
-          ]
-        ]
-      },
-      5: {
-        title: 'Performance monitoring',
-        badge: 'Sustainment',
-        tasks: [
-          [
-            'Monitor outcome attainment, substitute spend exposure, and documentation completeness.',
-            'Performance management'
-          ],
-          [
-            'Review referral updates and PCP co-management workflows.',
-            'Clinical operations'
-          ],
-          [
-            'Refresh risk registry and remediation plan monthly.',
-            'PMO / Compliance'
-          ]
-        ]
-      }
+      1:{title:'Readiness assessment',badge:'Foundation',tasks:[['Confirm Medicare Part B enrollment and active TIN/NPI alignment.','Compliance / Enrollment'],['Designate a physician Clinical Director with clear clinical and compliance authority.','Executive leadership'],['Assess track fit, operational risk, and current technology readiness.','Strategy / Operations']]},
+      2:{title:'Operational design',badge:'Model build',tasks:[['Define patient onboarding, baseline capture, and care pathway workflows.','Clinical operations'],['Map escalation protocols and care plan update triggers.','Clinical leadership'],['Create governance cadence for implementation decisions and issue resolution.','PMO / Governance']]},
+      3:{title:'Technology and reporting',badge:'Data backbone',tasks:[['Build standards-based API reporting workflow for CMS-hosted interfaces.','IT / Interoperability'],['Validate secure care-update delivery to PCPs and referring clinicians.','Interoperability lead'],['Test beneficiary-level outcome capture, denominator logic, and QA scripts.','Analytics / QA']]},
+      4:{title:'Enrollment launch',badge:'Go-live',tasks:[['Launch beneficiary screening, direct enrollment, and referral pathways.','Care coordination'],['Train frontline staff on aligned beneficiary communications and consent steps.','Operations enablement'],['Operationalize control-group and non-aligned patient messaging.','Patient engagement']]},
+      5:{title:'Performance monitoring',badge:'Sustainment',tasks:[['Monitor outcome attainment, substitute spend exposure, and documentation completeness.','Performance management'],['Review referral updates and PCP co-management workflows.','Clinical operations'],['Refresh risk registry and remediation plan monthly.','PMO / Compliance']]}
     };
 
-    const orgNotes = {
-      aco: 'Align ACCESS workflows with attribution, care coordination, and MSSP / ACO reporting governance.',
-      fqhc: 'Emphasize referral partnerships, digital access support, and staffing model adaptation for underserved populations.',
-      independent: 'Prioritize scalable staffing, outsourcing decisions, and a lean reporting architecture.',
-      'health-system':
-        'Coordinate enterprise governance, specialty line ownership, and integration with existing data platforms.',
-      digital: 'Focus on compliance readiness, clinician oversight, and integration with external provider workflows.'
+    const orgNotes={
+      aco:'Align ACCESS workflows with attribution, care coordination, and MSSP / ACO reporting governance.',
+      fqhc:'Emphasize referral partnerships, digital access support, and staffing model adaptation for underserved populations.',
+      independent:'Prioritize scalable staffing, outsourcing decisions, and a lean reporting architecture.',
+      'health-system':'Coordinate enterprise governance, specialty line ownership, and integration with existing data platforms.',
+      digital:'Focus on compliance readiness, clinician oversight, and integration with external provider workflows.'
     };
 
-    const gapActions = {
-      data: 'Close data latency and patient-level outcome QA gaps before launch.',
-      workforce: 'Define staffing ratios, clinical escalation ownership, and training plan.',
-      interop: 'Validate HIE or other secure electronic update pathways and API readiness.',
-      finance: 'Model payment risk, withholds, and care-period unit economics.',
-      governance: 'Stand up executive steering, clinical quality, and issue escalation forums.'
+    const orgFR={
+      aco:['ACO/MSSP overlap guidance','attribution logic','shared savings reconciliation'],
+      fqhc:['FQHC billing interaction','look-alike eligibility','social determinant documentation'],
+      independent:['small practice reporting accommodations','clinical director requirement','TIN alignment'],
+      'health-system':['enterprise TIN enrollment','specialty billing interactions','duplicate service prevention'],
+      digital:['virtual care compliance','FDA device intersections','telehealth billing rules']
     };
 
-    const selectedTracks = new Set();
-    const selectedPhases = new Set(['1', '2', '3']);
-    const selectedGaps = new Set();
+    const gapActions={
+      data:'Close data latency and patient-level outcome QA gaps before launch.',
+      workforce:'Define staffing ratios, clinical escalation ownership, and training plan.',
+      interop:'Validate HIE or other secure electronic update pathways and API readiness.',
+      finance:'Model payment risk, withholds, and care-period unit economics.',
+      governance:'Stand up executive steering, clinical quality, and issue escalation forums.'
+    };
 
-    const orgSelect = document.getElementById('org-type');
-    const generateBtn = document.getElementById('btn-generate');
+    const selectedTracks=new Set();
+    const selectedPhases=new Set(['1','2','3']);
+    const selectedGaps=new Set();
+    let totalTasks=0;
+    let checkedTasks=0;
+    let baseReadiness=0;
 
-    function toggleSet(set, value, el) {
-      if (set.has(value)) {
-        set.delete(value);
-        el.classList.remove('active');
-        el.setAttribute('aria-pressed', 'false');
-      } else {
-        set.add(value);
-        el.classList.add('active');
-        el.setAttribute('aria-pressed', 'true');
-      }
+    const orgSelect=document.getElementById('org-type');
+    const generateBtn=document.getElementById('btn-generate');
+    const resetBtn=document.getElementById('btn-reset');
+    const trackWarn=document.getElementById('track-warn');
+
+    function toggleSet(set,value,el){
+      if(set.has(value)){set.delete(value);el.classList.remove('active');el.setAttribute('aria-pressed','false');}
+      else{set.add(value);el.classList.add('active');el.setAttribute('aria-pressed','true');}
     }
 
-    // Track / phase / gap selection
-    document.querySelectorAll('.track-chip').forEach((btn) => {
-      btn.addEventListener('click', () => toggleSet(selectedTracks, btn.dataset.track, btn));
+    document.querySelectorAll('.track-chip').forEach(btn=>{
+      btn.addEventListener('click',()=>{toggleSet(selectedTracks,btn.dataset.track,btn);trackWarn.classList.toggle('visible',selectedTracks.size===0);});
+    });
+    document.querySelectorAll('.phase-pill').forEach(btn=>{
+      if(selectedPhases.has(btn.dataset.phase)){btn.classList.add('active');btn.setAttribute('aria-pressed','true');}
+      btn.addEventListener('click',()=>toggleSet(selectedPhases,btn.dataset.phase,btn));
+    });
+    document.querySelectorAll('.gap-chip').forEach(btn=>{
+      btn.addEventListener('click',()=>toggleSet(selectedGaps,btn.dataset.gap,btn));
     });
 
-    document.querySelectorAll('.phase-pill').forEach((btn) => {
-      if (selectedPhases.has(btn.dataset.phase)) {
-        btn.classList.add('active');
-        btn.setAttribute('aria-pressed', 'true');
-      }
-      btn.addEventListener('click', () => toggleSet(selectedPhases, btn.dataset.phase, btn));
+    document.getElementById('toggle-dark').addEventListener('click',()=>{
+      const r=document.documentElement;
+      r.dataset.theme=r.dataset.theme==='dark'?'light':'dark';
     });
 
-    document.querySelectorAll('.gap-chip').forEach((btn) => {
-      btn.addEventListener('click', () => toggleSet(selectedGaps, btn.dataset.gap, btn));
+    document.getElementById('btn-print').addEventListener('click',()=>window.print());
+
+    document.getElementById('btn-copy').addEventListener('click',()=>{
+      const title=document.getElementById('plan-title').textContent;
+      const meta=document.getElementById('plan-meta').textContent;
+      const pct=document.getElementById('progress-pct').textContent;
+      const text=`${title}\n${meta}\nReadiness: ${pct}\n\nGenerated by The Policy Nest ACCESS Rollout Planner`;
+      navigator.clipboard.writeText(text).then(()=>{
+        const btn=document.getElementById('btn-copy');
+        btn.textContent='✓ Copied!';
+        setTimeout(()=>{btn.textContent='📋 Copy Summary';},2000);
+      });
     });
 
-    // Theme toggle
-    document.getElementById('toggle-dark').addEventListener('click', () => {
-      const root = document.documentElement;
-      root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
-    });
+    function updateProgress(){
+      if(totalTasks===0)return;
+      const taskBonus=Math.round((checkedTasks/totalTasks)*30);
+      const pct=Math.min(baseReadiness+taskBonus,98);
+      document.getElementById('progress-fill').style.width=pct+'%';
+      document.getElementById('progress-pct').textContent=pct+'%';
+    }
 
-    function renderSummary(orgValue, tracks, gaps) {
-      const summary = document.getElementById('summary-row');
-      summary.innerHTML = `
-        <div class="summary-card">
-          <div class="summary-kicker">Tracks selected</div>
-          <div class="summary-value">${tracks.length}</div>
-        </div>
-        <div class="summary-card">
-          <div class="summary-kicker">Readiness gaps</div>
-          <div class="summary-value">${gaps.length}</div>
-        </div>
-        <div class="summary-card">
-          <div class="summary-kicker">Implementation lens</div>
-          <div class="summary-value" style="font-size:1rem; line-height:1.25;">
-            ${orgNotes[orgValue] || 'Select an organization type to tailor the rollout approach.'}
-          </div>
-        </div>
+    function attachTaskListeners(){
+      totalTasks=0;checkedTasks=0;
+      document.querySelectorAll('.task-item').forEach(item=>{
+        totalTasks++;
+        item.addEventListener('click',()=>{
+          item.classList.toggle('done');
+          checkedTasks=document.querySelectorAll('.task-item.done').length;
+          updateProgress();
+        });
+      });
+    }
+
+    function renderSummary(orgValue,tracks,gaps){
+      document.getElementById('summary-row').innerHTML=`
+        <div class="summary-card"><div class="summary-kicker">Tracks selected</div><div class="summary-value">${tracks.length}</div></div>
+        <div class="summary-card"><div class="summary-kicker">Readiness gaps</div><div class="summary-value">${gaps.length}</div></div>
+        <div class="summary-card"><div class="summary-kicker">Implementation lens</div><div class="summary-value" style="font-size:1rem;line-height:1.25;">${orgNotes[orgValue]||'Select an organization type.'}</div></div>
       `;
     }
 
-    function renderWorkplan(phases, tracks, gaps) {
-      const container = document.getElementById('panel-workplan');
-      container.innerHTML = phases
-        .map((key) => {
-          const phase = phaseLibrary[key];
-          const trackNotes = tracks.length
-            ? `<p><strong>Track focus:</strong> ${tracks
-                .map((t) => `${trackLibrary[t].label}: ${trackLibrary[t].outcomes}`)
-                .join(' ')}</p>`
-            : '<p><strong>Track focus:</strong> Select at least one clinical track to add condition-specific actions.</p>';
-          const gapNotes = gaps.length
-            ? `<p><strong>Gap response:</strong> ${gaps.map((g) => gapActions[g]).join(' ')}</p>`
-            : '<p><strong>Gap response:</strong> No specific readiness gaps selected yet.</p>';
-
-          return `
+    function renderWorkplan(phases,tracks,gaps){
+      const container=document.getElementById('panel-workplan');
+      container.innerHTML=phases.map(key=>{
+        const phase=phaseLibrary[key];
+        const trackNotes=tracks.length
+          ?`<p><strong>Track focus:</strong> ${tracks.map(t=>`${trackLibrary[t].label}: ${trackLibrary[t].outcomes}`).join(' ')}</p>`
+          :'<p><strong>Track focus:</strong> Select at least one clinical track to add condition-specific actions.</p>';
+        const gapNotes=gaps.length
+          ?`<p><strong>Gap response:</strong> ${gaps.map(g=>gapActions[g]).join(' ')}</p>`
+          :'<p><strong>Gap response:</strong> No specific readiness gaps selected yet.</p>';
+        return `
           <article class="phase-card">
             <div class="phase-card-header">
-              <div>
-                <h3>Phase ${key} · ${phase.title}</h3>
-                ${trackNotes}
-              </div>
+              <div><h3>Phase ${key} · ${phase.title}</h3>${trackNotes}</div>
               <span class="phase-badge">${phase.badge}</span>
             </div>
             ${gapNotes}
             <div class="task-list">
-              ${phase.tasks
-                .map(
-                  (task) => `
-                <div class="task-item">
+              ${phase.tasks.map(task=>`
+                <div class="task-item" role="checkbox" aria-checked="false" tabindex="0">
                   <div class="task-check" aria-hidden="true"></div>
-                  <div class="task-copy">
-                    <strong>${task[0]}</strong>
-                    <div class="task-meta">Suggested owner: ${task[1]}</div>
-                  </div>
-                </div>
-              `
-                )
-                .join('')}
+                  <div class="task-copy"><strong>${task[0]}</strong><div class="task-meta">Suggested owner: ${task[1]}</div></div>
+                </div>`).join('')}
             </div>
-          </article>
-        `;
-        })
-        .join('');
+          </article>`;
+      }).join('');
     }
 
-    function renderRegCheck(tracks) {
-      const trackLine = tracks.length
-        ? tracks.map((t) => `${trackLibrary[t].label}: ${trackLibrary[t].outcomes}`).join(' ')
-        : 'Choose one or more tracks to show condition-specific checkpoints.';
-
-      document.getElementById('panel-regcheck').innerHTML = `
+    function renderRegCheck(tracks){
+      const trackLine=tracks.length
+        ?tracks.map(t=>`${trackLibrary[t].label}: ${trackLibrary[t].outcomes}`).join(' ')
+        :'Choose one or more tracks to show condition-specific checkpoints.';
+      document.getElementById('panel-regcheck').innerHTML=`
         <div class="two-col">
-          <section class="detail-card">
-            <h3>Participation checkpoints</h3>
-            <ul>
-              <li>Confirm Medicare Part B enrollment, active TIN, and physician Clinical Director coverage.</li>
-              <li>Validate HIPAA, applicable state licensure, and FDA compliance posture.</li>
-              <li>Prepare care coordination workflows for updates to PCPs and referring clinicians at initiation, milestones, and completion.</li>
-              <li>Confirm no duplicative fee-for-service billing for aligned beneficiaries during active ACCESS care periods.</li>
-            </ul>
-          </section>
-          <section class="detail-card">
-            <h3>Reporting checkpoints</h3>
-            <ul>
-              <li>Stand up standards-based API reporting to CMS-hosted interfaces.</li>
-              <li>Capture baseline and follow-up outcomes for each enrolled beneficiary.</li>
-              <li>Document track-specific measures and submission logic.</li>
-              <li>${trackLine}</li>
-            </ul>
-          </section>
-        </div>
-      `;
+          <section class="detail-card"><h3>Participation checkpoints</h3><ul>
+            <li>Confirm Medicare Part B enrollment, active TIN, and physician Clinical Director coverage.</li>
+            <li>Validate HIPAA, applicable state licensure, and FDA compliance posture.</li>
+            <li>Prepare care coordination workflows for updates to PCPs and referring clinicians at initiation, milestones, and completion.</li>
+            <li>Confirm no duplicative fee-for-service billing for aligned beneficiaries during active ACCESS care periods.</li>
+          </ul></section>
+          <section class="detail-card"><h3>Reporting checkpoints</h3><ul>
+            <li>Stand up standards-based API reporting to CMS-hosted interfaces.</li>
+            <li>Capture baseline and follow-up outcomes for each enrolled beneficiary.</li>
+            <li>Document track-specific measures and submission logic.</li>
+            <li>${trackLine}</li>
+          </ul></section>
+        </div>`;
     }
 
-    function renderRisk(gaps, orgValue) {
-      const baseRisks = [
-        [
-          'API reporting delays',
-          'Missing standards-based CMS reporting readiness can delay launch.',
-          'High'
-        ],
-        [
-          'Care coordination breakdown',
-          'Updates to PCPs or referring clinicians are not consistently delivered or documented.',
-          'Medium'
-        ],
-        [
-          'Outcome underperformance',
-          'Baseline capture or follow-up workflows are too weak to support threshold attainment.',
-          'High'
-        ]
+    function renderRisk(gaps,orgValue){
+      const baseRisks=[
+        ['API reporting delays','Missing standards-based CMS reporting readiness can delay launch.','High'],
+        ['Care coordination breakdown','Updates to PCPs or referring clinicians are not consistently delivered or documented.','Medium'],
+        ['Outcome underperformance','Baseline capture or follow-up workflows are too weak to support threshold attainment.','High']
       ];
-
-      const gapRisks = Array.from(gaps).map((g) => [
-        g.charAt(0).toUpperCase() + g.slice(1) + ' gap',
-        gapActions[g],
-        g === 'finance' || g === 'interop' ? 'High' : 'Medium'
-      ]);
-
-      const orgRisk = orgValue
-        ? [['Org model risk', orgNotes[orgValue], 'Low']]
-        : [];
-
-      const allRisks = [...baseRisks, ...gapRisks, ...orgRisk];
-
-      document.getElementById('panel-risk').innerHTML = `
+      const gapRisks=Array.from(gaps).map(g=>[g.charAt(0).toUpperCase()+g.slice(1)+' gap',gapActions[g],g==='finance'||g==='interop'?'High':'Medium']);
+      const orgRisk=orgValue?[['Org model risk',orgNotes[orgValue],'Low']]:[];
+      const allRisks=[...baseRisks,...gapRisks,...orgRisk];
+      document.getElementById('panel-risk').innerHTML=`
         <div class="risk-grid">
-          ${allRisks
-            .map((r) => {
-              const klass =
-                r[2] === 'High'
-                  ? 'severity-high'
-                  : r[2] === 'Medium'
-                  ? 'severity-medium'
-                  : 'severity-low';
-              return `
-                <article class="risk-card">
-                  <div class="phase-card-header">
-                    <h3>${r[0]}</h3>
-                    <span class="severity-pill ${klass}">${r[2]} severity</span>
-                  </div>
-                  <p>${r[1]}</p>
-                  <div class="task-meta">Mitigation owner should be assigned before go-live.</div>
-                </article>
-              `;
-            })
-            .join('')}
-        </div>
-      `;
+          ${allRisks.map((r,i)=>{
+            const klass=r[2]==='High'?'severity-high':r[2]==='Medium'?'severity-medium':'severity-low';
+            return `<article class="risk-card">
+              <div class="phase-card-header"><h3>${r[0]}</h3><span class="severity-pill ${klass}">${r[2]} severity</span></div>
+              <p>${r[1]}</p>
+              <div class="risk-owner-row">
+                <input class="risk-owner-input" type="text" placeholder="Assign mitigation owner…" id="risk-owner-${i}" aria-label="Mitigation owner for ${r[0]}">
+                <button class="risk-save-btn" onclick="saveRiskOwner(${i})">Save</button>
+                <span class="risk-owner-saved" id="risk-saved-${i}">✓ Saved</span>
+              </div>
+            </article>`;
+          }).join('')}
+        </div>`;
     }
 
-    function renderKpi(tracks) {
-      const metrics = [
-        ['Enrollment conversion', '0%', 'watch'],
-        ['Baseline capture completeness', '0%', 'watch'],
-        ['Care update delivery rate', '0%', 'watch']
+    function saveRiskOwner(i){
+      const val=document.getElementById('risk-owner-'+i).value.trim();
+      if(!val)return;
+      const saved=document.getElementById('risk-saved-'+i);
+      saved.style.display='inline';
+      setTimeout(()=>{saved.style.display='none';},2000);
+    }
+
+    function renderKpi(tracks){
+      const metrics=[
+        {label:'Enrollment conversion',value:'0%',status:'watch'},
+        {label:'Baseline capture completeness',value:'0%',status:'watch'},
+        {label:'Care update delivery rate',value:'0%',status:'watch'}
       ];
-
-      tracks.forEach((t) =>
-        metrics.push([
-          `${trackLibrary[t].label} outcome tracker`,
-          trackLibrary[t].label === 'BH'
-            ? 'PHQ-9 / GAD-7 pending'
-            : 'Measure pending',
-          'on-track'
-        ])
-      );
-
-      document.getElementById('panel-kpi').innerHTML = `
+      tracks.forEach(t=>metrics.push({label:trackLibrary[t].kpiLabel,value:'0%',status:'on-track'}));
+      document.getElementById('panel-kpi').innerHTML=`
         <div class="kpi-grid">
-          ${metrics
-            .map(
-              (m) => `
+          ${metrics.map((m,i)=>`
             <article class="kpi-card">
               <div class="phase-card-header">
-                <h3>${m[0]}</h3>
-                <span class="metric-status ${m[2]}">
-                  ${m[2] === 'on-track' ? 'Configured' : 'Needs input'}
-                </span>
+                <h3>${m.label}</h3>
+                <span class="metric-status ${m.status}" id="kpi-status-badge-${i}">${m.status==='on-track'?'On Track':'Needs Input'}</span>
               </div>
-              <div class="summary-value">${m[1]}</div>
-              <p class="task-meta">
-                Next step: define numerator, denominator, owner, and update cadence.
-              </p>
-            </article>
-          `
-            )
-            .join('')}
-        </div>
-      `;
+              <div class="summary-value" id="kpi-display-${i}">${m.value}</div>
+              <div class="kpi-input-row">
+                <input class="kpi-input" type="text" value="${m.value}" id="kpi-val-${i}" aria-label="Current value for ${m.label}" placeholder="e.g. 72%">
+                <select class="kpi-status-select" id="kpi-status-sel-${i}" aria-label="Status for ${m.label}">
+                  <option value="on-track"${m.status==='on-track'?' selected':''}>On Track</option>
+                  <option value="watch"${m.status==='watch'?' selected':''}>Watch</option>
+                  <option value="behind">Behind</option>
+                </select>
+                <button class="kpi-update-btn" onclick="updateKpi(${i})">Update</button>
+              </div>
+            </article>`).join('')}
+        </div>`;
     }
 
-    function renderQuality(tracks) {
-      const content = tracks.length
-        ? tracks
-            .flatMap((t) =>
-              trackLibrary[t].quality.map(
-                (item) => `<li><strong>${trackLibrary[t].label}:</strong> ${item}</li>`
-              )
-            )
-            .join('')
-        : '<li>Select a clinical track to display condition-specific quality actions.</li>';
+    function updateKpi(i){
+      const val=document.getElementById('kpi-val-'+i).value.trim();
+      const status=document.getElementById('kpi-status-sel-'+i).value;
+      const display=document.getElementById('kpi-display-'+i);
+      const badge=document.getElementById('kpi-status-badge-'+i);
+      if(val)display.textContent=val;
+      badge.className='metric-status '+status;
+      badge.textContent=status==='on-track'?'On Track':status==='watch'?'Watch':'Behind';
+    }
 
-      document.getElementById('panel-quality').innerHTML = `
+    function renderQuality(tracks){
+      const content=tracks.length
+        ?tracks.flatMap(t=>trackLibrary[t].quality.map(item=>`<li><strong>${trackLibrary[t].label}:</strong> ${item}</li>`)).join('')
+        :'<li>Select a clinical track to display condition-specific quality actions.</li>';
+      document.getElementById('panel-quality').innerHTML=`
         <section class="detail-card">
           <h3>Quality build priorities</h3>
-          <ul>
-            ${content}
+          <ul>${content}
             <li>Validate baseline, milestone, and completion documentation standards.</li>
             <li>Set internal review cadence for outcome attainment and documentation completeness.</li>
           </ul>
-        </section>
-      `;
+        </section>`;
     }
 
-    function renderFR() {
-      document.getElementById('panel-fr').innerHTML = `
+    function renderFR(tracks,orgValue,gaps){
+      const trackTags=tracks.flatMap(t=>trackLibrary[t].frTags);
+      const orgTags=(orgValue&&orgFR[orgValue])||[];
+      const gapTags=Array.from(gaps).map(g=>g.charAt(0).toUpperCase()+g.slice(1)+' readiness');
+      const allTags=[...new Set([...trackTags,...orgTags,...gapTags])];
+      const tagHtml=allTags.length?allTags.map(t=>`<span class="fr-tag">${t}</span>`).join(''):'<span class="fr-tag">General ACCESS guidance</span>';
+
+      document.getElementById('panel-fr').innerHTML=`
         <section class="detail-card">
           <h3>Federal watch list</h3>
+          <p style="margin-bottom:0.75rem;">Watch items tailored to your selections: ${tagHtml}</p>
           <ul>
-            <li>Track CMS implementation guides for standards-based API reporting.</li>
-            <li>Monitor updates to ACCESS G-codes, co-management billing guidance, and future threshold schedules.</li>
-            <li>Review CMS participant directory and accepted applicant notices as the market matures.</li>
-            <li>Watch for future expansion of clinical tracks or additional model guidance.</li>
+            <li>Track CMS implementation guides for standards-based API reporting and any updates to accepted data submission methods.</li>
+            <li>Monitor updates to ACCESS G-codes, co-management billing guidance, and future outcome threshold schedules.</li>
+            <li>Review CMS participant directory and accepted applicant notices as the model matures.</li>
+            ${tracks.includes('eckm')||tracks.includes('ckm')?'<li><strong>CKM/eCKM:</strong> Watch for updated BP, lipid, HbA1c, eGFR, and UACR threshold schedules and any changes to the substitute spend definition.</li>':''}
+            ${tracks.includes('msk')?'<li><strong>MSK:</strong> Monitor guidance on PROM instrument acceptance and any expansion of the approved functional status measures.</li>':''}
+            ${tracks.includes('bh')?'<li><strong>BH:</strong> Watch for updates to WHODAS 2.0 submission standards and any PHQ-9/GAD-7 threshold adjustments.</li>':''}
+            ${orgValue==='aco'?'<li><strong>ACO:</strong> Monitor CMS guidance on ACCESS and MSSP overlap, attribution priority rules, and any shared savings reconciliation clarifications.</li>':''}
+            ${orgValue==='fqhc'?'<li><strong>FQHC:</strong> Watch for FQHC billing interaction guidance and any look-alike eligibility clarifications under ACCESS.</li>':''}
+            ${orgValue==='digital'?'<li><strong>Digital Health:</strong> Track FDA device intersection guidance, virtual care compliance requirements, and telehealth billing rules as they apply to ACCESS participants.</li>':''}
+            ${gaps.has('finance')?'<li><strong>Finance:</strong> Monitor withhold schedule publications and any updates to the payment calculation methodology.</li>':''}
+            ${gaps.has('interop')?'<li><strong>Interoperability:</strong> Watch for CMS updates to the required API specifications and HL7 FHIR implementation guides.</li>':''}
+            <li>Watch for future expansion of clinical tracks, additional model guidance, and any CMMI learning system publications.</li>
           </ul>
-        </section>
-      `;
+        </section>`;
     }
 
-    function activateTabs() {
-      document.querySelectorAll('.tab-btn').forEach((btn) => {
-        btn.onclick = () => {
-          document.querySelectorAll('.tab-btn').forEach((b) => b.classList.remove('active'));
-          document.querySelectorAll('.tab-panel').forEach((p) => p.classList.remove('active'));
-
+    function activateTabs(){
+      document.querySelectorAll('.tab-btn').forEach(btn=>{
+        btn.onclick=()=>{
+          document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+          document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
           btn.classList.add('active');
-          document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+          document.getElementById('panel-'+btn.dataset.tab).classList.add('active');
         };
       });
     }
 
-    generateBtn.addEventListener('click', () => {
-      const orgValue = orgSelect.value;
-      if (!orgValue) {
-        alert('Please select an organization type first.');
-        return;
-      }
+    generateBtn.addEventListener('click',()=>{
+      const orgValue=orgSelect.value;
+      if(!orgValue){alert('Please select an organization type first.');return;}
+      if(selectedTracks.size===0)trackWarn.classList.add('visible');
 
-      const tracks = Array.from(selectedTracks);
-      const phases = Array.from(selectedPhases).sort((a, b) => Number(a) - Number(b));
-      const gaps = Array.from(selectedGaps);
+      const tracks=Array.from(selectedTracks);
+      const phases=Array.from(selectedPhases).sort((a,b)=>Number(a)-Number(b));
+      const gaps=selectedGaps;
+      const gapsArr=Array.from(gaps);
 
-      const readiness = Math.min(
-        35 + tracks.length * 14 + phases.length * 7 - gaps.length * 6,
-        95
-      );
+      baseReadiness=Math.min(35+tracks.length*14+phases.length*7-gapsArr.length*6,65);
+      checkedTasks=0;
 
-      document.getElementById('empty-state-panel').style.display = 'none';
-      document.getElementById('generated-plan').style.display = 'block';
+      document.getElementById('empty-state-panel').style.display='none';
+      document.getElementById('generated-plan').style.display='block';
+      resetBtn.style.display='flex';
 
-      document.getElementById('plan-meta').textContent = `
-        ${orgSelect.options[orgSelect.selectedIndex].text} · ${
-          tracks.length ? tracks.map((t) => trackLibrary[t].label).join(', ') : 'No tracks selected yet'
-        } · ${
-          gaps.length ? gaps.length + ' readiness gap(s)' : 'No readiness gaps flagged'
-        }
-      `.trim();
+      document.getElementById('plan-meta').textContent=`${orgSelect.options[orgSelect.selectedIndex].text} · ${tracks.length?tracks.map(t=>trackLibrary[t].label).join(', '):'No tracks selected yet'} · ${gapsArr.length?gapsArr.length+' readiness gap(s)':'No readiness gaps flagged'}`;
+      document.getElementById('progress-fill').style.width=baseReadiness+'%';
+      document.getElementById('progress-pct').textContent=baseReadiness+'%';
 
-      document.getElementById('progress-fill').style.width = readiness + '%';
-      document.getElementById('progress-pct').textContent = readiness + '%';
-
-      renderSummary(orgValue, tracks, gaps);
-      renderWorkplan(phases, tracks, gaps);
+      renderSummary(orgValue,tracks,gapsArr);
+      renderWorkplan(phases,tracks,gapsArr);
       renderRegCheck(tracks);
-      renderRisk(gaps, orgValue);
+      renderRisk(gaps,orgValue);
       renderKpi(tracks);
       renderQuality(tracks);
-      renderFR();
+      renderFR(tracks,orgValue,gaps);
       activateTabs();
+      attachTaskListeners();
 
-      document
-        .getElementById('generated-plan')
-        .scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.getElementById('generated-plan').scrollIntoView({behavior:'smooth',block:'start'});
+    });
+
+    resetBtn.addEventListener('click',()=>{
+      document.getElementById('generated-plan').style.display='none';
+      document.getElementById('empty-state-panel').style.display='block';
+      resetBtn.style.display='none';
+      trackWarn.classList.remove('visible');
+      selectedTracks.clear();selectedPhases.clear();selectedPhases.add('1');selectedPhases.add('2');selectedPhases.add('3');selectedGaps.clear();
+      document.querySelectorAll('.track-chip,.phase-pill,.gap-chip').forEach(el=>{el.classList.remove('active');el.setAttribute('aria-pressed','false');});
+      document.querySelectorAll('.phase-pill').forEach(btn=>{if(selectedPhases.has(btn.dataset.phase)){btn.classList.add('active');btn.setAttribute('aria-pressed','true');}});
+      orgSelect.value='';
+      window.scrollTo({top:0,behavior:'smooth'});
     });
 
     activateTabs();
