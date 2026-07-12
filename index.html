@@ -16,11 +16,6 @@
 
     /* ── CSS Banner ── */
     .site-banner {
-      /*
-        Aubergine (#4a2e4f) fills the top half.
-        At 50% it begins transitioning into Cobalt (#1f4e79) by the bottom.
-        Clay (#C96A4A) 4px solid border at the bottom.
-      */
       background: linear-gradient(
         to bottom,
         #4a2e4f 0%,
@@ -33,28 +28,7 @@
       padding: clamp(var(--space-8), 5vw, var(--space-16)) clamp(var(--space-6), 5vw, var(--space-16));
     }
 
-    /* Remove the old ::after clay line — border-bottom handles it now */
     .site-banner::after { display: none; }
-
-    /* Decorative rings — top-right corner */
-    .site-banner__rings {
-      position: absolute;
-      top: -60px;
-      right: -60px;
-      width: 360px;
-      height: 360px;
-      pointer-events: none;
-      opacity: 0.10;
-    }
-
-    /* Subtle dot-grid texture */
-    .site-banner__dots {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      background-image: radial-gradient(circle, rgba(255,255,255,0.07) 1px, transparent 1px);
-      background-size: 28px 28px;
-    }
 
     /* Inner layout */
     .site-banner__inner {
@@ -72,20 +46,6 @@
       display: flex;
       align-items: center;
       gap: var(--space-5);
-    }
-
-    /* SVG nest logo mark */
-    .site-banner__logo-wrap {
-      flex-shrink: 0;
-      width: clamp(52px, 6vw, 72px);
-      height: clamp(52px, 6vw, 72px);
-      border-radius: var(--radius-full);
-      background: rgba(255,255,255,0.10);
-      border: 1.5px solid rgba(255,255,255,0.22);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.25);
     }
 
     .site-banner__text-block {
@@ -252,7 +212,6 @@
     [data-theme="dark"] .models-section { background: var(--color-surface); border-color: var(--color-divider); }
     [data-theme="dark"] .model-card,
     [data-theme="dark"] .pillar-card { background: var(--color-surface-soft); }
-    /* Dark mode: slightly deepen the banner gradient */
     [data-theme="dark"] .site-banner {
       background: linear-gradient(
         to bottom,
@@ -266,41 +225,16 @@
 <body>
 
   <!-- ============================================================
-       BANNER — CSS gradient, no image dependency
+       BANNER
   ============================================================ -->
   <header class="site-banner" role="banner" aria-label="The Policy Nest">
-
-    <!-- Decorative dot grid -->
-    <div class="site-banner__dots" aria-hidden="true"></div>
-
-    <!-- Decorative rings (SVG) -->
-    <svg class="site-banner__rings" viewBox="0 0 360 360" fill="none" aria-hidden="true">
-      <circle cx="300" cy="60"  r="240" stroke="white" stroke-width="1"/>
-      <circle cx="300" cy="60"  r="180" stroke="white" stroke-width="1"/>
-      <circle cx="300" cy="60"  r="120" stroke="white" stroke-width="1.5"/>
-      <circle cx="300" cy="60"  r="60"  stroke="white" stroke-width="2"/>
-    </svg>
-
     <div class="site-banner__inner">
 
-      <!-- Brand block -->
+      <!-- Brand text only -->
       <div class="site-banner__brand">
-        <!-- SVG nest / policy mark -->
-        <div class="site-banner__logo-wrap" aria-hidden="true">
-          <svg width="38" height="38" viewBox="0 0 48 48" fill="none" aria-label="Policy Nest logo mark">
-            <!-- Nest shape: stacked arcs -->
-            <path d="M8 34 Q24 18 40 34" stroke="#c2d4c2" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-            <path d="M12 38 Q24 24 36 38" stroke="#c9a4b8" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-            <!-- Leaf / document mark -->
-            <path d="M24 8 C24 8 32 14 32 22 C32 26.4 28.4 30 24 30 C19.6 30 16 26.4 16 22 C16 14 24 8 24 8Z" fill="rgba(201,106,74,0.85)"/>
-            <path d="M24 14 L24 26 M20 19 L24 14 L28 19" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-
         <div class="site-banner__text-block">
           <span class="site-banner__name">THE POLICY NEST</span>
           <span class="site-banner__tagline">Powering Value-Based Care Transitions</span>
-          <!-- Pills row -->
           <div class="site-banner__pills" role="list">
             <span class="site-banner__pill" role="listitem">CMMI Innovation Models</span>
             <span class="site-banner__pill" role="listitem">ACO &amp; VBC Programs</span>
