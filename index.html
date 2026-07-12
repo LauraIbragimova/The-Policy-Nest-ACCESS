@@ -580,6 +580,22 @@ document.getElementById('btn-generate').addEventListener('click',()=>{
 });
 
 if(typeof lucide!=='undefined')lucide.createIcons();
+<script>
+  const tabButtons = document.querySelectorAll('.tab');
+  const tabPanels = document.querySelectorAll('.tab-panel');
+
+  tabButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.getAttribute('data-tab');
+
+      tabButtons.forEach(b => b.classList.remove('active'));
+      tabPanels.forEach(p => p.classList.remove('active'));
+
+      btn.classList.add('active');
+      const activePanel = document.getElementById('tab-' + target);
+      if (activePanel) activePanel.classList.add('active');
+    });
+  });
 </script>
 </body>
 </html>
