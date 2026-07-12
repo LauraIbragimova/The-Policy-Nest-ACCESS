@@ -217,6 +217,15 @@
     .severity-high{background:rgba(138,48,64,0.12);color:var(--danger);}
     .severity-medium{background:rgba(138,90,0,0.12);color:var(--warning);}
     .severity-low{background:rgba(61,106,63,0.12);color:var(--success);}
+    .risk-summary-bar{display:flex;flex-wrap:wrap;align-items:center;gap:0.5rem 1rem;padding:0.6rem 0.85rem;margin-bottom:0.85rem;border:1px solid var(--border-subtle);border-radius:12px;background:var(--surface-soft);font-size:0.88rem;color:var(--text-muted);}
+    .risk-summary-bar strong{color:var(--text-main);font-size:1rem;}
+    .risk-summary-high{color:var(--danger);font-weight:700;}
+    .risk-summary-note{margin-left:auto;font-size:0.8rem;font-style:italic;}
+    .risk-cat{display:inline-block;font-size:0.72rem;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:var(--azure);background:rgba(31,78,121,0.1);border-radius:999px;padding:0.12rem 0.5rem;margin:0.15rem 0 0.5rem;}
+    .risk-flag{font-size:0.66rem;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:var(--clay);background:rgba(201,106,74,0.14);border-radius:999px;padding:0.1rem 0.42rem;vertical-align:middle;}
+    .risk-scale-row{display:flex;flex-wrap:wrap;gap:0.5rem 1.1rem;margin-top:0.6rem;}
+    .risk-scale{font-size:0.8rem;color:var(--text-muted);font-weight:600;display:inline-flex;align-items:center;gap:0.4rem;}
+    .risk-scale-badge{border-radius:999px;padding:0.12rem 0.5rem;font-size:0.74rem;font-weight:700;}
     .metric-status.on-track{background:rgba(61,106,63,0.12);color:var(--success);}
     .metric-status.watch{background:rgba(138,90,0,0.12);color:var(--warning);}
     .metric-status.behind{background:rgba(138,48,64,0.12);color:var(--danger);}
@@ -810,24 +819,72 @@
       }
     }
 
+    // 15-risk registry, each scored on Likelihood x Impact (High/Medium/Low).
+    const riskRegistry=[
+      {title:'CMS API reporting delays',category:'Data & Tech',likelihood:'High',impact:'High',desc:'Standards-based reporting to CMS interfaces is not ready in time, delaying launch or triggering non-compliance.'},
+      {title:'Baseline capture gaps',category:'Data & Tech',likelihood:'Medium',impact:'High',desc:'Baseline outcome data is incomplete within the 60-day window, undermining threshold attainment and reconciliation.'},
+      {title:'Care coordination breakdown',category:'Clinical ops',likelihood:'Medium',impact:'High',desc:'Updates to PCPs and referring clinicians are not consistently delivered or documented at initiation, milestones, and completion.'},
+      {title:'Outcome underperformance',category:'Clinical ops',likelihood:'Medium',impact:'High',desc:'Follow-up workflows are too weak to support quality thresholds, reducing earned payment.'},
+      {title:'FFS duplicative billing',category:'Compliance',likelihood:'Medium',impact:'High',desc:'Fee-for-service claims are billed for aligned beneficiaries during active ACCESS care periods, creating clawback and audit exposure.'},
+      {title:'PECOS enrollment lapse',category:'Compliance',likelihood:'Low',impact:'High',desc:'A billing practitioner is not properly enrolled or revalidated in PECOS, invalidating claims.'},
+      {title:'AKS / Stark exposure',category:'Legal',likelihood:'Low',impact:'High',desc:'Vendor or referral arrangements are not structured within safe harbors, creating Anti-Kickback or Stark liability.'},
+      {title:'HIPAA / BAA gap',category:'Legal',likelihood:'Low',impact:'High',desc:'A vendor handling PHI operates without an executed Business Associate Agreement, risking a breach and penalties.'},
+      {title:'Control group contamination',category:'Clinical ops',likelihood:'Medium',impact:'Medium',desc:'Randomization or control-group management fails, biasing results and jeopardizing model evaluation.'},
+      {title:'425-day deadline miss',category:'Operations',likelihood:'Medium',impact:'High',desc:'The care-period reconciliation deadline is missed, forfeiting payment for affected episodes.'},
+      {title:'Cost-sharing inconsistency',category:'Compliance',likelihood:'Low',impact:'Medium',desc:'Beneficiary cost-sharing is applied non-uniformly, breaching the documented election policy.'},
+      {title:'Staffing / capacity shortfall',category:'Operations',likelihood:'Medium',impact:'Medium',desc:'Care coordination and analytics roles are understaffed relative to enrolled volume.'},
+      {title:'Financial model / withhold risk',category:'Finance',likelihood:'Medium',impact:'High',desc:'Payment withholds and care-period unit economics erode margin if utilization or performance assumptions miss.'},
+      {title:'Interoperability / HIE failure',category:'Data & Tech',likelihood:'Medium',impact:'Medium',desc:'Aligned network or HIE connectivity is unreliable, disrupting secure care-update delivery.'},
+      {title:'Beneficiary attrition',category:'Clinical ops',likelihood:'Medium',impact:'Medium',desc:'Enrolled beneficiaries disengage, reducing denominator size and stability of measured outcomes.'}
+    ];
+
+    const RISK_W={High:3,Medium:2,Low:1};
+    function riskSeverity(likelihood,impact){
+      const s=RISK_W[likelihood]*RISK_W[impact];
+      if(s>=6) return 'High';
+      if(s>=3) return 'Medium';
+      return 'Low';
+    }
+    function riskLevelClass(level){
+      return level==='High'?'severity-high':level==='Medium'?'severity-medium':'severity-low';
+    }
+
     function renderRisk(gaps,orgValue){
-      const baseRisks=[
-        ['API reporting delays','Missing standards-based CMS reporting readiness can delay launch.','High'],
-        ['Care coordination breakdown','Updates to PCPs or referring clinicians are not consistently delivered or documented.','Medium'],
-        ['Outcome underperformance','Baseline capture or follow-up workflows are too weak to support threshold attainment.','High']
-      ];
-      const gapRisks=Array.from(gaps).map(g=>[g.charAt(0).toUpperCase()+g.slice(1)+' gap',gapActions[g],g==='finance'||g==='interop'?'High':'Medium']);
-      const orgRisk=orgValue?[['Org model risk',orgNotes[orgValue],'Low']]:[];
-      const allRisks=[...baseRisks,...gapRisks,...orgRisk];
+      // Elevate likelihood on risks tied to flagged readiness gaps for a personalized view.
+      const gapSet=new Set(Array.from(gaps));
+      const gapCatMap={data:'Data & Tech',interop:'Data & Tech',workforce:'Operations',finance:'Finance',governance:'Operations'};
+      const elevatedCats=new Set(Array.from(gapSet).map(g=>gapCatMap[g]).filter(Boolean));
+
+      const risks=riskRegistry.map(r=>{
+        const flagged=elevatedCats.has(r.category);
+        const likelihood=flagged&&r.likelihood==='Low'?'Medium':flagged&&r.likelihood==='Medium'?'High':r.likelihood;
+        const level=riskSeverity(likelihood,r.impact);
+        return {...r,likelihood,level,flagged};
+      });
+
+      const highCount=risks.filter(r=>r.level==='High').length;
+
       document.getElementById('panel-risk').innerHTML=`
+        <div class="risk-summary-bar">
+          <span><strong>${risks.length}</strong> tracked risks</span>
+          <span class="risk-summary-high">${highCount} high severity</span>
+          ${elevatedCats.size?`<span class="risk-summary-note">Likelihood elevated for flagged gap areas</span>`:''}
+        </div>
         <div class="risk-grid">
-          ${allRisks.map((r,i)=>{
-            const klass=r[2]==='High'?'severity-high':r[2]==='Medium'?'severity-medium':'severity-low';
+          ${risks.map((r,i)=>{
             return `<article class="risk-card">
-              <div class="phase-card-header"><h3>${r[0]}</h3><span class="severity-pill ${klass}">${r[2]} severity</span></div>
-              <p>${r[1]}</p>
+              <div class="phase-card-header">
+                <h3>${r.title}${r.flagged?' <span class="risk-flag" title="Tied to a flagged readiness gap">flagged</span>':''}</h3>
+                <span class="severity-pill ${riskLevelClass(r.level)}">${r.level} severity</span>
+              </div>
+              <div class="risk-cat">${r.category}</div>
+              <p>${r.desc}</p>
+              <div class="risk-scale-row">
+                <span class="risk-scale">Likelihood <span class="risk-scale-badge ${riskLevelClass(r.likelihood)}">${r.likelihood}</span></span>
+                <span class="risk-scale">Impact <span class="risk-scale-badge ${riskLevelClass(r.impact)}">${r.impact}</span></span>
+              </div>
               <div class="risk-owner-row">
-                <input class="risk-owner-input" type="text" placeholder="Assign mitigation owner…" id="risk-owner-${i}" aria-label="Mitigation owner for ${r[0]}">
+                <input class="risk-owner-input" type="text" placeholder="Assign mitigation owner…" id="risk-owner-${i}" aria-label="Mitigation owner for ${r.title}">
                 <button class="risk-save-btn" onclick="saveRiskOwner(${i})">Save</button>
                 <span class="risk-owner-saved" id="risk-saved-${i}">✓ Saved</span>
               </div>
