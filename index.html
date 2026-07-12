@@ -24,9 +24,11 @@
       );
       border-bottom: 4px solid #C96A4A;
       position: relative;
-      overflow: hidden;
-      padding: clamp(var(--space-8), 5vw, var(--space-16)) clamp(var(--space-6), 5vw, var(--space-16));
-      padding-bottom: clamp(var(--space-10), 6vw, var(--space-20));
+      /* Removed overflow:hidden — it was clipping the tagline */
+      /* Generous padding so title + tagline + pills always have room */
+      padding: clamp(var(--space-10), 6vw, var(--space-20)) clamp(var(--space-6), 5vw, var(--space-16));
+      /* Ensure a comfortable minimum height even at small font sizes */
+      min-height: 160px;
     }
 
     .site-banner::after { display: none; }
@@ -48,34 +50,30 @@
       flex-direction: row;
     }
 
-    /* Fix 3: wrapper div stretches to banner height so logo fills it cleanly */
+    /* Logo wrapper stretches to flex row height */
     .site-banner__logo-wrap {
       align-self: stretch;
       display: flex;
       align-items: center;
-      padding-block: var(--space-2); /* breathing room from top/bottom border */
+      padding-block: var(--space-2);
       flex-shrink: 0;
     }
 
-    /* Fix 1: encoded src in HTML. Fix 2: explicit width:auto overrides global img{height:auto}.
-       Fix 3: no negative margin — logo constrained by wrapper height instead.
-       Fix 4: width/height HTML attributes added to <img> tag below. */
+    /* Logo: bumped max from 130px → 160px */
     .site-banner__logo {
-      height: clamp(80px, 10vw, 130px);
-      width: auto;        /* explicit override of global img { height: auto } */
-      max-height: 100%;   /* never taller than the wrapper */
+      height: clamp(100px, 12vw, 160px);
+      width: auto;
+      max-height: 100%;
       object-fit: contain;
     }
 
-    /* Fix 5: bump gap so tagline reads as distinct sub-label at larger title size */
     .site-banner__text-block {
       display: flex;
       flex-direction: column;
-      gap: var(--space-3); /* was space-2 (8px) → now space-3 (12px) */
+      gap: var(--space-3);
       align-items: flex-start;
     }
 
-    /* Larger title */
     .site-banner__name {
       font-family: var(--font-display);
       font-size: clamp(2rem, 1.2rem + 3.5vw, 3.6rem);
@@ -84,9 +82,9 @@
       letter-spacing: -0.02em;
       line-height: 1.0;
       text-shadow: 0 2px 12px rgba(0,0,0,0.25);
+      white-space: nowrap;
     }
 
-    /* Larger tagline */
     .site-banner__tagline {
       font-family: var(--font-body);
       font-size: clamp(0.95rem, 0.7rem + 1.2vw, 1.35rem);
@@ -94,6 +92,7 @@
       color: rgba(194,212,194,0.9);
       letter-spacing: 0.04em;
       text-transform: uppercase;
+      white-space: nowrap;
     }
 
     .site-banner__pills {
@@ -283,9 +282,15 @@
 
     /* ── Responsive ── */
     @media (max-width: 640px) {
+      .site-banner {
+        padding: var(--space-8) var(--space-4);
+        min-height: unset;
+      }
       .site-banner__inner { justify-content: flex-start; }
       .site-banner__brand { flex-direction: row; gap: var(--space-4); }
-      .site-banner__logo { height: 64px; }
+      .site-banner__name { white-space: normal; font-size: clamp(1.5rem, 6vw, 2.2rem); }
+      .site-banner__tagline { white-space: normal; font-size: var(--text-sm); }
+      .site-banner__logo { height: 72px; }
       .site-banner__pills { display: none; }
       .models-grid { grid-template-columns: 1fr; }
     }
@@ -311,15 +316,13 @@
   <header class="site-banner" role="banner" aria-label="The Policy Nest">
     <div class="site-banner__inner">
       <div class="site-banner__brand">
-        <!-- Fix 1: %20 encoded space in src
-             Fix 4: width/height attributes prevent layout shift -->
         <div class="site-banner__logo-wrap">
           <img
             src="./PNL%20RMVBG.png"
             alt="The Policy Nest logo"
             class="site-banner__logo"
-            width="130"
-            height="130"
+            width="160"
+            height="160"
             loading="eager"
           />
         </div>
