@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Policy Nest — Implementation Planning Platform</title>
+  <meta name="description" content="The Policy Nest translates CMS regulations and value-based care policy into structured, actionable implementation plans for ACO leaders and health systems." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Source+Sans+3:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css" />
+  <style>
+    /* ── Page shell ── */
+    html, body { height: 100%; }
+    body {
+      display: flex;
+      flex-direction: column;
+      background-color: var(--bone);
+    }
+
+    main { flex: 1; }
+
+    /* ── Hero ── */
+    .hero {
+      background: var(--bone);
+      padding: clamp(var(--space-12), 6vw, var(--space-20)) var(--space-6);
+    }
+
+    .hero__inner {
+      max-width: var(--content-wide);
+      margin-inline: auto;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: var(--space-12);
+      align-items: center;
+    }
+
+    .hero__overline {
+      font-family: var(--font-body);
+      font-size: var(--text-xs);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--clay);
+      margin-bottom: var(--space-4);
+    }
+
+    .hero__heading {
+      font-family: var(--font-display);
+      font-size: var(--text-2xl);
+      font-weight: 800;
+      color: var(--aubergine);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: var(--space-5);
+      max-width: 16ch;
+    }
+
+    .hero__heading span {
+      color: var(--clay);
+    }
+
+    .hero__body {
+      font-size: var(--text-base);
+      color: var(--color-text-muted);
+      max-width: 52ch;
+      line-height: 1.7;
+      margin-bottom: var(--space-6);
+    }
+
+    .hero__meta {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      flex-wrap: wrap;
+    }
+
+    .hero__meta-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--text-xs);
+      font-weight: 600;
+      color: var(--color-text-faint);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .hero__meta-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: var(--radius-full);
+      background: var(--sage);
+      flex-shrink: 0;
+    }
+
+    .hero__logo-wrap {
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .hero__logo {
+      width: clamp(140px, 15vw, 220px);
+      height: clamp(140px, 15vw, 220px);
+      border-radius: var(--radius-full);
+      object-fit: cover;
+      box-shadow: var(--shadow-lg), 0 0 0 6px rgba(201,106,74,0.12);
+    }
+
+    .hero__logo-ring {
+      position: absolute;
+      inset: -12px;
+      border-radius: var(--radius-full);
+      border: 2px dashed rgba(143,168,143,0.4);
+      pointer-events: none;
+      animation: spin-slow 30s linear infinite;
+    }
+
+    @keyframes spin-slow {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .hero__logo-ring { animation: none; }
+    }
+
+    /* ── Models section ── */
+    .models-section {
+      background: var(--color-surface-offset);
+      padding: clamp(var(--space-10), 5vw, var(--space-16)) var(--space-6);
+      border-top: 1px solid var(--color-divider);
+      border-bottom: 1px solid var(--color-divider);
+    }
+
+    .models-section__header {
+      max-width: var(--content-wide);
+      margin-inline: auto;
+      margin-bottom: var(--space-8);
+    }
+
+    .models-section__title {
+      font-family: var(--font-display);
+      font-size: var(--text-xl);
+      font-weight: 700;
+      color: var(--aubergine);
+      margin-top: var(--space-2);
+    }
+
+    .models-section__desc {
+      font-size: var(--text-sm);
+      color: var(--color-text-muted);
+      margin-top: var(--space-2);
+      max-width: 58ch;
+    }
+
+    .models-grid {
+      max-width: var(--content-wide);
+      margin-inline: auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
+      gap: var(--space-5);
+    }
+
+    /* ── Model Card ── */
+    .model-card {
+      background: var(--color-surface-soft);
+      border: 1px solid var(--color-border-subtle);
+      border-radius: var(--radius-xl);
+      padding: var(--space-6);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+      box-shadow: var(--shadow-card);
+      transition: box-shadow var(--transition-interactive), border-color var(--transition-interactive), transform var(--transition-interactive);
+      position: relative;
+    }
+
+    .model-card--active {
+      border-color: rgba(201, 106, 74, 0.25);
+      border-left: 3px solid var(--clay);
+    }
+
+    .model-card--active:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+      border-color: rgba(201, 106, 74, 0.4);
+    }
+
+    .model-card--inactive {
+      opacity: 0.75;
+    }
+
+    .model-card__top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--space-3);
+    }
+
+    .model-card__program {
+      font-size: var(--text-xs);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--azure);
+    }
+
+    .model-card__name {
+      font-family: var(--font-display);
+      font-size: var(--text-lg);
+      font-weight: 700;
+      color: var(--aubergine);
+      line-height: 1.2;
+      margin-top: var(--space-1);
+    }
+
+    .model-card--inactive .model-card__name {
+      color: var(--color-text-muted);
+    }
+
+    .model-card__desc {
+      font-size: var(--text-sm);
+      color: var(--color-text-muted);
+      line-height: 1.6;
+      flex: 1;
+    }
+
+    .model-card__details {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+    }
+
+    .model-card__detail-pill {
+      font-size: var(--text-xs);
+      font-weight: 500;
+      color: var(--color-text-faint);
+      background: var(--color-surface-offset);
+      border: 1px solid var(--color-border-subtle);
+      border-radius: var(--radius-full);
+      padding: var(--space-1) var(--space-3);
+    }
+
+    .model-card__footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-3);
+      padding-top: var(--space-4);
+      border-top: 1px solid var(--color-divider);
+      margin-top: auto;
+    }
+
+    .model-card__cta {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-5);
+      border-radius: var(--radius-lg);
+      font-family: var(--font-body);
+      font-size: var(--text-sm);
+      font-weight: 600;
+      line-height: 1;
+      text-decoration: none;
+      min-height: 40px;
+      transition: background var(--transition-interactive), box-shadow var(--transition-interactive), transform var(--transition-fast);
+    }
+
+    .model-card__cta--active {
+      background: var(--clay);
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(201,106,74,0.28);
+    }
+
+    .model-card__cta--active:hover {
+      background: var(--clay-hover);
+      box-shadow: 0 4px 16px rgba(201,106,74,0.38);
+      color: #ffffff;
+      transform: translateX(2px);
+    }
+
+    .model-card__cta--disabled {
+      background: var(--color-surface-offset);
+      color: var(--color-text-faint);
+      cursor: not-allowed;
+      pointer-events: none;
+      border: 1px solid var(--color-border-subtle);
+    }
+
+    /* ── Pillars strip ── */
+    .pillars-section {
+      background: var(--bone);
+      padding: clamp(var(--space-10), 5vw, var(--space-16)) var(--space-6);
+    }
+
+    .pillars-section__header {
+      max-width: var(--content-wide);
+      margin-inline: auto;
+      margin-bottom: var(--space-8);
+    }
+
+    .pillars-section__title {
+      font-family: var(--font-display);
+      font-size: var(--text-xl);
+      font-weight: 700;
+      color: var(--aubergine);
+      margin-top: var(--space-2);
+    }
+
+    .pillars-grid {
+      max-width: var(--content-wide);
+      margin-inline: auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: var(--space-5);
+    }
+
+    .pillar-card {
+      background: var(--color-surface-soft);
+      border: 1px solid var(--color-border-subtle);
+      border-radius: var(--radius-xl);
+      padding: var(--space-6);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .pillar-card__name {
+      font-family: var(--font-display);
+      font-size: var(--text-base);
+      font-weight: 700;
+      color: var(--clay);
+      margin-bottom: var(--space-2);
+    }
+
+    .pillar-card__desc {
+      font-size: var(--text-sm);
+      color: var(--color-text-muted);
+      line-height: 1.6;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .hero__inner {
+        grid-template-columns: 1fr;
+        gap: var(--space-8);
+      }
+
+      .hero__logo-wrap {
+        order: -1;
+        margin-inline: auto;
+      }
+
+      .hero__heading { max-width: 100%; }
+    }
+
+    @media (max-width: 480px) {
+      .models-grid { grid-template-columns: 1fr; }
+      .pillars-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── Dark mode overrides ── */
+    [data-theme="dark"] body {
+      background-color: var(--color-bg);
+    }
+
+    [data-theme="dark"] .hero,
+    [data-theme="dark"] .pillars-section {
+      background: var(--color-bg);
+    }
+
+    [data-theme="dark"] .models-section {
+      background: var(--color-surface);
+      border-color: var(--color-divider);
+    }
+
+    [data-theme="dark"] .model-card,
+    [data-theme="dark"] .pillar-card {
+      background: var(--color-surface-soft);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================
+       HEADER
+  ============================================================ -->
+  <header class="app-header" role="banner">
+    <div class="app-header__brand">
+      <img
+        src="./Policy Nest Logo.png"
+        alt="The Policy Nest logo"
+        class="app-header__logo"
+        width="56"
+        height="56"
+        loading="eager"
+      />
+      <div class="app-header__titles">
+        <span class="app-header__title">THE POLICY NEST</span>
+        <span class="app-header__subtitle">Powering Value-Based Care Transitions</span>
+      </div>
+    </div>
+
+    <nav class="app-header__nav" aria-label="Site navigation">
+      <button
+        class="toggle-dark"
+        data-theme-toggle
+        aria-label="Switch to dark mode"
+        title="Toggle dark mode"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+    </nav>
+  </header>
+
+  <main id="main-content">
+
+    <!-- ============================================================
+         HERO
+    ============================================================ -->
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="hero__inner">
+        <div class="hero__text">
+          <p class="hero__overline">Implementation Planning Platform</p>
+          <h1 class="hero__heading" id="hero-heading">
+            Your roadmap for <span>value-based care</span> transitions
+          </h1>
+          <p class="hero__body">
+            The Policy Nest translates dense CMS regulations into structured, actionable project plans — giving ACO leaders, health systems, and care organizations the operational intelligence they need to execute transitions with confidence.
+          </p>
+          <div class="hero__meta">
+            <span class="hero__meta-item">
+              <span class="hero__meta-dot"></span>
+              CMMI Innovation Models
+            </span>
+            <span class="hero__meta-item">
+              <span class="hero__meta-dot"></span>
+              ACO &amp; VBC Programs
+            </span>
+            <span class="hero__meta-item">
+              <span class="hero__meta-dot"></span>
+              Regulatory Guidance
+            </span>
+          </div>
+        </div>
+
+        <div class="hero__logo-wrap" aria-hidden="true">
+          <div class="hero__logo-ring"></div>
+          <img
+            src="./Policy Nest Logo.png"
+            alt=""
+            class="hero__logo"
+            width="220"
+            height="220"
+            loading="eager"
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         MODEL SELECTOR
+    ============================================================ -->
+    <section class="models-section" aria-labelledby="models-heading">
+      <div class="models-section__header">
+        <p class="overline">Available Planners</p>
+        <h2 class="models-section__title" id="models-heading">Select a CMS model to begin</h2>
+        <p class="models-section__desc">Each planner is built around the specific participation requirements, reporting obligations, and care delivery changes of its CMS program.</p>
+      </div>
+
+      <div class="models-grid" role="list">
+
+        <!-- ACCESS Model — ACTIVE -->
+        <article class="model-card model-card--active" role="listitem">
+          <div class="model-card__top">
+            <div>
+              <p class="model-card__program">CMMI Innovation Model</p>
+              <h3 class="model-card__name">ACCESS Model</h3>
+            </div>
+            <span class="badge badge--active">Active</span>
+          </div>
+
+          <p class="model-card__desc">
+            Advancing Cardiac Care, Equity, and Safety through Solutions. A mandatory cardiac bundled payment model focused on AMI, CABG, and surgical hip/femur fracture treatment episodes with integrated care delivery requirements.
+          </p>
+
+          <div class="model-card__details">
+            <span class="model-card__detail-pill">Performance Year 1</span>
+            <span class="model-card__detail-pill">2025 – 2027</span>
+            <span class="model-card__detail-pill">Cardiac &amp; Surgical</span>
+          </div>
+
+          <div class="model-card__footer">
+            <span class="badge badge--sage">4 Tracks</span>
+            <a
+              href="./ACCESS Rollout.html"
+              class="model-card__cta model-card__cta--active"
+              aria-label="Open ACCESS Model Planner"
+            >
+              Open Planner
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+          </div>
+        </article>
+
+        <!-- REACH ACO — COMING SOON -->
+        <article class="model-card model-card--inactive" role="listitem">
+          <div class="model-card__top">
+            <div>
+              <p class="model-card__program">CMMI Innovation Model</p>
+              <h3 class="model-card__name">REACH ACO</h3>
+            </div>
+            <span class="badge badge--coming-soon">Coming Soon</span>
+          </div>
+
+          <p class="model-card__desc">
+            Realizing Equity, Access, and Community Health. A voluntary global and professional risk ACO model designed to improve care for Traditional Medicare beneficiaries, with emphasis on health equity and social determinants.
+          </p>
+
+          <div class="model-card__details">
+            <span class="model-card__detail-pill">Global &amp; Professional Risk</span>
+            <span class="model-card__detail-pill">Voluntary</span>
+            <span class="model-card__detail-pill">Medicare FFS</span>
+          </div>
+
+          <div class="model-card__footer">
+            <span class="badge badge--aubergine">ACO</span>
+            <span class="model-card__cta model-card__cta--disabled" aria-disabled="true">
+              Coming Soon
+            </span>
+          </div>
+        </article>
+
+        <!-- PCF — COMING SOON -->
+        <article class="model-card model-card--inactive" role="listitem">
+          <div class="model-card__top">
+            <div>
+              <p class="model-card__program">CMMI Innovation Model</p>
+              <h3 class="model-card__name">Primary Care First</h3>
+            </div>
+            <span class="badge badge--coming-soon">Coming Soon</span>
+          </div>
+
+          <p class="model-card__desc">
+            A voluntary primary care payment model rewarding practices for delivering advanced primary care services. Focuses on seriously ill patient populations and practice transformation across five performance-based payment adjustments.
+          </p>
+
+          <div class="model-card__details">
+            <span class="model-card__detail-pill">Primary Care</span>
+            <span class="model-card__detail-pill">Voluntary</span>
+            <span class="model-card__detail-pill">Practice-Level</span>
+          </div>
+
+          <div class="model-card__footer">
+            <span class="badge badge--aubergine">PCF</span>
+            <span class="model-card__cta model-card__cta--disabled" aria-disabled="true">
+              Coming Soon
+            </span>
+          </div>
+        </article>
+
+        <!-- Shared Savings — COMING SOON -->
+        <article class="model-card model-card--inactive" role="listitem">
+          <div class="model-card__top">
+            <div>
+              <p class="model-card__program">Medicare Shared Savings Program</p>
+              <h3 class="model-card__name">MSSP ACO</h3>
+            </div>
+            <span class="badge badge--coming-soon">Coming Soon</span>
+          </div>
+
+          <p class="model-card__desc">
+            The Medicare Shared Savings Program enables groups of healthcare providers to form ACOs and work together to provide coordinated, high-quality care while earning shared savings when they reduce costs and meet quality benchmarks.
+          </p>
+
+          <div class="model-card__details">
+            <span class="model-card__detail-pill">BASIC &amp; ENHANCED Tracks</span>
+            <span class="model-card__detail-pill">Voluntary</span>
+            <span class="model-card__detail-pill">Medicare FFS</span>
+          </div>
+
+          <div class="model-card__footer">
+            <span class="badge badge--aubergine">MSSP</span>
+            <span class="model-card__cta model-card__cta--disabled" aria-disabled="true">
+              Coming Soon
+            </span>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ============================================================
+         BRAND PILLARS
+    ============================================================ -->
+    <section class="pillars-section" aria-labelledby="pillars-heading">
+      <div class="pillars-section__header">
+        <p class="overline">Why The Policy Nest</p>
+        <h2 class="pillars-section__title" id="pillars-heading">Built on four principles</h2>
+      </div>
+
+      <div class="pillars-grid">
+        <div class="pillar-card">
+          <p class="pillar-card__name">Intelligence</p>
+          <p class="pillar-card__desc">Early signal. Policy decoded before your competitors — so your team acts on what's coming, not what's already happened.</p>
+        </div>
+        <div class="pillar-card">
+          <p class="pillar-card__name">Architecture</p>
+          <p class="pillar-card__desc">Structured plans built from the ground up. Every work plan, checkpoint, and risk item maps directly to CMS requirements.</p>
+        </div>
+        <div class="pillar-card">
+          <p class="pillar-card__name">Outcomes</p>
+          <p class="pillar-card__desc">Every plan maps to measurable VBC performance. Quality scorecards and KPI trackers keep your team accountable to results.</p>
+        </div>
+        <div class="pillar-card">
+          <p class="pillar-card__name">The Canary</p>
+          <p class="pillar-card__desc">We detect what's coming. You act first. Federal Register monitoring and FR updates keep you ahead of regulatory change.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============================================================
+       FOOTER
+  ============================================================ -->
+  <footer class="app-footer" role="contentinfo">
+    <div class="app-footer__inner">
+      <span class="app-footer__brand">The Policy Nest</span>
+      <p class="app-footer__note">
+        For planning and informational purposes only. Not official CMS guidance. Always verify requirements with current CMS program materials.
+      </p>
+      <a
+        href="https://www.cms.gov/priorities/innovation/innovation-models"
+        class="app-footer__link"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        CMS Innovation Models →
+      </a>
+    </div>
+  </footer>
+
+  <script>
+    (function(){
+      const t = document.querySelector('[data-theme-toggle]');
+      const r = document.documentElement;
+      let d = matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light';
+      r.setAttribute('data-theme', d);
+      if (t) {
+        t.setAttribute('aria-label', 'Switch to ' + (d === 'dark' ? 'light' : 'dark') + ' mode');
+        t.innerHTML = d === 'dark'
+          ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'
+          : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+        t.addEventListener('click', () => {
+          d = d === 'dark' ? 'light' : 'dark';
+          r.setAttribute('data-theme', d);
+          t.setAttribute('aria-label', 'Switch to ' + (d === 'dark' ? 'light' : 'dark') + ' mode');
+          t.innerHTML = d === 'dark'
+            ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'
+            : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+        });
+      }
+    })();
+  </script>
+
+</body>
+</html>
