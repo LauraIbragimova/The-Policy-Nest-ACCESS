@@ -272,6 +272,31 @@
     .fr-ref-body span{display:block;color:var(--text-muted);font-size:0.85rem;margin-top:0.1rem;}
     .fr-ref-body .fr-ref-url{color:var(--clay);font-size:0.8rem;margin-top:0.25rem;}
 
+    /* ── LIVE FEDERAL REGISTER UPDATES ───────────────────────────────────── */
+    .fr-live-header{display:flex;align-items:center;justify-content:space-between;gap:0.75rem;flex-wrap:wrap;margin-bottom:0.75rem;}
+    .fr-live-status{font-size:0.8rem;color:var(--text-muted);display:flex;align-items:center;gap:0.4rem;}
+    .fr-refresh-btn{border:1px solid var(--border-subtle);background:var(--surface);color:var(--text-main);border-radius:999px;padding:0.3rem 0.8rem;font-size:0.8rem;font-weight:600;cursor:pointer;transition:background 160ms ease,border-color 160ms ease;}
+    .fr-refresh-btn:hover{background:var(--surface-accent);border-color:var(--clay);}
+    .fr-refresh-btn:disabled{opacity:0.55;cursor:default;}
+    .fr-live-list{display:grid;gap:0.6rem;}
+    .fr-update-card{display:block;padding:0.85rem 0.95rem;border-radius:14px;border:1px solid var(--border-subtle);background:var(--surface);text-decoration:none;color:var(--text-main);transition:background 160ms ease,border-color 160ms ease;}
+    .fr-update-card:hover{background:var(--surface-accent);border-color:var(--clay);}
+    .fr-update-top{display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.35rem;}
+    .fr-type-badge{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;border-radius:999px;padding:0.15rem 0.55rem;}
+    .fr-type-rule{background:rgba(138,48,64,0.12);color:var(--danger);}
+    .fr-type-proposed{background:rgba(138,90,0,0.14);color:var(--warning);}
+    .fr-type-notice{background:rgba(31,78,121,0.1);color:var(--azure);}
+    .fr-type-other{background:rgba(74,46,79,0.1);color:var(--aubergine);}
+    .fr-update-date{font-size:0.78rem;color:var(--text-muted);margin-left:auto;}
+    .fr-update-title{display:block;font-size:0.92rem;font-weight:600;line-height:1.35;color:var(--text-main);}
+    .fr-update-abstract{display:block;font-size:0.83rem;color:var(--text-muted);margin-top:0.3rem;line-height:1.45;}
+    .fr-update-link{display:inline-block;color:var(--clay);font-size:0.78rem;margin-top:0.4rem;font-weight:600;}
+    .fr-empty,.fr-error{font-size:0.88rem;color:var(--text-muted);padding:0.9rem;border:1px dashed var(--border-subtle);border-radius:12px;}
+    .fr-error{color:var(--danger);border-color:var(--danger);}
+    .fr-skeleton{height:74px;border-radius:14px;border:1px solid var(--border-subtle);background:linear-gradient(90deg,var(--surface-soft) 25%,var(--surface-accent) 50%,var(--surface-soft) 75%);background-size:400% 100%;animation:fr-shimmer 1.4s ease infinite;}
+    @keyframes fr-shimmer{0%{background-position:100% 0;}100%{background-position:-100% 0;}}
+    @media (prefers-reduced-motion: reduce){.fr-skeleton{animation:none;}}
+
     /* ── FOOTER ──────────────────────────────────────────────────────────── */
     .site-footer {
       background: var(--aubergine);
@@ -973,6 +998,15 @@
 
       document.getElementById('panel-fr').innerHTML=`
         <section class="detail-card">
+          <div class="fr-live-header">
+            <h3>Recent CMS rulemaking (live)</h3>
+            <button class="fr-refresh-btn" id="fr-refresh-btn" type="button">↻ Refresh</button>
+          </div>
+          <p style="margin-bottom:0.5rem;color:var(--text-muted);font-size:0.88rem;">Pulled live from the <a href="https://www.federalregister.gov/developers/documentation/api/v1" target="_blank" rel="noopener noreferrer" style="color:var(--clay);">Federal Register API</a> — recent CMS proposed rules, final rules, and notices. Formally published rulemaking only; informal CMS guidance may not appear here.</p>
+          <div class="fr-live-status" id="fr-live-status"></div>
+          <div class="fr-live-list" id="fr-live-list"></div>
+        </section>
+        <section class="detail-card">
           <h3>Federal watch list</h3>
           <p style="margin-bottom:0.75rem;">Watch items tailored to your selections: ${tagHtml}</p>
           <ul>
@@ -994,6 +1028,108 @@
           <div style="font-size:0.82rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-bottom:0.6rem;">Official CMS ACCESS references</div>
           <div class="fr-refs">${refHtml}</div>
         </div>`;
+
+      // Wire the refresh button and trigger the initial live fetch.
+      const refreshBtn = document.getElementById('fr-refresh-btn');
+      if(refreshBtn){ refreshBtn.addEventListener('click', () => loadFederalRegisterUpdates()); }
+      loadFederalRegisterUpdates();
+    }
+
+    // ── Live Federal Register API integration ──────────────────────────────
+    function frTypeClass(type){
+      const t=(type||'').toLowerCase();
+      if(t==='rule') return 'fr-type-rule';
+      if(t.indexOf('proposed')>-1) return 'fr-type-proposed';
+      if(t==='notice') return 'fr-type-notice';
+      return 'fr-type-other';
+    }
+    function frEscape(str){
+      return String(str==null?'':str)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+    function frTruncate(str,n){
+      const s=String(str==null?'':str);
+      return s.length>n ? s.slice(0,n).trim()+'…' : s;
+    }
+    function frFormatDate(iso){
+      if(!iso) return '';
+      const d=new Date(iso+'T00:00:00');
+      if(isNaN(d)) return iso;
+      return d.toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'});
+    }
+
+    async function loadFederalRegisterUpdates(){
+      const listEl=document.getElementById('fr-live-list');
+      const statusEl=document.getElementById('fr-live-status');
+      const btnEl=document.getElementById('fr-refresh-btn');
+      if(!listEl) return;
+
+      // Loading state: shimmer skeletons
+      if(btnEl){ btnEl.disabled=true; }
+      if(statusEl){ statusEl.textContent='Fetching latest documents…'; }
+      listEl.innerHTML=Array.from({length:4}).map(()=>'<div class="fr-skeleton"></div>').join('');
+
+      // Federal Register API: newest CMS documents matching ACCESS-related terms.
+      const params=new URLSearchParams();
+      params.append('conditions[agencies][]','centers-for-medicare-medicaid-services');
+      params.append('conditions[term]','ACCESS Model chronic care');
+      params.append('conditions[type][]','RULE');
+      params.append('conditions[type][]','PRORULE');
+      params.append('conditions[type][]','NOTICE');
+      params.append('order','newest');
+      params.append('per_page','6');
+      ['title','publication_date','type','abstract','html_url','document_number']
+        .forEach(f=>params.append('fields[]',f));
+      const url='https://www.federalregister.gov/api/v1/documents.json?'+params.toString();
+
+      try{
+        const controller=new AbortController();
+        const timeout=setTimeout(()=>controller.abort(),12000);
+        const res=await fetch(url,{signal:controller.signal,headers:{'Accept':'application/json'}});
+        clearTimeout(timeout);
+        if(!res.ok) throw new Error('HTTP '+res.status);
+        const data=await res.json();
+        const results=(data && data.results) || [];
+
+        if(!results.length){
+          listEl.innerHTML='<div class="fr-empty">No recent CMS documents matched. Check the official CMS ACCESS references below, or try refreshing later.</div>';
+          if(statusEl) statusEl.textContent='0 results · '+new Date().toLocaleString();
+          return;
+        }
+
+        listEl.innerHTML=results.map(r=>{
+          const cls=frTypeClass(r.type);
+          const typeLabel=frEscape(r.type||'Document');
+          const date=frFormatDate(r.publication_date);
+          const title=frEscape(r.title||'Untitled document');
+          const abstract=r.abstract?('<span class="fr-update-abstract">'+frEscape(frTruncate(r.abstract,220))+'</span>'):'';
+          const href=frEscape(r.html_url||'#');
+          return '<a class="fr-update-card" href="'+href+'" target="_blank" rel="noopener noreferrer">'
+            +'<div class="fr-update-top">'
+            +'<span class="fr-type-badge '+cls+'">'+typeLabel+'</span>'
+            +(date?'<span class="fr-update-date">'+date+'</span>':'')
+            +'</div>'
+            +'<span class="fr-update-title">'+title+'</span>'
+            +abstract
+            +'<span class="fr-update-link">Read on FederalRegister.gov ↗</span>'
+            +'</a>';
+        }).join('');
+
+        if(statusEl){
+          const total=(typeof data.count==='number')?data.count:results.length;
+          statusEl.textContent='Showing '+results.length+' of '+total.toLocaleString()+' matching documents · updated '+new Date().toLocaleTimeString();
+        }
+      }catch(err){
+        const isAbort=err && err.name==='AbortError';
+        listEl.innerHTML='<div class="fr-error">Could not load live Federal Register updates '
+          +(isAbort?'(request timed out)':'(network or API error)')
+          +'. This can happen offline or if the API is temporarily unavailable. '
+          +'You can still use the official CMS ACCESS references below, or click Refresh to try again.</div>';
+        if(statusEl) statusEl.textContent='Live feed unavailable';
+      }finally{
+        if(btnEl){ btnEl.disabled=false; }
+      }
     }
 
     function activateTabs(){
