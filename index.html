@@ -20,19 +20,40 @@
 
     main { flex: 1; }
 
+    /* ── Banner header ── */
+    .site-banner {
+      position: relative;
+      width: 100%;
+      display: block;
+      line-height: 0;
+    }
+
+    .site-banner__img {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: cover;
+      object-position: center center;
+      max-height: 320px;
+    }
+
+    /* Dark mode toggle — floats top-right over the banner */
+    .site-banner__nav {
+      position: absolute;
+      top: var(--space-4);
+      right: var(--space-5);
+      z-index: 10;
+    }
+
     /* ── Hero ── */
     .hero {
       background: var(--bone);
-      padding: clamp(var(--space-12), 6vw, var(--space-20)) var(--space-6);
+      padding: clamp(var(--space-10), 5vw, var(--space-16)) var(--space-6);
     }
 
     .hero__inner {
       max-width: var(--content-wide);
       margin-inline: auto;
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: var(--space-12);
-      align-items: center;
     }
 
     .hero__overline {
@@ -53,7 +74,7 @@
       line-height: 1.1;
       letter-spacing: -0.02em;
       margin-bottom: var(--space-5);
-      max-width: 16ch;
+      max-width: 20ch;
     }
 
     .hero__heading span {
@@ -63,7 +84,7 @@
     .hero__body {
       font-size: var(--text-base);
       color: var(--color-text-muted);
-      max-width: 52ch;
+      max-width: 58ch;
       line-height: 1.7;
       margin-bottom: var(--space-6);
     }
@@ -92,36 +113,6 @@
       border-radius: var(--radius-full);
       background: var(--sage);
       flex-shrink: 0;
-    }
-
-    .hero__logo-wrap {
-      position: relative;
-      flex-shrink: 0;
-    }
-
-    .hero__logo {
-      width: clamp(140px, 15vw, 220px);
-      height: clamp(140px, 15vw, 220px);
-      border-radius: var(--radius-full);
-      object-fit: cover;
-      box-shadow: var(--shadow-lg), 0 0 0 6px rgba(201,106,74,0.12);
-    }
-
-    .hero__logo-ring {
-      position: absolute;
-      inset: -12px;
-      border-radius: var(--radius-full);
-      border: 2px dashed rgba(143,168,143,0.4);
-      pointer-events: none;
-      animation: spin-slow 30s linear infinite;
-    }
-
-    @keyframes spin-slow {
-      to { transform: rotate(360deg); }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .hero__logo-ring { animation: none; }
     }
 
     /* ── Models section ── */
@@ -186,9 +177,7 @@
       border-color: rgba(201, 106, 74, 0.4);
     }
 
-    .model-card--inactive {
-      opacity: 0.75;
-    }
+    .model-card--inactive { opacity: 0.75; }
 
     .model-card__top {
       display: flex;
@@ -214,9 +203,7 @@
       margin-top: var(--space-1);
     }
 
-    .model-card--inactive .model-card__name {
-      color: var(--color-text-muted);
-    }
+    .model-card--inactive .model-card__name { color: var(--color-text-muted); }
 
     .model-card__desc {
       font-size: var(--text-sm);
@@ -339,67 +326,48 @@
 
     /* ── Responsive ── */
     @media (max-width: 768px) {
-      .hero__inner {
-        grid-template-columns: 1fr;
-        gap: var(--space-8);
-      }
-
-      .hero__logo-wrap {
-        order: -1;
-        margin-inline: auto;
-      }
-
+      .site-banner__img { max-height: 200px; }
       .hero__heading { max-width: 100%; }
     }
 
     @media (max-width: 480px) {
+      .site-banner__img { max-height: 140px; }
       .models-grid { grid-template-columns: 1fr; }
       .pillars-grid { grid-template-columns: 1fr; }
     }
 
-    /* ── Dark mode overrides ── */
-    [data-theme="dark"] body {
-      background-color: var(--color-bg);
-    }
-
+    /* ── Dark mode ── */
+    [data-theme="dark"] body { background-color: var(--color-bg); }
     [data-theme="dark"] .hero,
-    [data-theme="dark"] .pillars-section {
-      background: var(--color-bg);
-    }
-
+    [data-theme="dark"] .pillars-section { background: var(--color-bg); }
     [data-theme="dark"] .models-section {
       background: var(--color-surface);
       border-color: var(--color-divider);
     }
-
     [data-theme="dark"] .model-card,
-    [data-theme="dark"] .pillar-card {
-      background: var(--color-surface-soft);
-    }
+    [data-theme="dark"] .pillar-card { background: var(--color-surface-soft); }
+
+    /* Dim banner slightly in dark mode so it doesn't blast full brightness */
+    [data-theme="dark"] .site-banner__img { filter: brightness(0.88); }
   </style>
 </head>
 <body>
 
   <!-- ============================================================
-       HEADER
+       BANNER — full-width brand image replaces coded header
   ============================================================ -->
-  <header class="app-header" role="banner">
-    <div class="app-header__brand">
-      <img
-        src="./Policy Nest Logo.png"
-        alt="The Policy Nest logo"
-        class="app-header__logo"
-        width="56"
-        height="56"
-        loading="eager"
-      />
-      <div class="app-header__titles">
-        <span class="app-header__title">THE POLICY NEST</span>
-        <span class="app-header__subtitle">Powering Value-Based Care Transitions</span>
-      </div>
-    </div>
-
-    <nav class="app-header__nav" aria-label="Site navigation">
+  <header class="site-banner" role="banner">
+    <img
+      src="./THE-POLICY-NEST.jpg"
+      alt="The Policy Nest — Powering Value-Based Care Transitions"
+      class="site-banner__img"
+      width="1530"
+      height="383"
+      loading="eager"
+      decoding="async"
+    />
+    <!-- Dark mode toggle floats over the banner -->
+    <nav class="site-banner__nav" aria-label="Site controls">
       <button
         class="toggle-dark"
         data-theme-toggle
@@ -420,40 +388,26 @@
     ============================================================ -->
     <section class="hero" aria-labelledby="hero-heading">
       <div class="hero__inner">
-        <div class="hero__text">
-          <p class="hero__overline">Implementation Planning Platform</p>
-          <h1 class="hero__heading" id="hero-heading">
-            Your roadmap for <span>value-based care</span> transitions
-          </h1>
-          <p class="hero__body">
-            The Policy Nest translates dense CMS regulations into structured, actionable project plans — giving ACO leaders, health systems, and care organizations the operational intelligence they need to execute transitions with confidence.
-          </p>
-          <div class="hero__meta">
-            <span class="hero__meta-item">
-              <span class="hero__meta-dot"></span>
-              CMMI Innovation Models
-            </span>
-            <span class="hero__meta-item">
-              <span class="hero__meta-dot"></span>
-              ACO &amp; VBC Programs
-            </span>
-            <span class="hero__meta-item">
-              <span class="hero__meta-dot"></span>
-              Regulatory Guidance
-            </span>
-          </div>
-        </div>
-
-        <div class="hero__logo-wrap" aria-hidden="true">
-          <div class="hero__logo-ring"></div>
-          <img
-            src="./Policy Nest Logo.png"
-            alt=""
-            class="hero__logo"
-            width="220"
-            height="220"
-            loading="eager"
-          />
+        <p class="hero__overline">Implementation Planning Platform</p>
+        <h1 class="hero__heading" id="hero-heading">
+          Your roadmap for <span>value-based care</span> transitions
+        </h1>
+        <p class="hero__body">
+          The Policy Nest translates dense CMS regulations into structured, actionable project plans — giving ACO leaders, health systems, and care organizations the operational intelligence they need to execute transitions with confidence.
+        </p>
+        <div class="hero__meta">
+          <span class="hero__meta-item">
+            <span class="hero__meta-dot"></span>
+            CMMI Innovation Models
+          </span>
+          <span class="hero__meta-item">
+            <span class="hero__meta-dot"></span>
+            ACO &amp; VBC Programs
+          </span>
+          <span class="hero__meta-item">
+            <span class="hero__meta-dot"></span>
+            Regulatory Guidance
+          </span>
         </div>
       </div>
     </section>
@@ -479,17 +433,14 @@
             </div>
             <span class="badge badge--active">Active</span>
           </div>
-
           <p class="model-card__desc">
             Advancing Cardiac Care, Equity, and Safety through Solutions. A mandatory cardiac bundled payment model focused on AMI, CABG, and surgical hip/femur fracture treatment episodes with integrated care delivery requirements.
           </p>
-
           <div class="model-card__details">
             <span class="model-card__detail-pill">Performance Year 1</span>
             <span class="model-card__detail-pill">2025 – 2027</span>
             <span class="model-card__detail-pill">Cardiac &amp; Surgical</span>
           </div>
-
           <div class="model-card__footer">
             <span class="badge badge--sage">4 Tracks</span>
             <a
@@ -512,22 +463,17 @@
             </div>
             <span class="badge badge--coming-soon">Coming Soon</span>
           </div>
-
           <p class="model-card__desc">
             Realizing Equity, Access, and Community Health. A voluntary global and professional risk ACO model designed to improve care for Traditional Medicare beneficiaries, with emphasis on health equity and social determinants.
           </p>
-
           <div class="model-card__details">
             <span class="model-card__detail-pill">Global &amp; Professional Risk</span>
             <span class="model-card__detail-pill">Voluntary</span>
             <span class="model-card__detail-pill">Medicare FFS</span>
           </div>
-
           <div class="model-card__footer">
             <span class="badge badge--aubergine">ACO</span>
-            <span class="model-card__cta model-card__cta--disabled" aria-disabled="true">
-              Coming Soon
-            </span>
+            <span class="model-card__cta model-card__cta--disabled" aria-disabled="true">Coming Soon</span>
           </div>
         </article>
 
@@ -540,26 +486,21 @@
             </div>
             <span class="badge badge--coming-soon">Coming Soon</span>
           </div>
-
           <p class="model-card__desc">
             A voluntary primary care payment model rewarding practices for delivering advanced primary care services. Focuses on seriously ill patient populations and practice transformation across five performance-based payment adjustments.
           </p>
-
           <div class="model-card__details">
             <span class="model-card__detail-pill">Primary Care</span>
             <span class="model-card__detail-pill">Voluntary</span>
             <span class="model-card__detail-pill">Practice-Level</span>
           </div>
-
           <div class="model-card__footer">
             <span class="badge badge--aubergine">PCF</span>
-            <span class="model-card__cta model-card__cta--disabled" aria-disabled="true">
-              Coming Soon
-            </span>
+            <span class="model-card__cta model-card__cta--disabled" aria-disabled="true">Coming Soon</span>
           </div>
         </article>
 
-        <!-- Shared Savings — COMING SOON -->
+        <!-- MSSP ACO — COMING SOON -->
         <article class="model-card model-card--inactive" role="listitem">
           <div class="model-card__top">
             <div>
@@ -568,22 +509,17 @@
             </div>
             <span class="badge badge--coming-soon">Coming Soon</span>
           </div>
-
           <p class="model-card__desc">
             The Medicare Shared Savings Program enables groups of healthcare providers to form ACOs and work together to provide coordinated, high-quality care while earning shared savings when they reduce costs and meet quality benchmarks.
           </p>
-
           <div class="model-card__details">
             <span class="model-card__detail-pill">BASIC &amp; ENHANCED Tracks</span>
             <span class="model-card__detail-pill">Voluntary</span>
             <span class="model-card__detail-pill">Medicare FFS</span>
           </div>
-
           <div class="model-card__footer">
             <span class="badge badge--aubergine">MSSP</span>
-            <span class="model-card__cta model-card__cta--disabled" aria-disabled="true">
-              Coming Soon
-            </span>
+            <span class="model-card__cta model-card__cta--disabled" aria-disabled="true">Coming Soon</span>
           </div>
         </article>
 
