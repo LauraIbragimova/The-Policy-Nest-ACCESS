@@ -116,7 +116,7 @@
 
     .empty-state{border:1px dashed var(--border-subtle);border-radius:18px;padding:1.25rem;background:var(--surface-soft);}
     .empty-state h2{margin-top:0;font-family:"Bricolage Grotesque",system-ui,sans-serif;color:var(--aubergine);}
-    .phase-card,.detail-card,.risk-card,.kpi-card{border:1px solid var(--border-subtle);border-radius:16px;background:var(--surface-soft);padding:1rem;margin-bottom:0.9rem;}
+    .phase-card,.detail-card,.risk-card,.kpi-card,.scorecard-row{border:1px solid var(--border-subtle);border-radius:16px;background:var(--surface-soft);padding:1rem;margin-bottom:0.9rem;}
     .phase-card-header{display:flex;justify-content:space-between;gap:1rem;align-items:flex-start;margin-bottom:0.7rem;}
     .phase-card h3,.detail-card h3,.risk-card h3,.kpi-card h3{margin:0;font-size:1.02rem;color:var(--aubergine);}
     .phase-badge,.severity-pill,.metric-status{border-radius:999px;padding:0.2rem 0.55rem;font-size:0.75rem;font-weight:700;}
@@ -160,9 +160,32 @@
     .kpi-update-btn{padding:0.45rem 0.85rem;border-radius:10px;border:1px solid var(--clay);background:transparent;color:var(--clay);font-size:0.85rem;font-weight:600;transition:background 160ms ease,color 160ms ease;}
     .kpi-update-btn:hover{background:var(--clay);color:#fff;}
 
+    /* Quality scorecard */
+    .scorecard-header{display:grid;grid-template-columns:1fr 120px 120px 110px;gap:0.75rem;align-items:center;padding:0.5rem 0.75rem;border-radius:10px;background:var(--surface-accent);font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted);margin-bottom:0.5rem;}
+    .scorecard-row{display:grid;grid-template-columns:1fr 120px 120px 110px;gap:0.75rem;align-items:center;padding:0.75rem;margin-bottom:0.5rem;border-radius:14px;}
+    .scorecard-row:last-child{margin-bottom:0;}
+    .scorecard-measure strong{display:block;font-size:0.95rem;}
+    .scorecard-measure span{font-size:0.82rem;color:var(--text-muted);}
+    .score-input{width:100%;padding:0.4rem 0.6rem;border-radius:10px;border:1px solid var(--border-subtle);background:var(--surface);color:var(--text-main);font-size:0.9rem;font-weight:700;text-align:center;min-height:38px;}
+    .score-input:focus{outline:2px solid var(--clay);outline-offset:2px;}
+    .score-status-select{width:100%;padding:0.4rem 0.6rem;border-radius:10px;border:1px solid var(--border-subtle);background:var(--surface);color:var(--text-main);font-size:0.82rem;min-height:38px;}
+    .score-badge{border-radius:999px;padding:0.25rem 0.6rem;font-size:0.75rem;font-weight:700;text-align:center;white-space:nowrap;}
+    .score-badge.on-track{background:rgba(61,106,63,0.12);color:var(--success);}
+    .score-badge.watch{background:rgba(138,90,0,0.12);color:var(--warning);}
+    .score-badge.behind{background:rgba(138,48,64,0.12);color:var(--danger);}
+    .score-badge.not-started{background:rgba(107,100,120,0.12);color:var(--text-muted);}
+    .scorecard-update-btn{padding:0.35rem 0.7rem;border-radius:10px;border:1px solid var(--clay);background:transparent;color:var(--clay);font-size:0.8rem;font-weight:600;transition:background 160ms ease,color 160ms ease;white-space:nowrap;}
+    .scorecard-update-btn:hover{background:var(--clay);color:#fff;}
+    .scorecard-section-title{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-size:1rem;color:var(--aubergine);margin:1.25rem 0 0.6rem;border-bottom:1px solid var(--border-subtle);padding-bottom:0.4rem;}
+    .scorecard-section-title:first-child{margin-top:0;}
+
+    /* FR reference links */
     .resource-list{display:grid;gap:0.7rem;}
-    .resource-link{display:block;text-decoration:none;color:var(--text-main);border:1px solid var(--border-subtle);background:var(--surface-soft);border-radius:14px;padding:0.9rem;}
+    .resource-link{display:block;text-decoration:none;color:var(--text-main);border:1px solid var(--border-subtle);background:var(--surface-soft);border-radius:14px;padding:0.9rem;transition:background 160ms ease,border-color 160ms ease;}
+    .resource-link:hover{background:var(--surface-accent);border-color:var(--clay);}
+    .resource-link strong{display:block;}
     .resource-link span{display:block;color:var(--text-muted);margin-top:0.18rem;font-size:0.9rem;}
+    .resource-link .link-label{display:inline-flex;align-items:center;gap:0.3rem;margin-top:0.4rem;font-size:0.82rem;color:var(--clay);font-weight:600;}
 
     /* Export bar */
     .export-bar{display:flex;gap:0.65rem;justify-content:flex-end;margin-bottom:1rem;flex-wrap:wrap;}
@@ -170,17 +193,30 @@
     /* FR tag chips */
     .fr-tag{display:inline-block;border-radius:999px;padding:0.18rem 0.55rem;font-size:0.75rem;font-weight:700;background:rgba(31,78,121,0.1);color:var(--azure);margin-right:0.35rem;}
 
+    /* FR reference block */
+    .fr-refs{display:grid;gap:0.6rem;margin-top:1rem;}
+    .fr-ref-card{display:flex;gap:0.75rem;align-items:flex-start;padding:0.8rem 0.9rem;border-radius:14px;border:1px solid var(--border-subtle);background:var(--surface);text-decoration:none;color:var(--text-main);transition:background 160ms ease,border-color 160ms ease;}
+    .fr-ref-card:hover{background:var(--surface-accent);border-color:var(--clay);}
+    .fr-ref-icon{width:36px;height:36px;border-radius:10px;background:rgba(31,78,121,0.1);color:var(--azure);display:grid;place-items:center;flex:0 0 auto;font-size:1.1rem;}
+    .fr-ref-body strong{display:block;font-size:0.95rem;}
+    .fr-ref-body span{display:block;color:var(--text-muted);font-size:0.85rem;margin-top:0.1rem;}
+    .fr-ref-body .fr-ref-url{color:var(--clay);font-size:0.8rem;margin-top:0.25rem;}
+
     @media(max-width:1080px){
       .layout{grid-template-columns:1fr;}
       .left-panel{position:static;}
       .tabs-bar{grid-template-columns:repeat(3,minmax(0,1fr));}
       .summary-row,.two-col{grid-template-columns:1fr;}
+      .scorecard-header,.scorecard-row{grid-template-columns:1fr 90px 90px 90px;}
     }
     @media(max-width:700px){
       .app-shell{padding:1rem;}
       .phase-grid{grid-template-columns:1fr;}
       .tabs-bar{grid-template-columns:repeat(2,minmax(0,1fr));}
       .track-chip{flex-direction:column;align-items:flex-start;}
+      .scorecard-header{display:none;}
+      .scorecard-row{grid-template-columns:1fr 1fr;row-gap:0.5rem;}
+      .scorecard-measure{grid-column:1/-1;}
     }
 
     @media print{
@@ -339,9 +375,11 @@
         label:'eCKM',
         outcomes:'Control or minimum improvement in blood pressure, lipids, weight, and HbA1c.',
         quality:[
-          'Document baseline BP, weight, lipid, and HbA1c capture workflow.',
-          'Confirm patient education workflow for self-monitoring and lifestyle support.',
-          'Define care milestone updates to PCPs at initiation, milestones, and completion.'
+          {measure:'BP control rate',description:'% of eCKM patients at or below BP threshold',target:'≥70%'},
+          {measure:'HbA1c attainment',description:'% of eligible patients meeting HbA1c improvement threshold',target:'≥65%'},
+          {measure:'Lipid management rate',description:'% of patients with documented lipid panel at baseline and follow-up',target:'≥80%'},
+          {measure:'Weight documentation',description:'Baseline and follow-up weight captured and submitted',target:'100%'},
+          {measure:'Patient education completion',description:'Self-monitoring and lifestyle support education documented',target:'≥90%'}
         ],
         kpiLabel:'eCKM composite outcome rate',
         frTags:['eCKM','BP/Lipid/Weight/HbA1c thresholds']
@@ -350,9 +388,11 @@
         label:'CKM',
         outcomes:'Track BP, lipids, weight, and HbA1c; include eGFR and UACR submission for CKD plus diabetes populations.',
         quality:[
-          'Stand up lab integration for eGFR and UACR result exchange.',
-          'Define nephrology/cardiology escalation rules for high-risk patients.',
-          'Validate condition-specific outcome denominator logic.'
+          {measure:'eGFR submission rate',description:'% of CKD patients with eGFR submitted at baseline and follow-up',target:'≥85%'},
+          {measure:'UACR submission rate',description:'% of eligible patients with UACR submitted',target:'≥80%'},
+          {measure:'CKM composite outcome',description:'BP, lipids, weight, HbA1c attainment composite',target:'≥65%'},
+          {measure:'Nephrology escalation adherence',description:'% of high-risk patients escalated per protocol',target:'100%'},
+          {measure:'Denominator validation accuracy',description:'Condition-specific outcome denominator logic confirmed',target:'100%'}
         ],
         kpiLabel:'CKM outcome attainment rate',
         frTags:['CKM','eGFR/UACR reporting','CKD/ASCVD']
@@ -361,9 +401,11 @@
         label:'MSK',
         outcomes:'Use validated PROMs to show improvement in pain intensity, interference, and function.',
         quality:[
-          'Select and standardize the PROM collection cadence.',
-          'Train care teams on functional status documentation.',
-          'Build patient engagement scripts for the initial care period because MSK has no continuation period.'
+          {measure:'PROM collection rate',description:'% of MSK patients with baseline PROM collected',target:'≥90%'},
+          {measure:'Follow-up PROM completion',description:'% of patients with follow-up PROM submitted at care period close',target:'≥85%'},
+          {measure:'Pain intensity improvement',description:'% of patients showing ≥30% reduction in pain intensity score',target:'≥60%'},
+          {measure:'Functional status improvement',description:'% of patients with documented functional status improvement',target:'≥55%'},
+          {measure:'Patient engagement rate',description:'% of aligned patients completing initial onboarding',target:'≥80%'}
         ],
         kpiLabel:'MSK PROM improvement rate',
         frTags:['MSK','PROMs','functional status']
@@ -372,9 +414,11 @@
         label:'BH',
         outcomes:'Show symptom improvement using PHQ-9 or GAD-7 and submit WHODAS 2.0 12-item for function.',
         quality:[
-          'Embed PHQ-9/GAD-7 collection into onboarding and follow-up.',
-          'Define behavioral health escalation and crisis workflows.',
-          'Confirm closed-loop updates to primary care or referring clinicians.'
+          {measure:'PHQ-9 / GAD-7 baseline rate',description:'% of BH patients with baseline screen captured and submitted',target:'100%'},
+          {measure:'PHQ-9 / GAD-7 follow-up rate',description:'% of patients with follow-up screen at care period close',target:'≥90%'},
+          {measure:'Symptom improvement rate',description:'% of patients showing clinically meaningful improvement on PHQ-9 or GAD-7',target:'≥60%'},
+          {measure:'WHODAS 2.0 submission rate',description:'% of eligible patients with WHODAS 12-item submitted',target:'≥85%'},
+          {measure:'Crisis escalation adherence',description:'% of flagged patients with documented escalation per BH protocol',target:'100%'}
         ],
         kpiLabel:'BH symptom improvement rate (PHQ-9/GAD-7)',
         frTags:['BH','PHQ-9','GAD-7','WHODAS 2.0']
@@ -412,6 +456,42 @@
       finance:'Model payment risk, withholds, and care-period unit economics.',
       governance:'Stand up executive steering, clinical quality, and issue escalation forums.'
     };
+
+    // ── Reg. Checkpoints data ─────────────────────────────────────────────────
+    const regCheckSections = [
+      {
+        title:'Participation checkpoints',
+        badge:'Eligibility',
+        items:[
+          {text:'Confirm Medicare Part B enrollment and active TIN/NPI alignment.',owner:'Compliance / Enrollment'},
+          {text:'Validate HIPAA, applicable state licensure, and FDA compliance posture.',owner:'Legal / Compliance'},
+          {text:'Designate a physician Clinical Director and document authority scope.',owner:'Executive leadership'},
+          {text:'Confirm no duplicative fee-for-service billing for aligned beneficiaries during active ACCESS care periods.',owner:'Billing / Compliance'},
+          {text:'Review rolling application windows and confirm target start date.',owner:'Strategy / PMO'}
+        ]
+      },
+      {
+        title:'Reporting checkpoints',
+        badge:'Data & Tech',
+        items:[
+          {text:'Stand up standards-based API reporting to CMS-hosted interfaces.',owner:'IT / Interoperability'},
+          {text:'Capture baseline and follow-up outcomes for each enrolled beneficiary.',owner:'Analytics / QA'},
+          {text:'Document track-specific measures and submission logic for each active track.',owner:'Analytics / Clinical ops'},
+          {text:'Validate denominator logic and QA scripts before go-live.',owner:'Analytics / QA'},
+          {text:'Confirm secure electronic care update delivery to PCPs and referring clinicians.',owner:'Interoperability lead'}
+        ]
+      },
+      {
+        title:'Care coordination checkpoints',
+        badge:'Clinical ops',
+        items:[
+          {text:'Prepare care coordination workflows for updates to PCPs and referring clinicians at initiation, milestones, and completion.',owner:'Clinical operations'},
+          {text:'Define escalation protocols and document clinical triggers.',owner:'Clinical leadership'},
+          {text:'Train staff on aligned beneficiary communications and consent workflows.',owner:'Operations enablement'},
+          {text:'Stand up control-group patient messaging and non-aligned beneficiary workflows.',owner:'Patient engagement'}
+        ]
+      }
+    ];
 
     const selectedTracks=new Set();
     const selectedPhases=new Set(['1','2','3']);
@@ -516,25 +596,50 @@
       }).join('');
     }
 
+    // ── Reg. Checkpoints — checkbox format ───────────────────────────────────
     function renderRegCheck(tracks){
-      const trackLine=tracks.length
-        ?tracks.map(t=>`${trackLibrary[t].label}: ${trackLibrary[t].outcomes}`).join(' ')
-        :'Choose one or more tracks to show condition-specific checkpoints.';
-      document.getElementById('panel-regcheck').innerHTML=`
-        <div class="two-col">
-          <section class="detail-card"><h3>Participation checkpoints</h3><ul>
-            <li>Confirm Medicare Part B enrollment, active TIN, and physician Clinical Director coverage.</li>
-            <li>Validate HIPAA, applicable state licensure, and FDA compliance posture.</li>
-            <li>Prepare care coordination workflows for updates to PCPs and referring clinicians at initiation, milestones, and completion.</li>
-            <li>Confirm no duplicative fee-for-service billing for aligned beneficiaries during active ACCESS care periods.</li>
-          </ul></section>
-          <section class="detail-card"><h3>Reporting checkpoints</h3><ul>
-            <li>Stand up standards-based API reporting to CMS-hosted interfaces.</li>
-            <li>Capture baseline and follow-up outcomes for each enrolled beneficiary.</li>
-            <li>Document track-specific measures and submission logic.</li>
-            <li>${trackLine}</li>
-          </ul></section>
-        </div>`;
+      const trackLine = tracks.length
+        ? tracks.map(t=>`<strong>${trackLibrary[t].label}:</strong> ${trackLibrary[t].outcomes}`).join('<br>')
+        : 'Choose one or more tracks to show condition-specific checkpoints.';
+
+      const trackSection = `
+        <article class="phase-card" style="margin-top:0.9rem;">
+          <div class="phase-card-header">
+            <h3>Track-specific reporting requirements</h3>
+            <span class="phase-badge">Clinical measures</span>
+          </div>
+          <p style="margin-bottom:0.75rem;color:var(--text-muted);font-size:0.9rem;">${trackLine}</p>
+          ${tracks.length ? `<div class="task-list">${tracks.map(t=>trackLibrary[t].quality.map(q=>`
+            <div class="task-item" role="checkbox" aria-checked="false" tabindex="0">
+              <div class="task-check" aria-hidden="true"></div>
+              <div class="task-copy"><strong>[${trackLibrary[t].label}] ${q.measure}</strong><div class="task-meta">Target: ${q.target}</div></div>
+            </div>`).join('')).join('')}</div>` : ''}
+        </article>`;
+
+      const sectionsHtml = regCheckSections.map(sec=>`
+        <article class="phase-card">
+          <div class="phase-card-header">
+            <h3>${sec.title}</h3>
+            <span class="phase-badge">${sec.badge}</span>
+          </div>
+          <div class="task-list">
+            ${sec.items.map(item=>`
+              <div class="task-item" role="checkbox" aria-checked="false" tabindex="0">
+                <div class="task-check" aria-hidden="true"></div>
+                <div class="task-copy"><strong>${item.text}</strong><div class="task-meta">Suggested owner: ${item.owner}</div></div>
+              </div>`).join('')}
+          </div>
+        </article>`).join('');
+
+      document.getElementById('panel-regcheck').innerHTML = sectionsHtml + trackSection;
+
+      // Attach checkbox behavior to reg checkpoints
+      document.querySelectorAll('#panel-regcheck .task-item').forEach(item=>{
+        item.addEventListener('click',()=>{
+          item.classList.toggle('done');
+          item.setAttribute('aria-checked', item.classList.contains('done') ? 'true' : 'false');
+        });
+      });
     }
 
     function renderRisk(gaps,orgValue){
@@ -610,26 +715,154 @@
       badge.textContent=status==='on-track'?'On Track':status==='watch'?'Watch':'Behind';
     }
 
+    // ── Quality — interactive scorecard ──────────────────────────────────────
     function renderQuality(tracks){
-      const content=tracks.length
-        ?tracks.flatMap(t=>trackLibrary[t].quality.map(item=>`<li><strong>${trackLibrary[t].label}:</strong> ${item}</li>`)).join('')
-        :'<li>Select a clinical track to display condition-specific quality actions.</li>';
-      document.getElementById('panel-quality').innerHTML=`
-        <section class="detail-card">
-          <h3>Quality build priorities</h3>
-          <ul>${content}
-            <li>Validate baseline, milestone, and completion documentation standards.</li>
-            <li>Set internal review cadence for outcome attainment and documentation completeness.</li>
-          </ul>
-        </section>`;
+      if(!tracks.length){
+        document.getElementById('panel-quality').innerHTML=`
+          <section class="detail-card">
+            <h3>Quality scorecard</h3>
+            <p style="color:var(--text-muted);">Select a clinical track to display condition-specific quality measures and performance scoring.</p>
+          </section>`;
+        return;
+      }
+
+      let html = `
+        <div style="margin-bottom:1rem;">
+          <p style="color:var(--text-muted);font-size:0.9rem;">Enter your current performance value for each measure and set a status. Click <strong>Update</strong> to save. Targets are based on ACCESS model guidance.</p>
+        </div>`;
+
+      let scoreIndex = 0;
+      tracks.forEach(trackKey=>{
+        const track = trackLibrary[trackKey];
+        html += `<div class="scorecard-section-title">📋 ${track.label} — Quality Measures</div>`;
+        html += `<div class="scorecard-header">
+          <div>Measure</div>
+          <div style="text-align:center;">Target</div>
+          <div style="text-align:center;">Your Rate</div>
+          <div style="text-align:center;">Status</div>
+        </div>`;
+
+        track.quality.forEach(q=>{
+          const si = scoreIndex++;
+          html += `
+            <div class="scorecard-row" id="scorecard-row-${si}">
+              <div class="scorecard-measure">
+                <strong>${q.measure}</strong>
+                <span>${q.description}</span>
+              </div>
+              <div style="text-align:center;">
+                <span class="score-badge not-started" style="font-size:0.8rem;font-weight:600;">${q.target}</span>
+              </div>
+              <div>
+                <input class="score-input" type="text" placeholder="—" id="score-val-${si}" aria-label="Current rate for ${q.measure}">
+              </div>
+              <div style="display:flex;flex-direction:column;gap:0.4rem;align-items:center;">
+                <select class="score-status-select" id="score-status-${si}" aria-label="Status for ${q.measure}">
+                  <option value="not-started">Not started</option>
+                  <option value="on-track">On Track</option>
+                  <option value="watch">Watch</option>
+                  <option value="behind">Behind</option>
+                </select>
+                <button class="scorecard-update-btn" onclick="updateScorecard(${si})">Update</button>
+              </div>
+            </div>`;
+        });
+      });
+
+      // Universal quality actions
+      html += `
+        <div class="scorecard-section-title">🔧 Universal quality actions</div>
+        <div class="task-list" style="margin-bottom:1rem;">
+          <div class="task-item" role="checkbox" aria-checked="false" tabindex="0">
+            <div class="task-check" aria-hidden="true"></div>
+            <div class="task-copy"><strong>Validate baseline, milestone, and completion documentation standards.</strong><div class="task-meta">Owner: Clinical quality / Analytics</div></div>
+          </div>
+          <div class="task-item" role="checkbox" aria-checked="false" tabindex="0">
+            <div class="task-check" aria-hidden="true"></div>
+            <div class="task-copy"><strong>Set internal review cadence for outcome attainment and documentation completeness.</strong><div class="task-meta">Owner: PMO / Quality</div></div>
+          </div>
+          <div class="task-item" role="checkbox" aria-checked="false" tabindex="0">
+            <div class="task-check" aria-hidden="true"></div>
+            <div class="task-copy"><strong>Run quarterly scorecard review with clinical director and operations lead.</strong><div class="task-meta">Owner: Clinical director / Operations</div></div>
+          </div>
+        </div>`;
+
+      document.getElementById('panel-quality').innerHTML = html;
+
+      // Attach checkbox behavior for universal quality tasks
+      document.querySelectorAll('#panel-quality .task-item').forEach(item=>{
+        item.addEventListener('click',()=>{
+          item.classList.toggle('done');
+          item.setAttribute('aria-checked', item.classList.contains('done') ? 'true' : 'false');
+        });
+      });
     }
 
+    function updateScorecard(i){
+      const val = document.getElementById('score-val-'+i).value.trim();
+      const status = document.getElementById('score-status-'+i).value;
+      const row = document.getElementById('scorecard-row-'+i);
+      if(row){
+        row.style.background = status==='on-track'
+          ? 'rgba(61,106,63,0.05)'
+          : status==='watch'
+          ? 'rgba(138,90,0,0.05)'
+          : status==='behind'
+          ? 'rgba(138,48,64,0.05)'
+          : '';
+      }
+      // Update the status select to show color hint via border
+      const sel = document.getElementById('score-status-'+i);
+      sel.style.borderColor = status==='on-track'
+        ? 'var(--success)'
+        : status==='watch'
+        ? 'var(--warning)'
+        : status==='behind'
+        ? 'var(--danger)'
+        : 'var(--border-subtle)';
+    }
+
+    // ── FR Updates — with CMS reference links ────────────────────────────────
     function renderFR(tracks,orgValue,gaps){
       const trackTags=tracks.flatMap(t=>trackLibrary[t].frTags);
       const orgTags=(orgValue&&orgFR[orgValue])||[];
       const gapTags=Array.from(gaps).map(g=>g.charAt(0).toUpperCase()+g.slice(1)+' readiness');
       const allTags=[...new Set([...trackTags,...orgTags,...gapTags])];
       const tagHtml=allTags.length?allTags.map(t=>`<span class="fr-tag">${t}</span>`).join(''):'<span class="fr-tag">General ACCESS guidance</span>';
+
+      const cmsRefs = [
+        {
+          icon:'🏛',
+          title:'CMS ACCESS Model — Official Overview',
+          desc:'Program summary, rolling start dates, track definitions, and application resources.',
+          url:'https://www.cms.gov/priorities/innovation/innovation-models/access',
+          urlLabel:'cms.gov/priorities/innovation/innovation-models/access'
+        },
+        {
+          icon:'❓',
+          title:'CMS ACCESS Technical FAQs',
+          desc:'Track definitions, reporting expectations, care coordination requirements, and payment mechanics.',
+          url:'https://www.cms.gov/priorities/innovation/access-technical-frequently-asked-questions',
+          urlLabel:'cms.gov/…/access-technical-frequently-asked-questions'
+        },
+        {
+          icon:'📋',
+          title:'CMMI Innovation Models — Full Catalog',
+          desc:'Broader context: all active CMMI payment and delivery reform models.',
+          url:'https://www.cms.gov/priorities/innovation/innovation-models',
+          urlLabel:'cms.gov/priorities/innovation/innovation-models'
+        }
+      ];
+
+      const refHtml = cmsRefs.map(r=>`
+        <a class="fr-ref-card" href="${r.url}" target="_blank" rel="noopener noreferrer" aria-label="${r.title}">
+          <div class="fr-ref-icon">${r.icon}</div>
+          <div class="fr-ref-body">
+            <strong>${r.title}</strong>
+            <span>${r.desc}</span>
+            <div class="fr-ref-url">↗ ${r.urlLabel}</div>
+          </div>
+        </a>`).join('');
 
       document.getElementById('panel-fr').innerHTML=`
         <section class="detail-card">
@@ -649,7 +882,11 @@
             ${gaps.has('interop')?'<li><strong>Interoperability:</strong> Watch for CMS updates to the required API specifications and HL7 FHIR implementation guides.</li>':''}
             <li>Watch for future expansion of clinical tracks, additional model guidance, and any CMMI learning system publications.</li>
           </ul>
-        </section>`;
+        </section>
+        <div style="margin-top:1rem;">
+          <div style="font-size:0.82rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-bottom:0.6rem;">Official CMS ACCESS references</div>
+          <div class="fr-refs">${refHtml}</div>
+        </div>`;
     }
 
     function activateTabs(){
