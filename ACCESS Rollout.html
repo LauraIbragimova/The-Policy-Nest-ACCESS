@@ -225,6 +225,8 @@
     .risk-flag{font-size:0.66rem;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:var(--clay);background:rgba(201,106,74,0.14);border-radius:999px;padding:0.1rem 0.42rem;vertical-align:middle;}
     .risk-scale-row{display:flex;flex-wrap:wrap;gap:0.5rem 1.1rem;margin-top:0.6rem;}
     .risk-scale{font-size:0.8rem;color:var(--text-muted);font-weight:600;display:inline-flex;align-items:center;gap:0.4rem;}
+    .risk-scale-select{padding:0.3rem 0.5rem;border-radius:8px;border:1px solid var(--border-subtle);background:var(--surface);color:var(--text-main);font-size:0.8rem;font-weight:700;min-height:34px;cursor:pointer;}
+    .risk-scale-select:focus{outline:2px solid var(--clay);outline-offset:2px;}
     .risk-scale-badge{border-radius:999px;padding:0.12rem 0.5rem;font-size:0.74rem;font-weight:700;}
     .metric-status.on-track{background:rgba(61,106,63,0.12);color:var(--success);}
     .metric-status.watch{background:rgba(138,90,0,0.12);color:var(--warning);}
@@ -864,10 +866,12 @@
 
       const highCount=risks.filter(r=>r.level==='High').length;
 
+      const scaleOpts=(sel)=>['Low','Medium','High'].map(v=>`<option value="${v}"${v===sel?' selected':''}>${v}</option>`).join('');
+
       document.getElementById('panel-risk').innerHTML=`
         <div class="risk-summary-bar">
           <span><strong>${risks.length}</strong> tracked risks</span>
-          <span class="risk-summary-high">${highCount} high severity</span>
+          <span class="risk-summary-high"><strong id="risk-high-count">${highCount}</strong> high severity</span>
           ${elevatedCats.size?`<span class="risk-summary-note">Likelihood elevated for flagged gap areas</span>`:''}
         </div>
         <div class="risk-grid">
@@ -875,13 +879,17 @@
             return `<article class="risk-card">
               <div class="phase-card-header">
                 <h3>${r.title}${r.flagged?' <span class="risk-flag" title="Tied to a flagged readiness gap">flagged</span>':''}</h3>
-                <span class="severity-pill ${riskLevelClass(r.level)}">${r.level} severity</span>
+                <span class="severity-pill ${riskLevelClass(r.level)}" id="risk-sev-${i}">${r.level} severity</span>
               </div>
               <div class="risk-cat">${r.category}</div>
               <p>${r.desc}</p>
               <div class="risk-scale-row">
-                <span class="risk-scale">Likelihood <span class="risk-scale-badge ${riskLevelClass(r.likelihood)}">${r.likelihood}</span></span>
-                <span class="risk-scale">Impact <span class="risk-scale-badge ${riskLevelClass(r.impact)}">${r.impact}</span></span>
+                <label class="risk-scale" for="risk-like-${i}">Likelihood
+                  <select class="risk-scale-select" id="risk-like-${i}" aria-label="Likelihood for ${r.title}" onchange="updateRiskScale(${i})">${scaleOpts(r.likelihood)}</select>
+                </label>
+                <label class="risk-scale" for="risk-impact-${i}">Impact
+                  <select class="risk-scale-select" id="risk-impact-${i}" aria-label="Impact for ${r.title}" onchange="updateRiskScale(${i})">${scaleOpts(r.impact)}</select>
+                </label>
               </div>
               <div class="risk-owner-row">
                 <input class="risk-owner-input" type="text" placeholder="Assign mitigation owner…" id="risk-owner-${i}" aria-label="Mitigation owner for ${r.title}">
@@ -891,6 +899,22 @@
             </article>`;
           }).join('')}
         </div>`;
+    }
+
+    // Recompute a risk's severity live when likelihood or impact is edited, and update the high-severity count.
+    function updateRiskScale(i){
+      const likeSel=document.getElementById('risk-like-'+i);
+      const impactSel=document.getElementById('risk-impact-'+i);
+      const sevPill=document.getElementById('risk-sev-'+i);
+      if(!likeSel||!impactSel||!sevPill) return;
+      const level=riskSeverity(likeSel.value,impactSel.value);
+      sevPill.className='severity-pill '+riskLevelClass(level);
+      sevPill.textContent=level+' severity';
+      const countEl=document.getElementById('risk-high-count');
+      if(countEl){
+        const high=document.querySelectorAll('#panel-risk .severity-pill.severity-high').length;
+        countEl.textContent=high;
+      }
     }
 
     function saveRiskOwner(i){
