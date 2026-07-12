@@ -24,10 +24,10 @@
       );
       border-bottom: 4px solid #C96A4A;
       position: relative;
-      /* Removed overflow:hidden — it was clipping the tagline */
-      /* Padding expanded ~30% from previous clamp values */
-      padding: clamp(var(--space-12), 7.8vw, var(--space-24)) clamp(var(--space-8), 6.5vw, var(--space-20));
-      /* Ensure a comfortable minimum height even at small font sizes */
+      /* Top padding unchanged; bottom padding expanded ~30% to give tagline clear space above border */
+      padding-top: clamp(var(--space-12), 7.8vw, var(--space-24));
+      padding-bottom: clamp(var(--space-16), 10.2vw, var(--space-32));
+      padding-inline: clamp(var(--space-8), 6.5vw, var(--space-20));
       min-height: 200px;
     }
 
@@ -39,7 +39,6 @@
       max-width: var(--content-wide);
       margin-inline: auto;
       display: flex;
-      /* Align brand block to the top so tagline has breathing room from the bottom border */
       align-items: flex-start;
       justify-content: center;
     }
@@ -72,7 +71,7 @@
       display: flex;
       flex-direction: column;
       gap: var(--space-3);
-      /* Top-align text so tagline sits near the top with extra padding below creating the space */
+      /* Top-align so name sits at the top and tagline follows immediately below */
       align-items: flex-start;
       padding-top: var(--space-2);
     }
@@ -95,30 +94,9 @@
       color: rgba(194,212,194,0.9);
       letter-spacing: 0.04em;
       text-transform: uppercase;
-      /* Allow wrapping so it never clips */
       white-space: normal;
-      /* Generous bottom spacing so the tagline visually breathes above the border */
-      margin-bottom: var(--space-2);
-    }
-
-    .site-banner__pills {
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--space-2);
-      margin-top: var(--space-4);
-    }
-
-    .site-banner__pill {
-      font-family: var(--font-body);
-      font-size: var(--text-xs);
-      font-weight: 600;
-      color: rgba(255,255,255,0.75);
-      background: rgba(255,255,255,0.09);
-      border: 1px solid rgba(255,255,255,0.16);
-      border-radius: var(--radius-full);
-      padding: var(--space-1) var(--space-3);
-      letter-spacing: 0.04em;
-      white-space: nowrap;
+      /* Sits near the top of the banner; extra bottom padding on .site-banner provides space from border */
+      margin-bottom: 0;
     }
 
     /* Dark mode toggle — absolute top-right */
@@ -289,7 +267,9 @@
     /* ── Responsive ── */
     @media (max-width: 640px) {
       .site-banner {
-        padding: var(--space-10) var(--space-5);
+        padding-top: var(--space-10);
+        padding-bottom: var(--space-14);
+        padding-inline: var(--space-5);
         min-height: unset;
       }
       .site-banner__inner { justify-content: flex-start; }
@@ -297,7 +277,6 @@
       .site-banner__name { white-space: normal; font-size: clamp(1.5rem, 6vw, 2.2rem); }
       .site-banner__tagline { white-space: normal; font-size: var(--text-sm); }
       .site-banner__logo { height: 72px; }
-      .site-banner__pills { display: none; }
       .models-grid { grid-template-columns: 1fr; }
     }
 
@@ -335,12 +314,6 @@
         <div class="site-banner__text-block">
           <span class="site-banner__name">THE POLICY NEST</span>
           <span class="site-banner__tagline">Powering Value-Based Care Transitions</span>
-          <div class="site-banner__pills" role="list">
-            <span class="site-banner__pill" role="listitem">CMMI Innovation Models</span>
-            <span class="site-banner__pill" role="listitem">ACO &amp; VBC Programs</span>
-            <span class="site-banner__pill" role="listitem">Regulatory Intelligence</span>
-            <span class="site-banner__pill" role="listitem">Federal Register Monitoring</span>
-          </div>
         </div>
       </div>
     </div>
