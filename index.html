@@ -277,7 +277,86 @@ select:focus,input:focus{outline:2px solid var(--color-primary);outline-offset:2
       <div class="empty-state">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
         <h3>Configure your plan</h3>
-        <p>Select your organization type, condition tracks, and readiness gaps, then click Generate.</p>
+<p>Select your organization type, condition tracks, and readiness gaps, then click <strong>Generate</strong>. The prototype plan output below shows the structure this tool will create for the ACCESS Model.</p>
+
+<div class="tabs">
+  <button class="tab active" data-tab="plan">Plan Output</button>
+  <button class="tab" data-tab="resources">ACCESS Resources</button>
+</div>
+
+<div id="tab-content">
+
+  <!-- Plan Output placeholder for Phase 2 Step 1 -->
+  <section id="tab-plan" class="tab-panel active">
+    <h3>ACCESS Rollout Plan – Prototype Output</h3>
+    <p>This static example illustrates how the ACCESS rollout plan will be structured. Later versions will generate and update this content automatically from ACCESS policy requirements.</p>
+
+    <div class="phase-card">
+      <h4>Phase 1 – Readiness Assessment</h4>
+      <ul>
+        <li>
+          <strong>Task:</strong> Confirm ACCESS eligibility and condition track selection<br>
+          <strong>Owner:</strong> VBC / Strategy Lead
+        </li>
+        <li>
+          <strong>Task:</strong> Designate ACCESS Clinical Director and document responsibilities<br>
+          <strong>Owner:</strong> Chief Medical Officer
+        </li>
+        <li>
+          <strong>Task:</strong> Review existing technology and reporting capabilities against ACCESS requirements<br>
+          <strong>Owner:</strong> IT / Analytics Lead
+        </li>
+      </ul>
+    </div>
+
+    <div class="phase-card">
+      <h4>Phase 2 – Operational Design</h4>
+      <ul>
+        <li>
+          <strong>Task:</strong> Map current care workflows to ACCESS care model for selected condition track(s)<br>
+          <strong>Owner:</strong> Clinical Operations
+        </li>
+        <li>
+          <strong>Task:</strong> Define care team roles (care coordinator, tech liaison, clinical lead)<br>
+          <strong>Owner:</strong> Operations / HR
+        </li>
+        <li>
+          <strong>Task:</strong> Draft patient alignment and enrollment process, including handling of control group assignments<br>
+          <strong>Owner:</strong> Care Coordination
+        </li>
+      </ul>
+    </div>
+
+  </section>
+
+  <!-- ACCESS Resources tab -->
+  <section id="tab-resources" class="tab-panel">
+    <h3>ACCESS Model Resources</h3>
+    <p>These official CMS resources are the primary sources for this planner.</p>
+    <ul>
+      <li>
+        <a href="https://www.cms.gov/priorities/innovation/innovation-models/access"
+           target="_blank" rel="noopener">
+          CMS ACCESS Model Overview
+        </a> – Official program description, goals, and high-level requirements.[web:18]
+      </li>
+      <li>
+        <a href="https://www.cms.gov/priorities/innovation/access-technical-frequently-asked-questions"
+           target="_blank" rel="noopener">
+          ACCESS Technical FAQs
+        </a> – Detailed operational guidance on eligibility, reporting, and payment.[web:3]
+      </li>
+      <li>
+        <a href="https://www.cms.gov/priorities/innovation/files/access-rfa.pdf"
+           target="_blank" rel="noopener">
+          ACCESS Request for Applications (RFA)
+        </a> – Formal participation requirements and timelines.[web:10]
+      </li>
+    </ul>
+    <p>You can consult these sources directly when interpreting or validating the rollout plan.</p>
+  </section>
+
+</div>
       </div>
     </div>
 
