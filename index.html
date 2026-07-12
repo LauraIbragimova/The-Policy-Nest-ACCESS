@@ -41,41 +41,46 @@
       justify-content: center;
     }
 
-    /* Logo + text centered together */
     .site-banner__brand {
       display: flex;
       align-items: center;
-      gap: var(--space-5);
+      gap: var(--space-6);
       flex-direction: row;
     }
 
+    /* Logo fills the banner height minus top/bottom breathing room */
     .site-banner__logo {
-      width: clamp(56px, 6vw, 80px);
-      height: auto;
+      /* height matches banner content area; top/bottom gap = space-4 each side */
+      height: clamp(80px, 10vw, 130px);
+      width: auto;
       flex-shrink: 0;
       object-fit: contain;
+      /* push the logo down slightly so it respects the inner padding rhythm */
+      margin-block: calc(-1 * var(--space-2));
     }
 
     .site-banner__text-block {
       display: flex;
       flex-direction: column;
-      gap: var(--space-1);
+      gap: var(--space-2);
       align-items: flex-start;
     }
 
+    /* Larger title */
     .site-banner__name {
       font-family: var(--font-display);
-      font-size: clamp(1.4rem, 1rem + 2vw, 2.4rem);
+      font-size: clamp(2rem, 1.2rem + 3.5vw, 3.6rem);
       font-weight: 800;
       color: #ffffff;
       letter-spacing: -0.02em;
-      line-height: 1.05;
+      line-height: 1.0;
       text-shadow: 0 2px 12px rgba(0,0,0,0.25);
     }
 
+    /* Larger tagline */
     .site-banner__tagline {
       font-family: var(--font-body);
-      font-size: clamp(0.8rem, 0.6rem + 0.8vw, 1rem);
+      font-size: clamp(0.95rem, 0.7rem + 1.2vw, 1.35rem);
       font-weight: 400;
       color: rgba(194,212,194,0.9);
       letter-spacing: 0.04em;
@@ -184,13 +189,10 @@
       box-shadow: 0 8px 24px rgba(0,0,0,0.16), 0 2px 6px rgba(0,0,0,0.10);
       transform: translateY(-2px);
     }
-
-    /* Active card = #8FA88F */
     .model-card--active {
       background: #8FA88F;
       border-color: rgba(0,0,0,0.10);
     }
-    /* Inactive cards stay gray */
     .model-card--inactive {
       background: #d1d5d1;
       opacity: 0.82;
@@ -200,7 +202,6 @@
       transform: none;
       box-shadow: 0 4px 14px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.08);
     }
-
     .model-card__top { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-3); }
     .model-card__program { font-size: var(--text-xs); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--azure); }
     .model-card--active .model-card__program { color: rgba(255,255,255,0.75); }
@@ -225,8 +226,6 @@
     }
     .model-card__footer { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding-top: var(--space-4); border-top: 1px solid var(--color-divider); margin-top: auto; }
     .model-card--active .model-card__footer { border-top-color: rgba(255,255,255,0.25); }
-
-    /* CTA button */
     .model-card__cta {
       display: inline-flex; align-items: center; gap: var(--space-2);
       padding: var(--space-2) var(--space-5);
@@ -265,6 +264,9 @@
     .app-footer__note,
     .app-footer__link {
       color: #ffffff !important;
+      text-align: center;
+      display: block;
+      margin-inline: auto;
     }
     .app-footer__link:hover {
       color: rgba(255,255,255,0.8) !important;
@@ -273,13 +275,13 @@
     /* ── Responsive ── */
     @media (max-width: 640px) {
       .site-banner__inner { justify-content: flex-start; }
-      .site-banner__brand { flex-direction: row; }
-      .site-banner__logo { width: 48px; }
+      .site-banner__brand { flex-direction: row; gap: var(--space-4); }
+      .site-banner__logo { height: 64px; margin-block: 0; }
       .site-banner__pills { display: none; }
       .models-grid { grid-template-columns: 1fr; }
     }
 
-    /* ── Dark mode overrides ── */
+    /* ── Dark mode ── */
     [data-theme="dark"] body { background-color: var(--color-bg); }
     [data-theme="dark"] .hero { background: var(--color-bg); }
     [data-theme="dark"] .models-section { background: var(--color-surface); border-color: var(--color-divider); }
@@ -296,20 +298,14 @@
 </head>
 <body>
 
-  <!-- ============================================================
-       BANNER
-  ============================================================ -->
+  <!-- BANNER -->
   <header class="site-banner" role="banner" aria-label="The Policy Nest">
     <div class="site-banner__inner">
-
-      <!-- Logo + Brand centered -->
       <div class="site-banner__brand">
         <img
           src="./PNL RMVBG.png"
           alt="The Policy Nest logo"
           class="site-banner__logo"
-          width="80"
-          height="80"
           loading="eager"
         />
         <div class="site-banner__text-block">
@@ -323,17 +319,9 @@
           </div>
         </div>
       </div>
-
     </div>
-
-    <!-- Dark mode toggle — absolute top-right -->
     <div class="site-banner__controls">
-      <button
-        class="toggle-dark"
-        data-theme-toggle
-        aria-label="Switch to dark mode"
-        title="Toggle dark mode"
-      >
+      <button class="toggle-dark" data-theme-toggle aria-label="Switch to dark mode" title="Toggle dark mode">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
         </svg>
@@ -343,9 +331,7 @@
 
   <main id="main-content">
 
-    <!-- ============================================================
-         HERO
-    ============================================================ -->
+    <!-- HERO -->
     <section class="hero" aria-labelledby="hero-heading">
       <div class="hero__inner">
         <p class="hero__overline">Implementation Planning Platform</p>
@@ -363,9 +349,7 @@
       </div>
     </section>
 
-    <!-- ============================================================
-         MODEL SELECTOR
-    ============================================================ -->
+    <!-- MODEL SELECTOR -->
     <section class="models-section" aria-labelledby="models-heading">
       <div class="models-section__header">
         <p class="overline">Available Planners</p>
@@ -384,9 +368,7 @@
             </div>
             <span class="badge badge--active">Active</span>
           </div>
-          <p class="model-card__desc">
-            Advancing Cardiac Care, Equity, and Safety through Solutions. A mandatory cardiac bundled payment model focused on AMI, CABG, and surgical hip/femur fracture treatment episodes with integrated care delivery requirements.
-          </p>
+          <p class="model-card__desc">Advancing Cardiac Care, Equity, and Safety through Solutions. A mandatory cardiac bundled payment model focused on AMI, CABG, and surgical hip/femur fracture treatment episodes with integrated care delivery requirements.</p>
           <div class="model-card__details">
             <span class="model-card__detail-pill">Performance Year 1</span>
             <span class="model-card__detail-pill">2025 – 2027</span>
@@ -401,7 +383,7 @@
           </div>
         </article>
 
-        <!-- REACH ACO — COMING SOON -->
+        <!-- REACH ACO -->
         <article class="model-card model-card--inactive" role="listitem">
           <div class="model-card__top">
             <div>
@@ -410,9 +392,7 @@
             </div>
             <span class="badge badge--coming-soon">Coming Soon</span>
           </div>
-          <p class="model-card__desc">
-            Realizing Equity, Access, and Community Health. A voluntary global and professional risk ACO model designed to improve care for Traditional Medicare beneficiaries, with emphasis on health equity and social determinants.
-          </p>
+          <p class="model-card__desc">Realizing Equity, Access, and Community Health. A voluntary global and professional risk ACO model designed to improve care for Traditional Medicare beneficiaries, with emphasis on health equity and social determinants.</p>
           <div class="model-card__details">
             <span class="model-card__detail-pill">Global &amp; Professional Risk</span>
             <span class="model-card__detail-pill">Voluntary</span>
@@ -424,7 +404,7 @@
           </div>
         </article>
 
-        <!-- PCF — COMING SOON -->
+        <!-- PCF -->
         <article class="model-card model-card--inactive" role="listitem">
           <div class="model-card__top">
             <div>
@@ -433,9 +413,7 @@
             </div>
             <span class="badge badge--coming-soon">Coming Soon</span>
           </div>
-          <p class="model-card__desc">
-            A voluntary primary care payment model rewarding practices for delivering advanced primary care services. Focuses on seriously ill patient populations and practice transformation across five performance-based payment adjustments.
-          </p>
+          <p class="model-card__desc">A voluntary primary care payment model rewarding practices for delivering advanced primary care services. Focuses on seriously ill patient populations and practice transformation across five performance-based payment adjustments.</p>
           <div class="model-card__details">
             <span class="model-card__detail-pill">Primary Care</span>
             <span class="model-card__detail-pill">Voluntary</span>
@@ -447,7 +425,7 @@
           </div>
         </article>
 
-        <!-- MSSP ACO — COMING SOON -->
+        <!-- MSSP ACO -->
         <article class="model-card model-card--inactive" role="listitem">
           <div class="model-card__top">
             <div>
@@ -456,9 +434,7 @@
             </div>
             <span class="badge badge--coming-soon">Coming Soon</span>
           </div>
-          <p class="model-card__desc">
-            The Medicare Shared Savings Program enables groups of healthcare providers to form ACOs and work together to provide coordinated, high-quality care while earning shared savings when they reduce costs and meet quality benchmarks.
-          </p>
+          <p class="model-card__desc">The Medicare Shared Savings Program enables groups of healthcare providers to form ACOs and work together to provide coordinated, high-quality care while earning shared savings when they reduce costs and meet quality benchmarks.</p>
           <div class="model-card__details">
             <span class="model-card__detail-pill">BASIC &amp; ENHANCED Tracks</span>
             <span class="model-card__detail-pill">Voluntary</span>
@@ -475,9 +451,7 @@
 
   </main>
 
-  <!-- ============================================================
-       FOOTER
-  ============================================================ -->
+  <!-- FOOTER -->
   <footer class="app-footer" role="contentinfo">
     <div class="app-footer__inner">
       <span class="app-footer__brand">The Policy Nest</span>
