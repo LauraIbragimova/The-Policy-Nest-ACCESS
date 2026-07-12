@@ -40,7 +40,7 @@
       margin-inline: auto;
       display: flex;
       align-items: flex-start;
-      justify-content: center;
+      justify-content: flex-start;  /* was center — push brand block to the LEFT */
     }
 
     .site-banner__brand {
@@ -59,12 +59,13 @@
       flex-shrink: 0;
     }
 
-    /* Logo: enlarged for banner prominence */
+    /* Logo: sized to fit inside the banner so its bottom is not clipped by the border */
     .site-banner__logo {
-      height: clamp(140px, 18vw, 220px);
+      height: clamp(120px, 12vw, 150px);
       width: auto;
       max-height: 100%;
       object-fit: contain;
+      display: block;
     }
 
     .site-banner__text-block {
