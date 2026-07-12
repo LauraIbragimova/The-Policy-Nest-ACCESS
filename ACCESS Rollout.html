@@ -851,6 +851,9 @@
       return level==='High'?'severity-high':level==='Medium'?'severity-medium':'severity-low';
     }
 
+    // Persist user-edited risk ratings and mitigation owners across regenerations, keyed by risk title.
+    const riskState={};
+
     function renderRisk(gaps,orgValue){
       // Elevate likelihood on risks tied to flagged readiness gaps for a personalized view.
       const gapSet=new Set(Array.from(gaps));
@@ -859,9 +862,12 @@
 
       const risks=riskRegistry.map(r=>{
         const flagged=elevatedCats.has(r.category);
-        const likelihood=flagged&&r.likelihood==='Low'?'Medium':flagged&&r.likelihood==='Medium'?'High':r.likelihood;
-        const level=riskSeverity(likelihood,r.impact);
-        return {...r,likelihood,level,flagged};
+        const saved=riskState[r.title]||{};
+        // Manual edits take precedence; otherwise apply gap-based elevation to the default likelihood.
+        const likelihood=saved.likelihood||(flagged&&r.likelihood==='Low'?'Medium':flagged&&r.likelihood==='Medium'?'High':r.likelihood);
+        const impact=saved.impact||r.impact;
+        const level=riskSeverity(likelihood,impact);
+        return {...r,likelihood,impact,level,flagged,owner:saved.owner||''};
       });
 
       const highCount=risks.filter(r=>r.level==='High').length;
@@ -876,7 +882,8 @@
         </div>
         <div class="risk-grid">
           ${risks.map((r,i)=>{
-            return `<article class="risk-card">
+            const key=encodeURIComponent(r.title);
+            return `<article class="risk-card" data-risk-key="${key}">
               <div class="phase-card-header">
                 <h3>${r.title}${r.flagged?' <span class="risk-flag" title="Tied to a flagged readiness gap">flagged</span>':''}</h3>
                 <span class="severity-pill ${riskLevelClass(r.level)}" id="risk-sev-${i}">${r.level} severity</span>
@@ -885,15 +892,15 @@
               <p>${r.desc}</p>
               <div class="risk-scale-row">
                 <label class="risk-scale" for="risk-like-${i}">Likelihood
-                  <select class="risk-scale-select" id="risk-like-${i}" aria-label="Likelihood for ${r.title}" onchange="updateRiskScale(${i})">${scaleOpts(r.likelihood)}</select>
+                  <select class="risk-scale-select" id="risk-like-${i}" aria-label="Likelihood for ${r.title}" onchange="updateRiskScale(${i},'${key}')">${scaleOpts(r.likelihood)}</select>
                 </label>
                 <label class="risk-scale" for="risk-impact-${i}">Impact
-                  <select class="risk-scale-select" id="risk-impact-${i}" aria-label="Impact for ${r.title}" onchange="updateRiskScale(${i})">${scaleOpts(r.impact)}</select>
+                  <select class="risk-scale-select" id="risk-impact-${i}" aria-label="Impact for ${r.title}" onchange="updateRiskScale(${i},'${key}')">${scaleOpts(r.impact)}</select>
                 </label>
               </div>
               <div class="risk-owner-row">
-                <input class="risk-owner-input" type="text" placeholder="Assign mitigation owner…" id="risk-owner-${i}" aria-label="Mitigation owner for ${r.title}">
-                <button class="risk-save-btn" onclick="saveRiskOwner(${i})">Save</button>
+                <input class="risk-owner-input" type="text" placeholder="Assign mitigation owner…" id="risk-owner-${i}" aria-label="Mitigation owner for ${r.title}" value="${r.owner.replace(/"/g,'&quot;')}">
+                <button class="risk-save-btn" onclick="saveRiskOwner(${i},'${key}')">Save</button>
                 <span class="risk-owner-saved" id="risk-saved-${i}">✓ Saved</span>
               </div>
             </article>`;
@@ -901,8 +908,8 @@
         </div>`;
     }
 
-    // Recompute a risk's severity live when likelihood or impact is edited, and update the high-severity count.
-    function updateRiskScale(i){
+    // Recompute a risk's severity live when likelihood or impact is edited, persist the edit, and update the high-severity count.
+    function updateRiskScale(i,key){
       const likeSel=document.getElementById('risk-like-'+i);
       const impactSel=document.getElementById('risk-impact-'+i);
       const sevPill=document.getElementById('risk-sev-'+i);
@@ -910,6 +917,10 @@
       const level=riskSeverity(likeSel.value,impactSel.value);
       sevPill.className='severity-pill '+riskLevelClass(level);
       sevPill.textContent=level+' severity';
+      if(key){
+        const title=decodeURIComponent(key);
+        riskState[title]=Object.assign({},riskState[title],{likelihood:likeSel.value,impact:impactSel.value});
+      }
       const countEl=document.getElementById('risk-high-count');
       if(countEl){
         const high=document.querySelectorAll('#panel-risk .severity-pill.severity-high').length;
@@ -917,9 +928,13 @@
       }
     }
 
-    function saveRiskOwner(i){
+    function saveRiskOwner(i,key){
       const val=document.getElementById('risk-owner-'+i).value.trim();
       if(!val)return;
+      if(key){
+        const title=decodeURIComponent(key);
+        riskState[title]=Object.assign({},riskState[title],{owner:val});
+      }
       const saved=document.getElementById('risk-saved-'+i);
       saved.style.display='inline';
       setTimeout(()=>{saved.style.display='none';},2000);
