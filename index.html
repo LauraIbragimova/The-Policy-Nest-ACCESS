@@ -28,7 +28,7 @@
       padding-top: clamp(var(--space-6), 3vw, var(--space-10));
       padding-bottom: clamp(var(--space-20), 13vw, var(--space-32));
       padding-inline: clamp(var(--space-8), 6.5vw, var(--space-20));
-      min-height: 200px;
+      min-height: 240px;  /* raised from 200px to give the enlarged logo room without clipping */
     }
 
     .site-banner::after { display: none; }
@@ -59,9 +59,9 @@
       flex-shrink: 0;
     }
 
-    /* Logo: sized to fit inside the banner so its bottom is not clipped by the border */
+    /* Logo: enlarged but still fits inside the banner (bottom not clipped by border) */
     .site-banner__logo {
-      height: clamp(120px, 12vw, 150px);
+      height: clamp(140px, 14vw, 180px);
       width: auto;
       max-height: 100%;
       object-fit: contain;
