@@ -50,12 +50,12 @@
       flex-direction: row;
     }
 
-    /* Logo wrapper stretches to flex row height */
+    /* Logo wrapper pinned to TOP of the brand row (no vertical stretch) */
     .site-banner__logo-wrap {
-      align-self: stretch;
+      align-self: flex-start;   /* was stretch — stop filling the row so the logo can sit at the top */
       display: flex;
       align-items: flex-start;
-      padding-block: var(--space-2);
+      margin-top: var(--space-2);  /* top-only inset (was symmetric padding-block) */
       flex-shrink: 0;
     }
 
