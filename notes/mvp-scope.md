@@ -41,7 +41,7 @@ A value-based care operations director or program manager at an ACO, FQHC, healt
 |-------|------|---------|
 | Organization Type | Dropdown | ACO, FQHC, Health System, Physician Group, Rural Health Clinic |
 | Condition Track | Multi-select checkbox | CKM (Cardiometabolic), MSK (Musculoskeletal), BH (Behavioral Health), Oncology |
-| Implementation Phase | Radio with badges | Phase 1: Readiness, Phase 2: Alignment, Phase 3: Care Delivery, Phase 4: Reporting, Phase 5: Reconciliation |
+| Implementation Phase | Radio with badges | Phase 1: Readiness Assessment, Phase 2: Operational Design, Phase 3: Technology & Reporting Setup, Phase 4: Enrollment & Launch, Phase 5: Monitoring & Optimization |
 | Readiness Gap Flags | Multi-select checkbox | HIE/EHR Integration, Billing & Coding, Staff Training, Device Procurement, Beneficiary Engagement |
 
 ---
@@ -63,7 +63,7 @@ A value-based care operations director or program manager at an ACO, FQHC, healt
 
 ## Work Breakdown Structure
 
-### Phase 1 — Readiness (Weeks 1–8)
+### Phase 1 — Readiness Assessment (Weeks 1–8)
 - [ ] Designate Physician Clinical Director (required by CMS)
 - [ ] Complete PECOS enrollment verification for all billing practitioners
 - [ ] Execute HIPAA Business Associate Agreements with all vendors
@@ -76,7 +76,7 @@ A value-based care operations director or program manager at an ACO, FQHC, healt
 - [ ] Develop staff training curriculum (clinical, billing, operations)
 - [ ] Define device procurement and BYOD consent workflow
 
-### Phase 2 — Alignment (Weeks 9–16)
+### Phase 2 — Operational Design (Weeks 9–16)
 - [ ] Submit application or confirm CMS selection confirmation documents
 - [ ] Activate co-management G-code notifications to PCPs and referring clinicians
 - [ ] Build beneficiary identification and outreach workflow
@@ -88,7 +88,7 @@ A value-based care operations director or program manager at an ACO, FQHC, healt
 - [ ] Launch beneficiary consent and engagement workflow
 - [ ] Activate HIE care plan transmission to PCPs at enrollment trigger
 
-### Phase 3 — Care Delivery (Weeks 17–36)
+### Phase 3 — Technology & Reporting Setup / Care Delivery (Weeks 17–36)
 - [ ] Launch care delivery operations across selected tracks
 - [ ] Submit baseline measures within 60 days of each beneficiary alignment
 - [ ] Activate quarterly outcome data collection workflow
@@ -100,7 +100,7 @@ A value-based care operations director or program manager at an ACO, FQHC, healt
 - [ ] Conduct mid-period billing audit (FFS exclusion compliance check)
 - [ ] Report any adverse events or program integrity concerns to CMS within required window
 
-### Phase 4 — Reporting (Weeks 37–52 / Day 1–425 Post-Alignment)
+### Phase 4 — Enrollment & Launch / Reporting (Weeks 37–52 / Day 1–425 Post-Alignment)
 - [ ] Submit quarterly outcome data on schedule
 - [ ] Confirm all 425-day final outcome submissions are calendared per beneficiary cohort
 - [ ] Conduct pre-submission quality review for each measure set
@@ -109,7 +109,7 @@ A value-based care operations director or program manager at an ACO, FQHC, healt
 - [ ] Audit PECOS and billing records for accuracy before final submission
 - [ ] Escalate any missed 425-day deadlines immediately to Compliance Officer
 
-### Phase 5 — Reconciliation (Post-Day 425)
+### Phase 5 — Monitoring & Optimization / Reconciliation (Post-Day 425)
 - [ ] Receive CMS reconciliation report
 - [ ] Review OAT attainment rate against 50% threshold
 - [ ] Confirm release or forfeiture of withheld 50% payment
