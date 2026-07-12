@@ -72,9 +72,15 @@
       display: flex;
       flex-direction: column;
       gap: var(--space-3);
-      /* Top-align so name sits at the top and tagline follows immediately below */
-      align-items: flex-start;
+      /* Horizontally center title + tagline in the banner (logo stays at top-left, untouched) */
+      align-items: center;
+      text-align: center;
       padding-top: var(--space-2);
+      /* Center across the full banner width independent of the logo's position */
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      top: 0;
     }
 
     .site-banner__name {
