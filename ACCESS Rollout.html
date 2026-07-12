@@ -415,6 +415,7 @@
             <option value="">Select...</option>
             <option value="aco">ACO / MSSP Participant</option>
             <option value="fqhc">FQHC / Community Health Center</option>
+            <option value="rhc">Rural Health Clinic (RHC)</option>
             <option value="independent">Independent Practice / Group Practice</option>
             <option value="health-system">Health System / Hospital</option>
             <option value="digital">Digital Health / Tech-Enabled Provider</option>
@@ -440,6 +441,10 @@
             <button class="track-chip" data-track="bh" aria-pressed="false">
               <span><span class="label">BH</span><br><small>Depression or anxiety</small></span>
               <span class="pill">PHQ-9, GAD-7, WHODAS</span>
+            </button>
+            <button class="track-chip" data-track="onc" aria-pressed="false">
+              <span><span class="label">Oncology</span><br><small>Active cancer treatment &amp; survivorship</small></span>
+              <span class="pill">ePROs, symptom &amp; ED-visit control</span>
             </button>
           </div>
           <div class="warn-banner" id="track-warn">⚠ Consider selecting at least one clinical track for a condition-specific plan.</div>
@@ -590,6 +595,19 @@
         ],
         kpiLabel:'BH symptom improvement rate (PHQ-9/GAD-7)',
         frTags:['BH','PHQ-9','GAD-7','WHODAS 2.0']
+      },
+      onc:{
+        label:'Oncology',
+        outcomes:'Improve symptom control and reduce avoidable acute care during active treatment using electronic patient-reported outcomes (ePROs) and survivorship follow-up.',
+        quality:[
+          {measure:'ePRO baseline capture',description:'% of oncology patients with baseline symptom ePRO submitted',target:'≥90%'},
+          {measure:'ePRO follow-up completion',description:'% of patients with follow-up ePRO submitted during the care period',target:'≥85%'},
+          {measure:'Symptom control rate',description:'% of patients with documented improvement or control of treatment-related symptoms',target:'≥60%'},
+          {measure:'Avoidable ED / inpatient rate',description:'% of aligned patients avoiding potentially preventable ED visits or admissions',target:'≤15%'},
+          {measure:'Survivorship care plan delivery',description:'% of eligible patients receiving a documented survivorship care plan',target:'≥80%'}
+        ],
+        kpiLabel:'Oncology symptom control & avoidable-acute-care rate',
+        frTags:['Oncology','ePROs','symptom management','avoidable acute care']
       }
     };
 
@@ -604,6 +622,7 @@
     const orgNotes={
       aco:'Align ACCESS workflows with attribution, care coordination, and MSSP / ACO reporting governance.',
       fqhc:'Emphasize referral partnerships, digital access support, and staffing model adaptation for underserved populations.',
+      rhc:'Address rural workforce and broadband constraints, lean back-office reporting, and telehealth-enabled care coordination for geographically dispersed beneficiaries.',
       independent:'Prioritize scalable staffing, outsourcing decisions, and a lean reporting architecture.',
       'health-system':'Coordinate enterprise governance, specialty line ownership, and integration with existing data platforms.',
       digital:'Focus on compliance readiness, clinician oversight, and integration with external provider workflows.'
