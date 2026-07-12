@@ -15,7 +15,7 @@ It is designed for value-based care operations leads, ACO administrators, and he
 
 ## The Problem
 
-The CMS ACCESS Model (Advancing Chronic Care with Effective, Scalable Solutions) launched July 5, 2026 and runs through 2036. It introduces 4 chronic condition tracks (high blood pressure, diabetes, chronic musculoskeletal pain, and depression), outcome attainment thresholds, G-code billing requirements, 425-day reporting deadlines, and HIE integration mandates. Most participating organizations lack a structured operational playbook to translate that policy complexity into day-to-day execution.
+The CMS ACCESS Model (Advancing Chronic Care with Effective, Scalable Solutions) launched July 5, 2026 and runs through 2036, with rolling participant start dates (the next on August 17, 2026 and October 1, 2026). It introduces 4 chronic condition tracks (high blood pressure, diabetes, chronic musculoskeletal pain, and depression), outcome attainment thresholds, G-code billing requirements, 425-day reporting deadlines, and HIE integration mandates. Most participating organizations lack a structured operational playbook to translate that policy complexity into day-to-day execution.
 
 ---
 
