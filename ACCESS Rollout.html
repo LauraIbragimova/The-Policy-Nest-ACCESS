@@ -70,17 +70,17 @@
       opacity: 0.7;
     }
 
-    /* Logo — fills banner height with inset top/bottom padding */
+    /* Logo — pinned to TOP of the banner (not vertically centered) */
     .site-banner__logo-wrap {
       display: flex;
-      align-items: stretch;
-      align-self: stretch;
-      padding-block: clamp(8px, 1vw, 14px);
+      align-items: flex-start;   /* anchor logo to top edge of the wrap */
+      align-self: flex-start;    /* opt this child out of the banner's align-items:center */
+      margin-top: clamp(8px, 1vw, 14px);  /* top-only inset (was symmetric padding-block) */
       flex-shrink: 0;
     }
     .site-banner__logo {
-      /* height: 100% fills the wrap which already has padding inset */
-      height: 100%;
+      /* fixed height (no longer stretches to fill the wrap) so it sits at the top */
+      height: auto;
       width: auto;
       max-height: clamp(60px, 8vw, 100px);
       object-fit: contain;
