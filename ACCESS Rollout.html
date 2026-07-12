@@ -272,6 +272,23 @@
     .fr-ref-body span{display:block;color:var(--text-muted);font-size:0.85rem;margin-top:0.1rem;}
     .fr-ref-body .fr-ref-url{color:var(--clay);font-size:0.8rem;margin-top:0.25rem;}
 
+    /* ── REGULATORY CHECKPOINT LOG ───────────────────────────────────────── */
+    .regcheck-list{display:grid;gap:0.55rem;}
+    .regcheck-row{display:flex;align-items:flex-start;gap:0.75rem;padding:0.75rem 0.85rem;border:1px solid var(--border-subtle);border-left:4px solid var(--border-subtle);border-radius:12px;background:var(--surface);transition:border-color 160ms ease,background 160ms ease;}
+    .regcheck-num{flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:rgba(74,46,79,0.1);color:var(--aubergine);font-size:0.82rem;font-weight:700;display:grid;place-items:center;margin-top:0.05rem;}
+    .regcheck-body{flex:1 1 auto;min-width:0;}
+    .regcheck-body strong{display:block;font-size:0.93rem;line-height:1.3;color:var(--text-main);}
+    .regcheck-meta{display:flex;flex-wrap:wrap;gap:0.4rem 0.65rem;margin-top:0.35rem;font-size:0.76rem;}
+    .regcheck-basis{font-weight:700;color:var(--azure);background:rgba(31,78,121,0.1);border-radius:999px;padding:0.1rem 0.5rem;}
+    .regcheck-phase{color:var(--clay);font-weight:600;}
+    .regcheck-owner{color:var(--text-muted);}
+    .regcheck-status-wrap{flex:0 0 auto;}
+    .regcheck-status-select{font-size:0.8rem;font-weight:600;padding:0.3rem 0.5rem;border-radius:8px;border:1px solid var(--border-subtle);background:var(--surface-soft);color:var(--text-main);cursor:pointer;}
+    .regcheck-not-started{border-left-color:var(--border-subtle);}
+    .regcheck-in-progress{border-left-color:var(--warning);background:rgba(138,90,0,0.04);}
+    .regcheck-complete{border-left-color:var(--success);background:rgba(61,106,63,0.05);}
+    .regcheck-complete .regcheck-body strong{text-decoration:line-through;text-decoration-color:var(--success);text-decoration-thickness:1.5px;}
+
     /* ── LIVE FEDERAL REGISTER UPDATES ───────────────────────────────────── */
     .fr-live-header{display:flex;align-items:center;justify-content:space-between;gap:0.75rem;flex-wrap:wrap;margin-bottom:0.75rem;}
     .fr-live-status{font-size:0.8rem;color:var(--text-muted);display:flex;align-items:center;gap:0.4rem;}
@@ -597,39 +614,21 @@
       governance:'Stand up executive steering, clinical quality, and issue escalation forums.'
     };
 
-    const regCheckSections = [
-      {
-        title:'Participation checkpoints',
-        badge:'Eligibility',
-        items:[
-          {text:'Confirm Medicare Part B enrollment and active TIN/NPI alignment.',owner:'Compliance / Enrollment'},
-          {text:'Validate HIPAA, applicable state licensure, and FDA compliance posture.',owner:'Legal / Compliance'},
-          {text:'Designate a physician Clinical Director and document authority scope.',owner:'Executive leadership'},
-          {text:'Confirm no duplicative fee-for-service billing for aligned beneficiaries during active ACCESS care periods.',owner:'Billing / Compliance'},
-          {text:'Review rolling application windows and confirm target start date.',owner:'Strategy / PMO'}
-        ]
-      },
-      {
-        title:'Reporting checkpoints',
-        badge:'Data & Tech',
-        items:[
-          {text:'Stand up standards-based API reporting to CMS-hosted interfaces.',owner:'IT / Interoperability'},
-          {text:'Capture baseline and follow-up outcomes for each enrolled beneficiary.',owner:'Analytics / QA'},
-          {text:'Document track-specific measures and submission logic for each active track.',owner:'Analytics / Clinical ops'},
-          {text:'Validate denominator logic and QA scripts before go-live.',owner:'Analytics / QA'},
-          {text:'Confirm secure electronic care update delivery to PCPs and referring clinicians.',owner:'Interoperability lead'}
-        ]
-      },
-      {
-        title:'Care coordination checkpoints',
-        badge:'Clinical ops',
-        items:[
-          {text:'Prepare care coordination workflows for updates to PCPs and referring clinicians at initiation, milestones, and completion.',owner:'Clinical operations'},
-          {text:'Define escalation protocols and document clinical triggers.',owner:'Clinical leadership'},
-          {text:'Train staff on aligned beneficiary communications and consent workflows.',owner:'Operations enablement'},
-          {text:'Stand up control-group patient messaging and non-aligned beneficiary workflows.',owner:'Patient engagement'}
-        ]
-      }
+    // 12 named regulatory checkpoints with regulatory basis, phase, and suggested owner.
+    // Regulatory citations sourced from the ACCESS RFA, CMS ACCESS FAQ/payment guidance, and referenced federal statute/regulation.
+    const regCheckpoints = [
+      {n:1,  checkpoint:'Physician Clinical Director designated',                     basis:'ACCESS RFA § 4.2',                          phase:1, owner:'Executive leadership'},
+      {n:2,  checkpoint:'PECOS enrollment verified (all billing practitioners)',       basis:'ACCESS FAQ — Billing Eligibility',          phase:1, owner:'Compliance / Enrollment'},
+      {n:3,  checkpoint:'HIPAA Business Associate Agreements executed (all vendors)',   basis:'45 CFR § 164.502',                          phase:1, owner:'Legal / Compliance'},
+      {n:4,  checkpoint:'FDA device classification review complete',                   basis:'ACCESS FAQ — TEMPO Pilot',                  phase:1, owner:'Clinical / Regulatory'},
+      {n:5,  checkpoint:'AKS / Stark Law structuring review',                          basis:'42 USC § 1320a-7b(b)',                      phase:1, owner:'Legal counsel'},
+      {n:6,  checkpoint:'Cost-sharing election documented (uniform policy)',           basis:'ACCESS RFA — Beneficiary Policy',          phase:1, owner:'Billing / Compliance'},
+      {n:7,  checkpoint:'FFS exclusion audit activated',                               basis:'ACCESS FAQ — Billing Rules',               phase:2, owner:'Billing / Compliance'},
+      {n:8,  checkpoint:'HIE / Aligned Network contract executed',                     basis:'ACCESS FAQ — Care Coordination',           phase:1, owner:'IT / Interoperability'},
+      {n:9,  checkpoint:'Control group management process active',                     basis:'ACCESS FAQ — Randomization',               phase:2, owner:'Clinical operations'},
+      {n:10, checkpoint:'Baseline measures submitted (60-day window)',                 basis:'ACCESS Payment Guidance',                  phase:3, owner:'Analytics / Clinical ops'},
+      {n:11, checkpoint:'425-day deadline calendar confirmed',                         basis:'ACCESS Payment Guidance',                  phase:4, owner:'Compliance Officer'},
+      {n:12, checkpoint:'Pre-reconciliation billing audit complete',                   basis:'ACCESS Payment Guidance',                  phase:5, owner:'Billing / Compliance'}
     ];
 
     const selectedTracks=new Set();
@@ -754,29 +753,61 @@
             </div>`).join('')).join('')}</div>` : ''}
         </article>`;
 
-      const sectionsHtml = regCheckSections.map(sec=>`
+      const completed = regCheckpoints.filter(c => regCheckState[c.n] === 'complete').length;
+
+      const checkpointRows = regCheckpoints.map(c => {
+        const state = regCheckState[c.n] || 'not-started';
+        return `
+          <div class="regcheck-row regcheck-${state}" id="regcheck-row-${c.n}">
+            <div class="regcheck-num">${c.n}</div>
+            <div class="regcheck-body">
+              <strong>${c.checkpoint}</strong>
+              <div class="regcheck-meta">
+                <span class="regcheck-basis" title="Regulatory basis">${c.basis}</span>
+                <span class="regcheck-phase">Phase ${c.phase}</span>
+                <span class="regcheck-owner">Owner: ${c.owner}</span>
+              </div>
+            </div>
+            <div class="regcheck-status-wrap">
+              <select class="regcheck-status-select" id="regcheck-sel-${c.n}" aria-label="Status for checkpoint ${c.n}: ${c.checkpoint}" onchange="updateRegCheck(${c.n})">
+                <option value="not-started"${state==='not-started'?' selected':''}>Not Started</option>
+                <option value="in-progress"${state==='in-progress'?' selected':''}>In Progress</option>
+                <option value="complete"${state==='complete'?' selected':''}>Complete</option>
+              </select>
+            </div>
+          </div>`;
+      }).join('');
+
+      const sectionsHtml = `
         <article class="phase-card">
           <div class="phase-card-header">
-            <h3>${sec.title}</h3>
-            <span class="phase-badge">${sec.badge}</span>
+            <div>
+              <h3>Regulatory checkpoint log</h3>
+              <p style="margin:0.2rem 0 0;color:var(--text-muted);font-size:0.85rem;">12 named checkpoints with regulatory basis. Set each to Not Started, In Progress, or Complete.</p>
+            </div>
+            <span class="phase-badge" id="regcheck-count">${completed}/12 complete</span>
           </div>
-          <div class="task-list">
-            ${sec.items.map(item=>`
-              <div class="task-item" role="checkbox" aria-checked="false" tabindex="0">
-                <div class="task-check" aria-hidden="true"></div>
-                <div class="task-copy"><strong>${item.text}</strong><div class="task-meta">Suggested owner: ${item.owner}</div></div>
-              </div>`).join('')}
+          <div class="regcheck-list">
+            ${checkpointRows}
           </div>
-        </article>`).join('');
+        </article>`;
 
       document.getElementById('panel-regcheck').innerHTML = sectionsHtml + trackSection;
+    }
 
-      document.querySelectorAll('#panel-regcheck .task-item').forEach(item=>{
-        item.addEventListener('click',()=>{
-          item.classList.toggle('done');
-          item.setAttribute('aria-checked', item.classList.contains('done') ? 'true' : 'false');
-        });
-      });
+    // Persist checkpoint status across tab switches / re-renders.
+    const regCheckState = {};
+    function updateRegCheck(n){
+      const sel = document.getElementById('regcheck-sel-'+n);
+      if(!sel) return;
+      regCheckState[n] = sel.value;
+      const row = document.getElementById('regcheck-row-'+n);
+      if(row){ row.className = 'regcheck-row regcheck-'+sel.value; }
+      const countEl = document.getElementById('regcheck-count');
+      if(countEl){
+        const done = Object.values(regCheckState).filter(v => v === 'complete').length;
+        countEl.textContent = done + '/12 complete';
+      }
     }
 
     function renderRisk(gaps,orgValue){
