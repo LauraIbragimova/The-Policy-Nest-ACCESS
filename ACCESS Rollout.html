@@ -633,8 +633,10 @@
     const orgFR={
       aco:['ACO/MSSP overlap guidance','attribution logic','shared savings reconciliation'],
       fqhc:['FQHC billing interaction','look-alike eligibility','social determinant documentation'],
+      rhc:['RHC all-inclusive rate interaction','rural add-on payment','telehealth originating site rules'],
       independent:['small practice reporting accommodations','clinical director requirement','TIN alignment'],
       'health-system':['enterprise TIN enrollment','specialty billing interactions','duplicate service prevention'],
+      'oncology-center':['ePRO submission standards','survivorship care planning','oncology drug/infusion billing intersections'],
       digital:['virtual care compliance','FDA device intersections','telehealth billing rules']
     };
 
@@ -827,12 +829,36 @@
       document.getElementById('panel-regcheck').innerHTML = sectionsHtml + trackSection;
     }
 
-    // Persist checkpoint status across tab switches / re-renders.
-    const regCheckState = {};
+    // ---- Persistence layer: survive full page reloads via localStorage ----
+    const STORE_KEY='access-planner-state-v1';
+    function loadStore(){
+      try{
+        const raw=localStorage.getItem(STORE_KEY);
+        if(!raw) return {};
+        const parsed=JSON.parse(raw);
+        return (parsed && typeof parsed==='object') ? parsed : {};
+      }catch(e){ return {}; }
+    }
+    const persisted=loadStore();
+    function saveStore(){
+      try{
+        localStorage.setItem(STORE_KEY, JSON.stringify({
+          intake: persisted.intake || null,
+          regCheckState, riskState, kpiState, qualityState
+        }));
+      }catch(e){ /* storage unavailable (private mode / quota) — fail silently */ }
+    }
+
+    // Persist checkpoint status across tab switches, re-renders, and reloads.
+    const regCheckState = Object.assign({}, persisted.regCheckState);
+    // KPI edits keyed by metric label; quality edits keyed by measure text (stable across re-renders).
+    const kpiState = Object.assign({}, persisted.kpiState);
+    const qualityState = Object.assign({}, persisted.qualityState);
     function updateRegCheck(n){
       const sel = document.getElementById('regcheck-sel-'+n);
       if(!sel) return;
       regCheckState[n] = sel.value;
+      saveStore();
       const row = document.getElementById('regcheck-row-'+n);
       if(row){ row.className = 'regcheck-row regcheck-'+sel.value; }
       const countEl = document.getElementById('regcheck-count');
@@ -872,8 +898,8 @@
       return level==='High'?'severity-high':level==='Medium'?'severity-medium':'severity-low';
     }
 
-    // Persist user-edited risk ratings and mitigation owners across regenerations, keyed by risk title.
-    const riskState={};
+    // Persist user-edited risk ratings and mitigation owners across regenerations and reloads, keyed by risk title.
+    const riskState=Object.assign({}, persisted.riskState);
 
     function renderRisk(gaps,orgValue){
       // Elevate likelihood on risks tied to flagged readiness gaps for a personalized view.
@@ -941,6 +967,7 @@
       if(key){
         const title=decodeURIComponent(key);
         riskState[title]=Object.assign({},riskState[title],{likelihood:likeSel.value,impact:impactSel.value});
+        saveStore();
       }
       const countEl=document.getElementById('risk-high-count');
       if(countEl){
@@ -955,6 +982,7 @@
       if(key){
         const title=decodeURIComponent(key);
         riskState[title]=Object.assign({},riskState[title],{owner:val});
+        saveStore();
       }
       const saved=document.getElementById('risk-saved-'+i);
       saved.style.display='inline';
@@ -970,27 +998,33 @@
       tracks.forEach(t=>metrics.push({label:trackLibrary[t].kpiLabel,value:'0%',status:'on-track'}));
       document.getElementById('panel-kpi').innerHTML=`
         <div class="kpi-grid">
-          ${metrics.map((m,i)=>`
+          ${metrics.map((m,i)=>{
+            const saved=kpiState[m.label]||{};
+            const val=saved.value!==undefined?saved.value:m.value;
+            const status=saved.status||m.status;
+            const key=encodeURIComponent(m.label);
+            const badgeText=status==='on-track'?'On Track':status==='watch'?'Watch':status==='behind'?'Behind':'Needs Input';
+            return `
             <article class="kpi-card">
               <div class="phase-card-header">
                 <h3>${m.label}</h3>
-                <span class="metric-status ${m.status}" id="kpi-status-badge-${i}">${m.status==='on-track'?'On Track':'Needs Input'}</span>
+                <span class="metric-status ${status}" id="kpi-status-badge-${i}">${badgeText}</span>
               </div>
-              <div class="summary-value" id="kpi-display-${i}">${m.value}</div>
+              <div class="summary-value" id="kpi-display-${i}">${val}</div>
               <div class="kpi-input-row">
-                <input class="kpi-input" type="text" value="${m.value}" id="kpi-val-${i}" aria-label="Current value for ${m.label}" placeholder="e.g. 72%">
+                <input class="kpi-input" type="text" value="${String(val).replace(/"/g,'&quot;')}" id="kpi-val-${i}" aria-label="Current value for ${m.label}" placeholder="e.g. 72%">
                 <select class="kpi-status-select" id="kpi-status-sel-${i}" aria-label="Status for ${m.label}">
-                  <option value="on-track"${m.status==='on-track'?' selected':''}>On Track</option>
-                  <option value="watch"${m.status==='watch'?' selected':''}>Watch</option>
-                  <option value="behind">Behind</option>
+                  <option value="on-track"${status==='on-track'?' selected':''}>On Track</option>
+                  <option value="watch"${status==='watch'?' selected':''}>Watch</option>
+                  <option value="behind"${status==='behind'?' selected':''}>Behind</option>
                 </select>
-                <button class="kpi-update-btn" onclick="updateKpi(${i})">Update</button>
+                <button class="kpi-update-btn" onclick="updateKpi(${i},'${key}')">Update</button>
               </div>
-            </article>`).join('')}
+            </article>`;}).join('')}
         </div>`;
     }
 
-    function updateKpi(i){
+    function updateKpi(i,key){
       const val=document.getElementById('kpi-val-'+i).value.trim();
       const status=document.getElementById('kpi-status-sel-'+i).value;
       const display=document.getElementById('kpi-display-'+i);
@@ -998,6 +1032,11 @@
       if(val)display.textContent=val;
       badge.className='metric-status '+status;
       badge.textContent=status==='on-track'?'On Track':status==='watch'?'Watch':'Behind';
+      if(key){
+        const label=decodeURIComponent(key);
+        kpiState[label]={value:val,status:status};
+        saveStore();
+      }
     }
 
     function renderQuality(tracks){
@@ -1028,6 +1067,11 @@
 
         track.quality.forEach(q=>{
           const si = scoreIndex++;
+          const qKey=track.label+' :: '+q.measure;
+          const saved=qualityState[qKey]||{};
+          const savedVal=saved.value!==undefined?saved.value:'';
+          const savedStatus=saved.status||'not-started';
+          const key=encodeURIComponent(qKey);
           html += `
             <div class="scorecard-row" id="scorecard-row-${si}">
               <div class="scorecard-measure">
@@ -1038,16 +1082,16 @@
                 <span class="score-badge not-started" style="font-size:0.8rem;font-weight:600;">${q.target}</span>
               </div>
               <div>
-                <input class="score-input" type="text" placeholder="—" id="score-val-${si}" aria-label="Current rate for ${q.measure}">
+                <input class="score-input" type="text" placeholder="—" value="${String(savedVal).replace(/"/g,'&quot;')}" id="score-val-${si}" aria-label="Current rate for ${q.measure}">
               </div>
               <div style="display:flex;flex-direction:column;gap:0.4rem;align-items:center;">
-                <select class="score-status-select" id="score-status-${si}" aria-label="Status for ${q.measure}">
-                  <option value="not-started">Not started</option>
-                  <option value="on-track">On Track</option>
-                  <option value="watch">Watch</option>
-                  <option value="behind">Behind</option>
+                <select class="score-status-select" id="score-status-${si}" data-score-key="${key}" aria-label="Status for ${q.measure}">
+                  <option value="not-started"${savedStatus==='not-started'?' selected':''}>Not started</option>
+                  <option value="on-track"${savedStatus==='on-track'?' selected':''}>On Track</option>
+                  <option value="watch"${savedStatus==='watch'?' selected':''}>Watch</option>
+                  <option value="behind"${savedStatus==='behind'?' selected':''}>Behind</option>
                 </select>
-                <button class="scorecard-update-btn" onclick="updateScorecard(${si})">Update</button>
+                <button class="scorecard-update-btn" onclick="updateScorecard(${si},'${key}')">Update</button>
               </div>
             </div>`;
         });
@@ -1072,6 +1116,12 @@
 
       document.getElementById('panel-quality').innerHTML = html;
 
+      // Re-apply saved status styling for any rows restored from storage.
+      document.querySelectorAll('#panel-quality .score-status-select').forEach(sel=>{
+        const si=sel.id.replace('score-status-','');
+        if(sel.value && sel.value!=='not-started') styleScorecardRow(si, sel.value);
+      });
+
       document.querySelectorAll('#panel-quality .task-item').forEach(item=>{
         item.addEventListener('click',()=>{
           item.classList.toggle('done');
@@ -1080,27 +1130,31 @@
       });
     }
 
-    function updateScorecard(i){
-      const val = document.getElementById('score-val-'+i).value.trim();
-      const status = document.getElementById('score-status-'+i).value;
+    // Apply background + border color to a scorecard row/select based on status.
+    function styleScorecardRow(i,status){
       const row = document.getElementById('scorecard-row-'+i);
       if(row){
-        row.style.background = status==='on-track'
-          ? 'rgba(61,106,63,0.05)'
-          : status==='watch'
-          ? 'rgba(138,90,0,0.05)'
-          : status==='behind'
-          ? 'rgba(138,48,64,0.05)'
-          : '';
+        row.style.background = status==='on-track' ? 'rgba(61,106,63,0.05)'
+          : status==='watch' ? 'rgba(138,90,0,0.05)'
+          : status==='behind' ? 'rgba(138,48,64,0.05)' : '';
       }
       const sel = document.getElementById('score-status-'+i);
-      sel.style.borderColor = status==='on-track'
-        ? 'var(--success)'
-        : status==='watch'
-        ? 'var(--warning)'
-        : status==='behind'
-        ? 'var(--danger)'
-        : 'var(--border-subtle)';
+      if(sel){
+        sel.style.borderColor = status==='on-track' ? 'var(--success)'
+          : status==='watch' ? 'var(--warning)'
+          : status==='behind' ? 'var(--danger)' : 'var(--border-subtle)';
+      }
+    }
+
+    function updateScorecard(i,key){
+      const val = document.getElementById('score-val-'+i).value.trim();
+      const status = document.getElementById('score-status-'+i).value;
+      if(key){
+        const qKey=decodeURIComponent(key);
+        qualityState[qKey]={value:val,status:status};
+        saveStore();
+      }
+      styleScorecardRow(i,status);
     }
 
     function renderFR(tracks,orgValue,gaps){
@@ -1164,8 +1218,11 @@
             ${tracks.includes('eckm')||tracks.includes('ckm')?'<li><strong>CKM/eCKM:</strong> Watch for updated BP, lipid, HbA1c, eGFR, and UACR threshold schedules and any changes to the substitute spend definition.</li>':''}
             ${tracks.includes('msk')?'<li><strong>MSK:</strong> Monitor guidance on PROM instrument acceptance and any expansion of the approved functional status measures.</li>':''}
             ${tracks.includes('bh')?'<li><strong>BH:</strong> Watch for updates to WHODAS 2.0 submission standards and any PHQ-9/GAD-7 threshold adjustments.</li>':''}
+            ${tracks.includes('onc')?'<li><strong>Oncology:</strong> Monitor guidance on accepted ePRO instruments, symptom-management measure definitions, avoidable acute-care attribution, and survivorship care plan requirements.</li>':''}
             ${orgValue==='aco'?'<li><strong>ACO:</strong> Monitor CMS guidance on ACCESS and MSSP overlap, attribution priority rules, and any shared savings reconciliation clarifications.</li>':''}
             ${orgValue==='fqhc'?'<li><strong>FQHC:</strong> Watch for FQHC billing interaction guidance and any look-alike eligibility clarifications under ACCESS.</li>':''}
+            ${orgValue==='rhc'?'<li><strong>RHC:</strong> Watch for guidance on RHC all-inclusive rate interactions, rural add-on payment capture, and telehealth originating-site rules under ACCESS.</li>':''}
+            ${orgValue==='oncology-center'?'<li><strong>Oncology Practice:</strong> Track ePRO submission standards, survivorship care planning requirements, and oncology drug/infusion billing intersections with ACCESS care periods.</li>':''}
             ${orgValue==='digital'?'<li><strong>Digital Health:</strong> Track FDA device intersection guidance, virtual care compliance requirements, and telehealth billing rules as they apply to ACCESS participants.</li>':''}
             ${gaps.has('finance')?'<li><strong>Finance:</strong> Monitor withhold schedule publications and any updates to the payment calculation methodology.</li>':''}
             ${gaps.has('interop')?'<li><strong>Interoperability:</strong> Watch for CMS updates to the required API specifications and HL7 FHIR implementation guides.</li>':''}
@@ -1291,15 +1348,19 @@
       });
     }
 
-    generateBtn.addEventListener('click',()=>{
+    function generatePlan(isRestore){
       const orgValue=orgSelect.value;
-      if(!orgValue){alert('Please select an organization type first.');return;}
+      if(!orgValue){ if(!isRestore) alert('Please select an organization type first.'); return; }
       if(selectedTracks.size===0)trackWarn.classList.add('visible');
 
       const tracks=Array.from(selectedTracks);
       const phases=Array.from(selectedPhases).sort((a,b)=>Number(a)-Number(b));
       const gaps=selectedGaps;
       const gapsArr=Array.from(gaps);
+
+      // Persist intake selections so the full plan restores on reload.
+      persisted.intake={org:orgValue,tracks:tracks,phases:phases,gaps:gapsArr};
+      saveStore();
 
       baseReadiness=Math.min(35+tracks.length*14+phases.length*7-gapsArr.length*6,65);
       checkedTasks=0;
@@ -1322,8 +1383,10 @@
       activateTabs();
       attachTaskListeners();
 
-      document.getElementById('generated-plan').scrollIntoView({behavior:'smooth',block:'start'});
-    });
+      if(!isRestore) document.getElementById('generated-plan').scrollIntoView({behavior:'smooth',block:'start'});
+    }
+
+    generateBtn.addEventListener('click',()=>generatePlan(false));
 
     resetBtn.addEventListener('click',()=>{
       document.getElementById('generated-plan').style.display='none';
@@ -1334,8 +1397,30 @@
       document.querySelectorAll('.track-chip,.phase-pill,.gap-chip').forEach(el=>{el.classList.remove('active');el.setAttribute('aria-pressed','false');});
       document.querySelectorAll('.phase-pill').forEach(btn=>{if(selectedPhases.has(btn.dataset.phase)){btn.classList.add('active');btn.setAttribute('aria-pressed','true');}});
       orgSelect.value='';
+      // Clear all persisted state so a reset is a true fresh start.
+      Object.keys(regCheckState).forEach(k=>delete regCheckState[k]);
+      Object.keys(riskState).forEach(k=>delete riskState[k]);
+      Object.keys(kpiState).forEach(k=>delete kpiState[k]);
+      Object.keys(qualityState).forEach(k=>delete qualityState[k]);
+      delete persisted.intake;
+      try{ localStorage.removeItem(STORE_KEY); }catch(e){}
       window.scrollTo({top:0,behavior:'smooth'});
     });
+
+    // ---- Restore a saved session on page load ----
+    (function restoreSession(){
+      const intake=persisted.intake;
+      if(!intake||!intake.org) return;
+      orgSelect.value=intake.org;
+      selectedTracks.clear(); (intake.tracks||[]).forEach(t=>selectedTracks.add(t));
+      selectedPhases.clear(); (intake.phases||['1','2','3']).forEach(p=>selectedPhases.add(p));
+      selectedGaps.clear(); (intake.gaps||[]).forEach(g=>selectedGaps.add(g));
+      // Reflect restored selections in the intake UI.
+      document.querySelectorAll('.track-chip').forEach(el=>{const on=selectedTracks.has(el.dataset.track);el.classList.toggle('active',on);el.setAttribute('aria-pressed',on?'true':'false');});
+      document.querySelectorAll('.phase-pill').forEach(el=>{const on=selectedPhases.has(el.dataset.phase);el.classList.toggle('active',on);el.setAttribute('aria-pressed',on?'true':'false');});
+      document.querySelectorAll('.gap-chip').forEach(el=>{const on=selectedGaps.has(el.dataset.gap);el.classList.toggle('active',on);el.setAttribute('aria-pressed',on?'true':'false');});
+      generatePlan(true);
+    })();
 
     activateTabs();
   </script>
