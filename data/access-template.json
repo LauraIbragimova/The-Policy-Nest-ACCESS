@@ -12,8 +12,10 @@
     "organizationTypes": [
       "ACO / MSSP Participant",
       "FQHC / Community Health Center",
+      "Rural Health Clinic (RHC)",
       "Independent Practice / Group Practice",
       "Health System / Hospital",
+      "Oncology Practice / Cancer Center",
       "Digital Health / Tech-Enabled Provider"
     ]
   },
