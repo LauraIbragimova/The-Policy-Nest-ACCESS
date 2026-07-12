@@ -24,9 +24,9 @@
       );
       border-bottom: 4px solid #C96A4A;
       position: relative;
-      /* Top padding unchanged; bottom padding expanded ~30% to give tagline clear space above border */
-      padding-top: clamp(var(--space-12), 7.8vw, var(--space-24));
-      padding-bottom: clamp(var(--space-16), 10.2vw, var(--space-32));
+      /* Top padding tightened to pull brand toward top; bottom padding expanded ~30% for tagline breathing room */
+      padding-top: clamp(var(--space-6), 3vw, var(--space-10));
+      padding-bottom: clamp(var(--space-20), 13vw, var(--space-32));
       padding-inline: clamp(var(--space-8), 6.5vw, var(--space-20));
       min-height: 200px;
     }
@@ -95,7 +95,8 @@
       letter-spacing: 0.04em;
       text-transform: uppercase;
       white-space: normal;
-      /* Sits near the top of the banner; extra bottom padding on .site-banner provides space from border */
+      /* Extra bottom padding creates clear space from the border */
+      padding-bottom: var(--space-4);
       margin-bottom: 0;
     }
 
@@ -139,18 +140,6 @@
       max-width: 58ch;
       line-height: 1.7;
       margin-bottom: var(--space-6);
-    }
-    .hero__meta { display: flex; align-items: center; gap: var(--space-4); flex-wrap: wrap; }
-    .hero__meta-item {
-      display: flex; align-items: center; gap: var(--space-2);
-      font-size: var(--text-xs); font-weight: 600;
-      color: var(--color-text-faint);
-      text-transform: uppercase; letter-spacing: 0.06em;
-    }
-    .hero__meta-dot {
-      width: 6px; height: 6px;
-      border-radius: var(--radius-full);
-      background: var(--sage); flex-shrink: 0;
     }
 
     /* ── Models section ── */
@@ -267,8 +256,8 @@
     /* ── Responsive ── */
     @media (max-width: 640px) {
       .site-banner {
-        padding-top: var(--space-10);
-        padding-bottom: var(--space-14);
+        padding-top: var(--space-5);
+        padding-bottom: var(--space-16);
         padding-inline: var(--space-5);
         min-height: unset;
       }
@@ -338,11 +327,6 @@
         <p class="hero__body">
           The Policy Nest translates dense CMS regulations into structured, actionable project plans — giving ACO leaders, health systems, and care organizations the operational intelligence they need to execute transitions with confidence.
         </p>
-        <div class="hero__meta">
-          <span class="hero__meta-item"><span class="hero__meta-dot"></span>CMMI Innovation Models</span>
-          <span class="hero__meta-item"><span class="hero__meta-dot"></span>ACO &amp; VBC Programs</span>
-          <span class="hero__meta-item"><span class="hero__meta-dot"></span>Regulatory Guidance</span>
-        </div>
       </div>
     </section>
 
