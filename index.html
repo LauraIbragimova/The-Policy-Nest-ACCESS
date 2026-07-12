@@ -25,10 +25,10 @@
       border-bottom: 4px solid #C96A4A;
       position: relative;
       /* Removed overflow:hidden — it was clipping the tagline */
-      /* Generous padding so title + tagline + pills always have room */
-      padding: clamp(var(--space-10), 6vw, var(--space-20)) clamp(var(--space-6), 5vw, var(--space-16));
+      /* Padding expanded ~30% from previous clamp values */
+      padding: clamp(var(--space-12), 7.8vw, var(--space-24)) clamp(var(--space-8), 6.5vw, var(--space-20));
       /* Ensure a comfortable minimum height even at small font sizes */
-      min-height: 160px;
+      min-height: 200px;
     }
 
     .site-banner::after { display: none; }
@@ -39,13 +39,14 @@
       max-width: var(--content-wide);
       margin-inline: auto;
       display: flex;
-      align-items: center;
+      /* Align brand block to the top so tagline has breathing room from the bottom border */
+      align-items: flex-start;
       justify-content: center;
     }
 
     .site-banner__brand {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       gap: var(--space-6);
       flex-direction: row;
     }
@@ -54,7 +55,7 @@
     .site-banner__logo-wrap {
       align-self: stretch;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       padding-block: var(--space-2);
       flex-shrink: 0;
     }
@@ -71,7 +72,9 @@
       display: flex;
       flex-direction: column;
       gap: var(--space-3);
+      /* Top-align text so tagline sits near the top with extra padding below creating the space */
       align-items: flex-start;
+      padding-top: var(--space-2);
     }
 
     .site-banner__name {
@@ -92,7 +95,10 @@
       color: rgba(194,212,194,0.9);
       letter-spacing: 0.04em;
       text-transform: uppercase;
-      white-space: nowrap;
+      /* Allow wrapping so it never clips */
+      white-space: normal;
+      /* Generous bottom spacing so the tagline visually breathes above the border */
+      margin-bottom: var(--space-2);
     }
 
     .site-banner__pills {
@@ -283,11 +289,11 @@
     /* ── Responsive ── */
     @media (max-width: 640px) {
       .site-banner {
-        padding: var(--space-8) var(--space-4);
+        padding: var(--space-10) var(--space-5);
         min-height: unset;
       }
       .site-banner__inner { justify-content: flex-start; }
-      .site-banner__brand { flex-direction: row; gap: var(--space-4); }
+      .site-banner__brand { flex-direction: row; gap: var(--space-4); align-items: flex-start; }
       .site-banner__name { white-space: normal; font-size: clamp(1.5rem, 6vw, 2.2rem); }
       .site-banner__tagline { white-space: normal; font-size: var(--text-sm); }
       .site-banner__logo { height: 72px; }
