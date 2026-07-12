@@ -658,22 +658,124 @@
   </div>
 
   <!-- Simple tab logic for Phase 2 Step 1 -->
-  <script>
-    const tabButtons = document.querySelectorAll('.tab');
-    const tabPanels = document.querySelectorAll('.tab-panel');
+ <script>
+  // --- Tab Switching Logic (Phase 2 Step 1) ---
+  const tabButtons = document.querySelectorAll('.tab');
+  const tabPanels = document.querySelectorAll('.tab-panel');
 
-    tabButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const target = btn.getAttribute('data-tab');
+  tabButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.getAttribute('data-tab');
+      tabButtons.forEach(b => b.classList.remove('active'));
+      tabPanels.forEach(p => p.classList.remove('active'));
 
-        tabButtons.forEach(b => b.classList.remove('active'));
-        tabPanels.forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      const panel = document.getElementById('tab-' + target);
+      if (panel) panel.classList.add('active');
+    });
+  });
 
-        btn.classList.add('active');
-        const panel = document.getElementById('tab-' + target);
-        if (panel) panel.classList.add('active');
+  // --- New Core Interactivity App State Script Logic ---
+  document.addEventListener('DOMContentLoaded', () => {
+    // State Tracking variables
+    let selectedOrg = '';
+    const selectedTracks = new Set();
+    const selectedPhases = new Set();
+    const selectedGaps = new Set();
+
+    // Elements
+    const orgSelect = document.getElementById('org-type');
+    const trackChips = document.querySelectorAll('.track-chip');
+    const phasePills = document.querySelectorAll('.phase-pill');
+    const gapChips = document.querySelectorAll('.gap-chip');
+    const generateBtn = document.getElementById('btn-generate');
+
+    // UI Output Blocks
+    const planHeader = document.getElementById('plan-header');
+    const tabsBar = document.getElementById('tabs-bar');
+    const planMeta = document.getElementById('plan-meta');
+    const progressFill = document.getElementById('progress-fill');
+    const progressPct = document.getElementById('progress-pct');
+
+    // 1. Organization Dropdown Selection tracking change event
+    orgSelect.addEventListener('change', (e) => {
+      selectedOrg = e.target.value;
+    });
+
+    // 2. Tracks Multiselect (Toggle class on click)
+    trackChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        const track = chip.getAttribute('data-track');
+        if (selectedTracks.has(track)) {
+          selectedTracks.delete(track);
+          chip.classList.remove('active');
+        } else {
+          selectedTracks.add(track);
+          chip.classList.add('active');
+        }
       });
     });
+
+    // 3. Phases Multiselect 
+    phasePills.forEach(pill => {
+      pill.addEventListener('click', () => {
+        const phase = pill.getAttribute('data-phase');
+        if (selectedPhases.has(phase)) {
+          selectedPhases.delete(phase);
+          pill.classList.remove('active');
+        } else {
+          selectedPhases.add(phase);
+          pill.classList.add('active');
+        }
+      });
+    });
+
+    // 4. Gaps Multiselect
+    gapChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        const gap = chip.getAttribute('data-gap');
+        if (selectedGaps.has(gap)) {
+          selectedGaps.delete(gap);
+          chip.classList.remove('active');
+        } else {
+          selectedGaps.add(gap);
+          chip.classList.add('active');
+        }
+      });
+    });
+
+    // 5. Generate Button Trigger Handler
+    generateBtn.addEventListener('click', () => {
+      if (!selectedOrg) {
+        alert('Please pick an Organization Type first.');
+        return;
+      }
+
+      // Format clean display labels from text strings
+      const orgDisplay = orgSelect.options[orgSelect.selectedIndex].text;
+      const tracksArray = Array.from(selectedTracks).map(t => t.toUpperCase());
+      
+      // Update dynamic header text attributes
+      planMeta.innerHTML = `
+        <strong>Target Hub:</strong> ${orgDisplay} 
+        ${tracksArray.length ? `| <strong>Tracks Active:</strong> ${tracksArray.join(', ')}` : ''}
+      `;
+
+      // Visual State Engine Updates
+      planHeader.style.display = 'block';
+      tabsBar.style.display = 'flex';
+
+      // Drive dynamic feedback onto the progress bar indicator template values
+      // (Mock dynamic progression logic step based on criteria configurations matched)
+      const baseProgress = Math.min(25 + (selectedTracks.size * 15) + (selectedGaps.size * 10), 100);
+      progressFill.style.width = `${baseProgress}%`;
+      progressPct.textContent = `${baseProgress}%`;
+
+      // Auto-scroll smooth slide into updated target panels view container block
+      planHeader.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+</script>
   </script>
 </body>
 </html>
