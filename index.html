@@ -10,39 +10,131 @@
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Source+Sans+3:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./style.css" />
   <style>
-    /* ── Page shell ── */
     html, body { height: 100%; }
-    body {
-      display: flex;
-      flex-direction: column;
-      background-color: var(--bone);
-    }
-
+    body { display: flex; flex-direction: column; background-color: var(--bone); }
     main { flex: 1; }
 
-    /* ── Banner header ── */
+    /* ── CSS Banner ── */
     .site-banner {
+      background: var(--header-gradient);
       position: relative;
-      width: 100%;
-      display: block;
-      line-height: 0;
+      overflow: hidden;
+      padding: clamp(var(--space-8), 5vw, var(--space-16)) clamp(var(--space-6), 5vw, var(--space-16));
     }
 
-    .site-banner__img {
-      width: 100%;
-      height: auto;
-      display: block;
-      object-fit: cover;
-      object-position: center center;
-      max-height: 320px;
-    }
-
-    /* Dark mode toggle — floats top-right over the banner */
-    .site-banner__nav {
+    /* Clay accent bottom line */
+    .site-banner::after {
+      content: '';
       position: absolute;
-      top: var(--space-4);
-      right: var(--space-5);
-      z-index: 10;
+      bottom: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--clay) 0%, rgba(201,106,74,0.4) 60%, transparent 100%);
+    }
+
+    /* Decorative rings — top-right corner */
+    .site-banner__rings {
+      position: absolute;
+      top: -60px;
+      right: -60px;
+      width: 360px;
+      height: 360px;
+      pointer-events: none;
+      opacity: 0.12;
+    }
+
+    /* Subtle dot-grid texture */
+    .site-banner__dots {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+
+    /* Inner layout */
+    .site-banner__inner {
+      position: relative;
+      z-index: 1;
+      max-width: var(--content-wide);
+      margin-inline: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-8);
+    }
+
+    .site-banner__brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-5);
+    }
+
+    /* SVG nest logo mark */
+    .site-banner__logo-wrap {
+      flex-shrink: 0;
+      width: clamp(52px, 6vw, 72px);
+      height: clamp(52px, 6vw, 72px);
+      border-radius: var(--radius-full);
+      background: rgba(255,255,255,0.10);
+      border: 1.5px solid rgba(255,255,255,0.22);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+    }
+
+    .site-banner__text-block {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+    }
+
+    .site-banner__name {
+      font-family: var(--font-display);
+      font-size: clamp(1.4rem, 1rem + 2vw, 2.4rem);
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.02em;
+      line-height: 1.05;
+      text-shadow: 0 2px 12px rgba(0,0,0,0.25);
+    }
+
+    .site-banner__tagline {
+      font-family: var(--font-body);
+      font-size: clamp(0.8rem, 0.6rem + 0.8vw, 1rem);
+      font-weight: 400;
+      color: rgba(194,212,194,0.9);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    /* Pills row */
+    .site-banner__pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      margin-top: var(--space-4);
+    }
+
+    .site-banner__pill {
+      font-family: var(--font-body);
+      font-size: var(--text-xs);
+      font-weight: 600;
+      color: rgba(255,255,255,0.75);
+      background: rgba(255,255,255,0.09);
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: var(--radius-full);
+      padding: var(--space-1) var(--space-3);
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+
+    /* Dark mode toggle — top-right of banner */
+    .site-banner__controls {
+      display: flex;
+      align-items: flex-start;
+      align-self: flex-start;
+      flex-shrink: 0;
     }
 
     /* ── Hero ── */
@@ -50,12 +142,7 @@
       background: var(--bone);
       padding: clamp(var(--space-10), 5vw, var(--space-16)) var(--space-6);
     }
-
-    .hero__inner {
-      max-width: var(--content-wide);
-      margin-inline: auto;
-    }
-
+    .hero__inner { max-width: var(--content-wide); margin-inline: auto; }
     .hero__overline {
       font-family: var(--font-body);
       font-size: var(--text-xs);
@@ -65,7 +152,6 @@
       color: var(--clay);
       margin-bottom: var(--space-4);
     }
-
     .hero__heading {
       font-family: var(--font-display);
       font-size: var(--text-2xl);
@@ -76,11 +162,7 @@
       margin-bottom: var(--space-5);
       max-width: 20ch;
     }
-
-    .hero__heading span {
-      color: var(--clay);
-    }
-
+    .hero__heading span { color: var(--clay); }
     .hero__body {
       font-size: var(--text-base);
       color: var(--color-text-muted);
@@ -88,31 +170,17 @@
       line-height: 1.7;
       margin-bottom: var(--space-6);
     }
-
-    .hero__meta {
-      display: flex;
-      align-items: center;
-      gap: var(--space-4);
-      flex-wrap: wrap;
-    }
-
+    .hero__meta { display: flex; align-items: center; gap: var(--space-4); flex-wrap: wrap; }
     .hero__meta-item {
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-      font-size: var(--text-xs);
-      font-weight: 600;
+      display: flex; align-items: center; gap: var(--space-2);
+      font-size: var(--text-xs); font-weight: 600;
       color: var(--color-text-faint);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
+      text-transform: uppercase; letter-spacing: 0.06em;
     }
-
     .hero__meta-dot {
-      width: 6px;
-      height: 6px;
+      width: 6px; height: 6px;
       border-radius: var(--radius-full);
-      background: var(--sage);
-      flex-shrink: 0;
+      background: var(--sage); flex-shrink: 0;
     }
 
     /* ── Models section ── */
@@ -122,35 +190,10 @@
       border-top: 1px solid var(--color-divider);
       border-bottom: 1px solid var(--color-divider);
     }
-
-    .models-section__header {
-      max-width: var(--content-wide);
-      margin-inline: auto;
-      margin-bottom: var(--space-8);
-    }
-
-    .models-section__title {
-      font-family: var(--font-display);
-      font-size: var(--text-xl);
-      font-weight: 700;
-      color: var(--aubergine);
-      margin-top: var(--space-2);
-    }
-
-    .models-section__desc {
-      font-size: var(--text-sm);
-      color: var(--color-text-muted);
-      margin-top: var(--space-2);
-      max-width: 58ch;
-    }
-
-    .models-grid {
-      max-width: var(--content-wide);
-      margin-inline: auto;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
-      gap: var(--space-5);
-    }
+    .models-section__header { max-width: var(--content-wide); margin-inline: auto; margin-bottom: var(--space-8); }
+    .models-section__title { font-family: var(--font-display); font-size: var(--text-xl); font-weight: 700; color: var(--aubergine); margin-top: var(--space-2); }
+    .models-section__desc { font-size: var(--text-sm); color: var(--color-text-muted); margin-top: var(--space-2); max-width: 58ch; }
+    .models-grid { max-width: var(--content-wide); margin-inline: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap: var(--space-5); }
 
     /* ── Model Card ── */
     .model-card {
@@ -158,227 +201,116 @@
       border: 1px solid var(--color-border-subtle);
       border-radius: var(--radius-xl);
       padding: var(--space-6);
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-4);
+      display: flex; flex-direction: column; gap: var(--space-4);
       box-shadow: var(--shadow-card);
       transition: box-shadow var(--transition-interactive), border-color var(--transition-interactive), transform var(--transition-interactive);
       position: relative;
     }
-
-    .model-card--active {
-      border-color: rgba(201, 106, 74, 0.25);
-      border-left: 3px solid var(--clay);
-    }
-
-    .model-card--active:hover {
-      box-shadow: var(--shadow-md);
-      transform: translateY(-2px);
-      border-color: rgba(201, 106, 74, 0.4);
-    }
-
+    .model-card--active { border-color: rgba(201,106,74,0.25); border-left: 3px solid var(--clay); }
+    .model-card--active:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); border-color: rgba(201,106,74,0.4); }
     .model-card--inactive { opacity: 0.75; }
-
-    .model-card__top {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: var(--space-3);
-    }
-
-    .model-card__program {
-      font-size: var(--text-xs);
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--azure);
-    }
-
-    .model-card__name {
-      font-family: var(--font-display);
-      font-size: var(--text-lg);
-      font-weight: 700;
-      color: var(--aubergine);
-      line-height: 1.2;
-      margin-top: var(--space-1);
-    }
-
+    .model-card__top { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-3); }
+    .model-card__program { font-size: var(--text-xs); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--azure); }
+    .model-card__name { font-family: var(--font-display); font-size: var(--text-lg); font-weight: 700; color: var(--aubergine); line-height: 1.2; margin-top: var(--space-1); }
     .model-card--inactive .model-card__name { color: var(--color-text-muted); }
+    .model-card__desc { font-size: var(--text-sm); color: var(--color-text-muted); line-height: 1.6; flex: 1; }
+    .model-card__details { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+    .model-card__detail-pill { font-size: var(--text-xs); font-weight: 500; color: var(--color-text-faint); background: var(--color-surface-offset); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-full); padding: var(--space-1) var(--space-3); }
+    .model-card__footer { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding-top: var(--space-4); border-top: 1px solid var(--color-divider); margin-top: auto; }
+    .model-card__cta { display: inline-flex; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-5); border-radius: var(--radius-lg); font-family: var(--font-body); font-size: var(--text-sm); font-weight: 600; line-height: 1; text-decoration: none; min-height: 40px; transition: background var(--transition-interactive), box-shadow var(--transition-interactive), transform var(--transition-fast); }
+    .model-card__cta--active { background: var(--clay); color: #ffffff; box-shadow: 0 2px 8px rgba(201,106,74,0.28); }
+    .model-card__cta--active:hover { background: var(--clay-hover); box-shadow: 0 4px 16px rgba(201,106,74,0.38); color: #ffffff; transform: translateX(2px); }
+    .model-card__cta--disabled { background: var(--color-surface-offset); color: var(--color-text-faint); cursor: not-allowed; pointer-events: none; border: 1px solid var(--color-border-subtle); }
 
-    .model-card__desc {
-      font-size: var(--text-sm);
-      color: var(--color-text-muted);
-      line-height: 1.6;
-      flex: 1;
-    }
-
-    .model-card__details {
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--space-2);
-    }
-
-    .model-card__detail-pill {
-      font-size: var(--text-xs);
-      font-weight: 500;
-      color: var(--color-text-faint);
-      background: var(--color-surface-offset);
-      border: 1px solid var(--color-border-subtle);
-      border-radius: var(--radius-full);
-      padding: var(--space-1) var(--space-3);
-    }
-
-    .model-card__footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: var(--space-3);
-      padding-top: var(--space-4);
-      border-top: 1px solid var(--color-divider);
-      margin-top: auto;
-    }
-
-    .model-card__cta {
-      display: inline-flex;
-      align-items: center;
-      gap: var(--space-2);
-      padding: var(--space-2) var(--space-5);
-      border-radius: var(--radius-lg);
-      font-family: var(--font-body);
-      font-size: var(--text-sm);
-      font-weight: 600;
-      line-height: 1;
-      text-decoration: none;
-      min-height: 40px;
-      transition: background var(--transition-interactive), box-shadow var(--transition-interactive), transform var(--transition-fast);
-    }
-
-    .model-card__cta--active {
-      background: var(--clay);
-      color: #ffffff;
-      box-shadow: 0 2px 8px rgba(201,106,74,0.28);
-    }
-
-    .model-card__cta--active:hover {
-      background: var(--clay-hover);
-      box-shadow: 0 4px 16px rgba(201,106,74,0.38);
-      color: #ffffff;
-      transform: translateX(2px);
-    }
-
-    .model-card__cta--disabled {
-      background: var(--color-surface-offset);
-      color: var(--color-text-faint);
-      cursor: not-allowed;
-      pointer-events: none;
-      border: 1px solid var(--color-border-subtle);
-    }
-
-    /* ── Pillars strip ── */
-    .pillars-section {
-      background: var(--bone);
-      padding: clamp(var(--space-10), 5vw, var(--space-16)) var(--space-6);
-    }
-
-    .pillars-section__header {
-      max-width: var(--content-wide);
-      margin-inline: auto;
-      margin-bottom: var(--space-8);
-    }
-
-    .pillars-section__title {
-      font-family: var(--font-display);
-      font-size: var(--text-xl);
-      font-weight: 700;
-      color: var(--aubergine);
-      margin-top: var(--space-2);
-    }
-
-    .pillars-grid {
-      max-width: var(--content-wide);
-      margin-inline: auto;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: var(--space-5);
-    }
-
-    .pillar-card {
-      background: var(--color-surface-soft);
-      border: 1px solid var(--color-border-subtle);
-      border-radius: var(--radius-xl);
-      padding: var(--space-6);
-      box-shadow: var(--shadow-sm);
-    }
-
-    .pillar-card__name {
-      font-family: var(--font-display);
-      font-size: var(--text-base);
-      font-weight: 700;
-      color: var(--clay);
-      margin-bottom: var(--space-2);
-    }
-
-    .pillar-card__desc {
-      font-size: var(--text-sm);
-      color: var(--color-text-muted);
-      line-height: 1.6;
-    }
+    /* ── Pillars ── */
+    .pillars-section { background: var(--bone); padding: clamp(var(--space-10), 5vw, var(--space-16)) var(--space-6); }
+    .pillars-section__header { max-width: var(--content-wide); margin-inline: auto; margin-bottom: var(--space-8); }
+    .pillars-section__title { font-family: var(--font-display); font-size: var(--text-xl); font-weight: 700; color: var(--aubergine); margin-top: var(--space-2); }
+    .pillars-grid { max-width: var(--content-wide); margin-inline: auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--space-5); }
+    .pillar-card { background: var(--color-surface-soft); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-xl); padding: var(--space-6); box-shadow: var(--shadow-sm); }
+    .pillar-card__name { font-family: var(--font-display); font-size: var(--text-base); font-weight: 700; color: var(--clay); margin-bottom: var(--space-2); }
+    .pillar-card__desc { font-size: var(--text-sm); color: var(--color-text-muted); line-height: 1.6; }
 
     /* ── Responsive ── */
-    @media (max-width: 768px) {
-      .site-banner__img { max-height: 200px; }
-      .hero__heading { max-width: 100%; }
-    }
-
-    @media (max-width: 480px) {
-      .site-banner__img { max-height: 140px; }
+    @media (max-width: 640px) {
+      .site-banner__inner { flex-direction: column; align-items: flex-start; gap: var(--space-4); }
+      .site-banner__controls { position: absolute; top: var(--space-4); right: var(--space-5); }
+      .site-banner__pills { display: none; }
       .models-grid { grid-template-columns: 1fr; }
       .pillars-grid { grid-template-columns: 1fr; }
     }
 
-    /* ── Dark mode ── */
+    /* ── Dark mode overrides ── */
     [data-theme="dark"] body { background-color: var(--color-bg); }
     [data-theme="dark"] .hero,
     [data-theme="dark"] .pillars-section { background: var(--color-bg); }
-    [data-theme="dark"] .models-section {
-      background: var(--color-surface);
-      border-color: var(--color-divider);
-    }
+    [data-theme="dark"] .models-section { background: var(--color-surface); border-color: var(--color-divider); }
     [data-theme="dark"] .model-card,
     [data-theme="dark"] .pillar-card { background: var(--color-surface-soft); }
-
-    /* Dim banner slightly in dark mode so it doesn't blast full brightness */
-    [data-theme="dark"] .site-banner__img { filter: brightness(0.88); }
   </style>
 </head>
 <body>
 
   <!-- ============================================================
-       BANNER — full-width brand image replaces coded header
+       BANNER — CSS gradient, no image dependency
   ============================================================ -->
-  <header class="site-banner" role="banner">
-    <img
-      src="./THE-POLICY-NEST.jpg"
-      alt="The Policy Nest — Powering Value-Based Care Transitions"
-      class="site-banner__img"
-      width="1530"
-      height="383"
-      loading="eager"
-      decoding="async"
-    />
-    <!-- Dark mode toggle floats over the banner -->
-    <nav class="site-banner__nav" aria-label="Site controls">
-      <button
-        class="toggle-dark"
-        data-theme-toggle
-        aria-label="Switch to dark mode"
-        title="Toggle dark mode"
-      >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-        </svg>
-      </button>
-    </nav>
+  <header class="site-banner" role="banner" aria-label="The Policy Nest">
+
+    <!-- Decorative dot grid -->
+    <div class="site-banner__dots" aria-hidden="true"></div>
+
+    <!-- Decorative rings (SVG) -->
+    <svg class="site-banner__rings" viewBox="0 0 360 360" fill="none" aria-hidden="true">
+      <circle cx="300" cy="60"  r="240" stroke="white" stroke-width="1"/>
+      <circle cx="300" cy="60"  r="180" stroke="white" stroke-width="1"/>
+      <circle cx="300" cy="60"  r="120" stroke="white" stroke-width="1.5"/>
+      <circle cx="300" cy="60"  r="60"  stroke="white" stroke-width="2"/>
+    </svg>
+
+    <div class="site-banner__inner">
+
+      <!-- Brand block -->
+      <div class="site-banner__brand">
+        <!-- SVG nest / policy mark -->
+        <div class="site-banner__logo-wrap" aria-hidden="true">
+          <svg width="38" height="38" viewBox="0 0 48 48" fill="none" aria-label="Policy Nest logo mark">
+            <!-- Nest shape: stacked arcs -->
+            <path d="M8 34 Q24 18 40 34" stroke="#c2d4c2" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+            <path d="M12 38 Q24 24 36 38" stroke="#c9a4b8" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+            <!-- Leaf / document mark -->
+            <path d="M24 8 C24 8 32 14 32 22 C32 26.4 28.4 30 24 30 C19.6 30 16 26.4 16 22 C16 14 24 8 24 8Z" fill="rgba(201,106,74,0.85)"/>
+            <path d="M24 14 L24 26 M20 19 L24 14 L28 19" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+
+        <div class="site-banner__text-block">
+          <span class="site-banner__name">THE POLICY NEST</span>
+          <span class="site-banner__tagline">Powering Value-Based Care Transitions</span>
+          <!-- Pills row -->
+          <div class="site-banner__pills" role="list">
+            <span class="site-banner__pill" role="listitem">CMMI Innovation Models</span>
+            <span class="site-banner__pill" role="listitem">ACO &amp; VBC Programs</span>
+            <span class="site-banner__pill" role="listitem">Regulatory Intelligence</span>
+            <span class="site-banner__pill" role="listitem">Federal Register Monitoring</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dark mode toggle -->
+      <div class="site-banner__controls">
+        <button
+          class="toggle-dark"
+          data-theme-toggle
+          aria-label="Switch to dark mode"
+          title="Toggle dark mode"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+      </div>
+
+    </div>
   </header>
 
   <main id="main-content">
@@ -396,18 +328,9 @@
           The Policy Nest translates dense CMS regulations into structured, actionable project plans — giving ACO leaders, health systems, and care organizations the operational intelligence they need to execute transitions with confidence.
         </p>
         <div class="hero__meta">
-          <span class="hero__meta-item">
-            <span class="hero__meta-dot"></span>
-            CMMI Innovation Models
-          </span>
-          <span class="hero__meta-item">
-            <span class="hero__meta-dot"></span>
-            ACO &amp; VBC Programs
-          </span>
-          <span class="hero__meta-item">
-            <span class="hero__meta-dot"></span>
-            Regulatory Guidance
-          </span>
+          <span class="hero__meta-item"><span class="hero__meta-dot"></span>CMMI Innovation Models</span>
+          <span class="hero__meta-item"><span class="hero__meta-dot"></span>ACO &amp; VBC Programs</span>
+          <span class="hero__meta-item"><span class="hero__meta-dot"></span>Regulatory Guidance</span>
         </div>
       </div>
     </section>
@@ -443,11 +366,7 @@
           </div>
           <div class="model-card__footer">
             <span class="badge badge--sage">4 Tracks</span>
-            <a
-              href="./ACCESS Rollout.html"
-              class="model-card__cta model-card__cta--active"
-              aria-label="Open ACCESS Model Planner"
-            >
+            <a href="./ACCESS Rollout.html" class="model-card__cta model-card__cta--active" aria-label="Open ACCESS Model Planner">
               Open Planner
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </a>
@@ -534,7 +453,6 @@
         <p class="overline">Why The Policy Nest</p>
         <h2 class="pillars-section__title" id="pillars-heading">Built on four principles</h2>
       </div>
-
       <div class="pillars-grid">
         <div class="pillar-card">
           <p class="pillar-card__name">Intelligence</p>
@@ -566,12 +484,7 @@
       <p class="app-footer__note">
         For planning and informational purposes only. Not official CMS guidance. Always verify requirements with current CMS program materials.
       </p>
-      <a
-        href="https://www.cms.gov/priorities/innovation/innovation-models"
-        class="app-footer__link"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
+      <a href="https://www.cms.gov/priorities/innovation/innovation-models" class="app-footer__link" target="_blank" rel="noopener noreferrer">
         CMS Innovation Models →
       </a>
     </div>
@@ -584,17 +497,15 @@
       let d = matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light';
       r.setAttribute('data-theme', d);
       if (t) {
+        const sunSVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
+        const moonSVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+        t.innerHTML = d === 'dark' ? sunSVG : moonSVG;
         t.setAttribute('aria-label', 'Switch to ' + (d === 'dark' ? 'light' : 'dark') + ' mode');
-        t.innerHTML = d === 'dark'
-          ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'
-          : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
         t.addEventListener('click', () => {
           d = d === 'dark' ? 'light' : 'dark';
           r.setAttribute('data-theme', d);
+          t.innerHTML = d === 'dark' ? sunSVG : moonSVG;
           t.setAttribute('aria-label', 'Switch to ' + (d === 'dark' ? 'light' : 'dark') + ' mode');
-          t.innerHTML = d === 'dark'
-            ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'
-            : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
         });
       }
     })();
