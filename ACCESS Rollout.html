@@ -261,6 +261,17 @@
     .proj-pos{color:var(--success);font-weight:700;}
     .proj-neg{color:var(--danger);font-weight:700;}
     .proj-note{color:var(--text-muted);font-size:0.8rem;margin-top:0.7rem;font-style:italic;}
+    /* ---- Enrollment ramp chart ---- */
+    .proj-chart-wrap{margin-top:0.6rem;width:100%;}
+    .proj-chart-svg{width:100%;height:auto;display:block;overflow:visible;}
+    .proj-grid-line{stroke:var(--border-subtle);stroke-width:1;stroke-dasharray:3 4;opacity:0.7;}
+    .proj-axis{stroke:var(--border-subtle);stroke-width:1.5;}
+    .proj-axis-label{fill:var(--text-muted);font-size:11px;font-family:system-ui,sans-serif;}
+    .proj-axis-sub{font-size:10px;opacity:0.8;}
+    .proj-area{fill:var(--clay);opacity:0.12;stroke:none;}
+    .proj-line{fill:none;stroke:var(--clay);stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round;}
+    .proj-point{fill:var(--surface);stroke:var(--clay);stroke-width:2.5;}
+    .proj-point-label{fill:var(--aubergine);font-size:10.5px;font-weight:700;font-family:system-ui,sans-serif;}
     .kpi-status-select{padding:0.45rem 0.7rem;border-radius:10px;border:1px solid var(--border-subtle);background:var(--surface);color:var(--text-main);font-size:0.85rem;min-height:38px;}
     .kpi-update-btn{padding:0.45rem 0.85rem;border-radius:10px;border:1px solid var(--clay);background:transparent;color:var(--clay);font-size:0.85rem;font-weight:600;transition:background 160ms ease,color 160ms ease;}
     .kpi-update-btn:hover{background:var(--clay);color:#fff;}
@@ -1294,6 +1305,12 @@
         <div class="kpi-grid proj-summary-grid" id="proj-summary"></div>
 
         <article class="phase-card">
+          <h3>Enrollment ramp</h3>
+          <p class="proj-help">Projected aligned beneficiaries by performance year (logistic ramp toward steady state).</p>
+          <div class="proj-chart-wrap" id="proj-chart"></div>
+        </article>
+
+        <article class="phase-card">
           <h3>Year-by-year projection</h3>
           <div class="proj-table-wrap">
             <table class="proj-table">
@@ -1309,11 +1326,58 @@
           <p class="proj-note" id="proj-note"></p>
         </article>`;
 
-      // Only the outputs (summary + table) are recomputed on edit — the
+      // Draw the enrollment ramp as an inline SVG line chart (no external
+      // libraries — keeps the app self-contained; colors use theme CSS vars).
+      function buildEnrollmentChart(res){
+        const wrap=document.getElementById('proj-chart');
+        if(!wrap) return;
+        const rows=res.rows;
+        const W=680, H=260, mL=64, mR=24, mT=18, mB=44;
+        const plotW=W-mL-mR, plotH=H-mT-mB;
+        const maxVal=Math.max.apply(null,rows.map(r=>r.enrolled));
+        // Round the y-axis ceiling up to a clean value.
+        const step=Math.pow(10,Math.floor(Math.log10(maxVal)));
+        const yMax=Math.ceil(maxVal/step)*step || 1;
+        const n=rows.length;
+        const xFor=i=> mL + (n===1?plotW/2:(i/(n-1))*plotW);
+        const yFor=v=> mT + plotH - (v/yMax)*plotH;
+        // Gridlines / y labels (5 bands).
+        const bands=5; let grid='', yLabels='';
+        for(let g=0; g<=bands; g++){
+          const val=yMax*g/bands, y=yFor(val);
+          grid+=`<line x1="${mL}" y1="${y.toFixed(1)}" x2="${W-mR}" y2="${y.toFixed(1)}" class="proj-grid-line"/>`;
+          yLabels+=`<text x="${mL-10}" y="${(y+4).toFixed(1)}" class="proj-axis-label" text-anchor="end">${fmtNum(val)}</text>`;
+        }
+        // Line path + area fill + points + x labels.
+        const pts=rows.map((r,i)=>({x:xFor(i), y:yFor(r.enrolled), r}));
+        const linePath=pts.map((p,i)=>`${i?'L':'M'}${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(' ');
+        const areaPath=`${linePath} L${pts[pts.length-1].x.toFixed(1)} ${(mT+plotH).toFixed(1)} L${pts[0].x.toFixed(1)} ${(mT+plotH).toFixed(1)} Z`;
+        let marks='', xLabels='';
+        pts.forEach((p,i)=>{
+          marks+=`<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="4" class="proj-point"/>`;
+          marks+=`<text x="${p.x.toFixed(1)}" y="${(p.y-11).toFixed(1)}" class="proj-point-label" text-anchor="middle">${fmtNum(p.r.enrolled)}</text>`;
+          xLabels+=`<text x="${p.x.toFixed(1)}" y="${(H-mB+20).toFixed(1)}" class="proj-axis-label" text-anchor="middle">PY${p.r.py}</text>`;
+          xLabels+=`<text x="${p.x.toFixed(1)}" y="${(H-mB+34).toFixed(1)}" class="proj-axis-label proj-axis-sub" text-anchor="middle">${p.r.year}</text>`;
+        });
+        wrap.innerHTML=`
+          <svg viewBox="0 0 ${W} ${H}" class="proj-chart-svg" role="img" aria-label="Enrollment ramp line chart of aligned beneficiaries by performance year" preserveAspectRatio="xMidYMid meet">
+            ${grid}
+            <line x1="${mL}" y1="${mT}" x2="${mL}" y2="${mT+plotH}" class="proj-axis"/>
+            <line x1="${mL}" y1="${mT+plotH}" x2="${W-mR}" y2="${mT+plotH}" class="proj-axis"/>
+            <path d="${areaPath}" class="proj-area"/>
+            <path d="${linePath}" class="proj-line"/>
+            ${marks}
+            ${yLabels}
+            ${xLabels}
+          </svg>`;
+      }
+
+      // Only the outputs (summary + table + chart) are recomputed on edit — the
       // assumption inputs are NOT rebuilt, so focus/caret are never lost.
       function refreshProjOutputs(){
         const cur=currentProjAssumptions(orgValue,tracks,gaps);
         const res=computeProjection(cur,gaps);
+        buildEnrollmentChart(res);
         document.getElementById('proj-summary').innerHTML=`
           <article class="kpi-card"><div class="summary-kicker">Peak aligned panel</div><div class="summary-value">${fmtNum(res.peakEnrolled)}</div></article>
           <article class="kpi-card"><div class="summary-kicker">Cumulative net savings</div><div class="summary-value">${fmtUSD(res.cumSavings)}</div></article>
