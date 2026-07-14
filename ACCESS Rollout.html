@@ -272,6 +272,17 @@
     .proj-line{fill:none;stroke:var(--clay);stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round;}
     .proj-point{fill:var(--surface);stroke:var(--clay);stroke-width:2.5;}
     .proj-point-label{fill:var(--aubergine);font-size:10.5px;font-weight:700;font-family:system-ui,sans-serif;}
+    /* ---- Savings bar chart ---- */
+    .proj-zero-line{stroke:var(--text-muted);stroke-width:1.5;opacity:0.6;}
+    .proj-bar-net{fill:var(--success);}
+    .proj-bar-share{fill:var(--aubergine);opacity:0.75;}
+    .proj-bar-loss{fill:var(--danger);}
+    .proj-legend{display:flex;flex-wrap:wrap;gap:1rem;margin:0.5rem 0 0.2rem;}
+    .proj-legend-item{display:inline-flex;align-items:center;gap:0.4rem;font-size:0.8rem;color:var(--text-muted);font-weight:600;}
+    .proj-swatch{width:13px;height:13px;border-radius:3px;display:inline-block;}
+    .proj-swatch-net{background:var(--success);}
+    .proj-swatch-share{background:var(--aubergine);opacity:0.75;}
+    .proj-swatch-loss{background:var(--danger);}
     .kpi-status-select{padding:0.45rem 0.7rem;border-radius:10px;border:1px solid var(--border-subtle);background:var(--surface);color:var(--text-main);font-size:0.85rem;min-height:38px;}
     .kpi-update-btn{padding:0.45rem 0.85rem;border-radius:10px;border:1px solid var(--clay);background:transparent;color:var(--clay);font-size:0.85rem;font-weight:600;transition:background 160ms ease,color 160ms ease;}
     .kpi-update-btn:hover{background:var(--clay);color:#fff;}
@@ -1311,6 +1322,17 @@
         </article>
 
         <article class="phase-card">
+          <h3>Savings by year</h3>
+          <p class="proj-help">Net savings vs. entity shared-savings share per performance year. Bars below the zero line are net losses during ramp-up.</p>
+          <div class="proj-legend">
+            <span class="proj-legend-item"><span class="proj-swatch proj-swatch-net"></span>Net savings</span>
+            <span class="proj-legend-item"><span class="proj-swatch proj-swatch-share"></span>Entity share</span>
+            <span class="proj-legend-item"><span class="proj-swatch proj-swatch-loss"></span>Net loss</span>
+          </div>
+          <div class="proj-chart-wrap" id="proj-bar-chart"></div>
+        </article>
+
+        <article class="phase-card">
           <h3>Year-by-year projection</h3>
           <div class="proj-table-wrap">
             <table class="proj-table">
@@ -1372,12 +1394,68 @@
           </svg>`;
       }
 
-      // Only the outputs (summary + table + chart) are recomputed on edit — the
+      // Grouped bar chart: net savings vs. entity share per year, with a zero
+      // baseline so early-year net losses render below the axis (in danger red).
+      function buildSavingsChart(res){
+        const wrap=document.getElementById('proj-bar-chart');
+        if(!wrap) return;
+        const rows=res.rows;
+        const W=680, H=280, mL=64, mR=24, mT=18, mB=44;
+        const plotW=W-mL-mR, plotH=H-mT-mB;
+        // Symmetric-ish range around zero using the largest magnitude value.
+        const vals=rows.flatMap(r=>[r.netSavings, r.shared]);
+        const maxV=Math.max(0,...vals), minV=Math.min(0,...vals);
+        const niceUp=v=>{ if(v<=0)return 0; const s=Math.pow(10,Math.floor(Math.log10(v))); return Math.ceil(v/s)*s; };
+        const yTop=niceUp(maxV)||1, yBot=-niceUp(Math.abs(minV));
+        const range=(yTop-yBot)||1;
+        const yFor=v=> mT + plotH - ((v-yBot)/range)*plotH;
+        const zeroY=yFor(0);
+        // Gridlines + y labels (money).
+        const bands=5; let grid='', yLabels='';
+        for(let g=0; g<=bands; g++){
+          const val=yBot+(range*g/bands), y=yFor(val);
+          grid+=`<line x1="${mL}" y1="${y.toFixed(1)}" x2="${W-mR}" y2="${y.toFixed(1)}" class="proj-grid-line"/>`;
+          yLabels+=`<text x="${mL-10}" y="${(y+4).toFixed(1)}" class="proj-axis-label" text-anchor="end">${fmtUSD(val)}</text>`;
+        }
+        const n=rows.length;
+        const slot=plotW/n;              // horizontal space per year
+        const groupW=slot*0.62;          // width used by the two bars
+        const barW=groupW/2*0.82;
+        const gap=groupW/2*0.18;
+        let bars='', xLabels='';
+        rows.forEach((r,i)=>{
+          const cx=mL + slot*i + slot/2;
+          const netX=cx-groupW/2, shareX=cx+gap;
+          // Net savings bar (can be negative -> below zero, danger color).
+          const netY=yFor(Math.max(0,r.netSavings)), netY2=yFor(Math.min(0,r.netSavings));
+          const netH=Math.max(1,Math.abs(netY2-netY));
+          const netCls=r.netSavings<0?'proj-bar-loss':'proj-bar-net';
+          bars+=`<rect x="${netX.toFixed(1)}" y="${Math.min(netY,netY2).toFixed(1)}" width="${barW.toFixed(1)}" height="${netH.toFixed(1)}" rx="2" class="${netCls}"/>`;
+          // Entity share bar (never negative).
+          const shY=yFor(Math.max(0,r.shared));
+          const shH=Math.max(1,Math.abs(zeroY-shY));
+          bars+=`<rect x="${shareX.toFixed(1)}" y="${shY.toFixed(1)}" width="${barW.toFixed(1)}" height="${shH.toFixed(1)}" rx="2" class="proj-bar-share"/>`;
+          xLabels+=`<text x="${cx.toFixed(1)}" y="${(H-mB+20).toFixed(1)}" class="proj-axis-label" text-anchor="middle">PY${r.py}</text>`;
+          xLabels+=`<text x="${cx.toFixed(1)}" y="${(H-mB+34).toFixed(1)}" class="proj-axis-label proj-axis-sub" text-anchor="middle">${r.year}</text>`;
+        });
+        wrap.innerHTML=`
+          <svg viewBox="0 0 ${W} ${H}" class="proj-chart-svg" role="img" aria-label="Grouped bar chart of net savings and entity share by performance year" preserveAspectRatio="xMidYMid meet">
+            ${grid}
+            <line x1="${mL}" y1="${mT}" x2="${mL}" y2="${mT+plotH}" class="proj-axis"/>
+            ${bars}
+            <line x1="${mL}" y1="${zeroY.toFixed(1)}" x2="${W-mR}" y2="${zeroY.toFixed(1)}" class="proj-axis proj-zero-line"/>
+            ${yLabels}
+            ${xLabels}
+          </svg>`;
+      }
+
+      // Only the outputs (summary + table + charts) are recomputed on edit — the
       // assumption inputs are NOT rebuilt, so focus/caret are never lost.
       function refreshProjOutputs(){
         const cur=currentProjAssumptions(orgValue,tracks,gaps);
         const res=computeProjection(cur,gaps);
         buildEnrollmentChart(res);
+        buildSavingsChart(res);
         document.getElementById('proj-summary').innerHTML=`
           <article class="kpi-card"><div class="summary-kicker">Peak aligned panel</div><div class="summary-value">${fmtNum(res.peakEnrolled)}</div></article>
           <article class="kpi-card"><div class="summary-kicker">Cumulative net savings</div><div class="summary-value">${fmtUSD(res.cumSavings)}</div></article>
