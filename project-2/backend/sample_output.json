@@ -1,0 +1,93 @@
+{
+  "org_value": "aco",
+  "org_label": "ACO / MSSP Participant",
+  "tracks": [
+    "eckm",
+    "bh"
+  ],
+  "track_labels": [
+    "eCKM - Early cardio-kidney-metabolic",
+    "BH - Depression or anxiety"
+  ],
+  "gaps": [
+    "data"
+  ],
+  "gap_labels": [
+    "Data & Analytics"
+  ],
+  "assumptions": {
+    "start_panel": 7080,
+    "steady_panel": 16992,
+    "ramp_speed": 0.9,
+    "pmpy": 13000,
+    "gross_savings_rate": 8,
+    "shared_share": 50,
+    "per_ben_cost": 550
+  },
+  "projection": {
+    "rows": [
+      {
+        "year": 2026,
+        "py": 1,
+        "enrolled": 7080,
+        "gross_savings": 1730352.0,
+        "program_cost": 3894000,
+        "net_savings": -2163648.0,
+        "shared": 0.0
+      },
+      {
+        "year": 2027,
+        "py": 2,
+        "enrolled": 9757,
+        "gross_savings": 4769221.600000001,
+        "program_cost": 5366350,
+        "net_savings": -597128.3999999994,
+        "shared": 0.0
+      },
+      {
+        "year": 2028,
+        "py": 3,
+        "enrolled": 12645,
+        "gross_savings": 9271313.999999998,
+        "program_cost": 6954750,
+        "net_savings": 2316563.999999998,
+        "shared": 1158281.999999999
+      },
+      {
+        "year": 2029,
+        "py": 4,
+        "enrolled": 14798,
+        "gross_savings": 14466524.8,
+        "program_cost": 8138900,
+        "net_savings": 6327624.800000001,
+        "shared": 3163812.4000000004
+      },
+      {
+        "year": 2030,
+        "py": 5,
+        "enrolled": 16003,
+        "gross_savings": 15644532.8,
+        "program_cost": 8801650,
+        "net_savings": 6842882.800000001,
+        "shared": 3421441.4000000004
+      },
+      {
+        "year": 2031,
+        "py": 6,
+        "enrolled": 16571,
+        "gross_savings": 16199809.600000001,
+        "program_cost": 9114050,
+        "net_savings": 7085759.6000000015,
+        "shared": 3542879.8000000007
+      }
+    ],
+    "cum_savings": 19812054.8,
+    "cum_shared": 11286415.600000001,
+    "peak_enrolled": 16571
+  },
+  "narrative": {
+    "engine": "template",
+    "summary": "For ACO / MSSP Participant, the ACCESS projection covers 6 performance years across the clinical track(s): eCKM - Early cardio-kidney-metabolic, BH - Depression or anxiety. Aligned enrollment ramps to a peak of 16,571 beneficiaries. The model projects a net loss during early ramp-up and reaches breakeven in performance year 3 (2028). Over the full horizon the entity accrues $19.81M in cumulative net savings and retains $11.29M as its shared-savings share. 1 unresolved readiness gap(s) (Data & Analytics) are dragging capability maturity, which lowers achievable savings.",
+    "note": "AI path unavailable (RuntimeError); used deterministic fallback."
+  }
+}

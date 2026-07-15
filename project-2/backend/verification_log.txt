@@ -1,0 +1,53 @@
+$ pytest -v
+test_projection.py::test_scenario_a_matches_web_app PASSED               [  5%]
+test_projection.py::test_scenario_b_matches_web_app PASSED               [ 10%]
+test_projection.py::test_enrollment_is_monotonic_and_bounded PASSED      [ 15%]
+test_projection.py::test_loss_then_breakeven_then_profit PASSED          [ 21%]
+test_projection.py::test_gap_drag_reduces_savings PASSED                 [ 26%]
+test_projection.py::test_shared_never_negative PASSED                    [ 31%]
+test_projection.py::test_assumption_override_wins PASSED                 [ 36%]
+test_projection.py::test_fmt_usd[2316564-$2.32M] PASSED                  [ 42%]
+test_projection.py::test_fmt_usd[-2163648--$2.16M] PASSED                [ 47%]
+test_projection.py::test_fmt_usd[513475-$513K] PASSED                    [ 52%]
+test_projection.py::test_fmt_usd[-725000--$725K] PASSED                  [ 57%]
+test_projection.py::test_fmt_usd[550-$550] PASSED                        [ 63%]
+test_projection.py::test_fmt_usd[0-$0] PASSED                            [ 68%]
+test_projection.py::test_health_route PASSED                             [ 73%]
+test_projection.py::test_options_route PASSED                            [ 78%]
+test_projection.py::test_projection_route_ok PASSED                      [ 84%]
+test_projection.py::test_projection_route_rejects_bad_org PASSED         [ 89%]
+test_projection.py::test_projection_route_rejects_bad_track PASSED       [ 94%]
+test_projection.py::test_narrative_route_falls_back_to_template PASSED   [100%]
+======================== 19 passed, 1 warning in 0.28s =========================
+
+$ python demo_run.py --scenario aco
+==============================================================================
+  THE POLICY NEST — ACCESS PROJECTION (demo run)
+==============================================================================
+  Organization : ACO / MSSP Participant
+  Tracks       : eCKM - Early cardio-kidney-metabolic, BH - Depression or anxiety
+  Readiness gaps: Data & Analytics
+------------------------------------------------------------------------------
+  Assumptions (resolved):
+    start panel   7,080   steady panel  16,992   ramp 0.9
+    PMPY $13,000   gross savings 8%   shared share 50%   program cost/ben $550
+------------------------------------------------------------------------------
+   PY  Year   Enrolled        Gross      Program          Net        Share
+  ------------------------------------------------------------------------
+    1  2026      7,080       $1.73M       $3.89M      -$2.16M           $0
+    2  2027      9,757       $4.77M       $5.37M       -$597K           $0
+    3  2028     12,645       $9.27M       $6.95M       $2.32M       $1.16M
+    4  2029     14,798      $14.47M       $8.14M       $6.33M       $3.16M
+    5  2030     16,003      $15.64M       $8.80M       $6.84M       $3.42M
+    6  2031     16,571      $16.20M       $9.11M       $7.09M       $3.54M
+  ------------------------------------------------------------------------
+  Peak aligned panel      : 16,571
+  Cumulative net savings  : $19.81M
+  Cumulative entity share : $11.29M
+==============================================================================
+
+  EXECUTIVE SUMMARY  (engine: template)
+  --------------------------------------------------------------------------
+  For ACO / MSSP Participant, the ACCESS projection covers 6 performance 
+  years across the clinical track(s): eCKM - Early cardio-kidney-metabolic, 
+  BH - Depression or anxiety. Aligned enrollment ramps to a peak of 16,571 

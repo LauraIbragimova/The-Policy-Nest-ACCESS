@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="760" viewBox="0 0 1180 760" font-family="Segoe UI, system-ui, sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#6b6478"/>
+    </marker>
+    <marker id="arrowErr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#8a3040"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1180" height="760" fill="#faf7f2"/>
+  <text x="40" y="46" font-size="26" font-weight="700" fill="#4a2e4f">The Policy Nest — ACCESS Workflow Pipeline (Project 2)</text>
+  <text x="40" y="72" font-size="15" fill="#6b6478">Rule-based backend that models enrollment ramp &amp; shared savings for a VBC entity, with an optional AI executive-summary layer.</text>
+
+  <!-- Stage bands legend -->
+  <g font-size="12" font-weight="700">
+    <rect x="40" y="92" width="14" height="14" rx="3" fill="#4a2e4f"/><text x="60" y="104" fill="#4a2e4f">Input</text>
+    <rect x="120" y="92" width="14" height="14" rx="3" fill="#c96a4a"/><text x="140" y="104" fill="#c96a4a">Processing / Backend</text>
+    <rect x="290" y="92" width="14" height="14" rx="3" fill="#3d6a3f"/><text x="310" y="104" fill="#3d6a3f">Output</text>
+    <rect x="380" y="92" width="14" height="14" rx="3" fill="#8a3040"/><text x="400" y="104" fill="#8a3040">Error / Fallback</text>
+  </g>
+
+  <!-- 1. USER INPUT -->
+  <rect x="40" y="130" width="230" height="120" rx="12" fill="#fff" stroke="#4a2e4f" stroke-width="2"/>
+  <text x="56" y="158" font-size="15" font-weight="700" fill="#4a2e4f">1 · User / Data Input</text>
+  <text x="56" y="182" font-size="12.5" fill="#3a3340">• Organization type (e.g. ACO)</text>
+  <text x="56" y="202" font-size="12.5" fill="#3a3340">• Clinical tracks (eCKM, BH…)</text>
+  <text x="56" y="222" font-size="12.5" fill="#3a3340">• Readiness gaps (data, workforce…)</text>
+  <text x="56" y="242" font-size="12.5" fill="#3a3340">• Optional assumption overrides</text>
+
+  <!-- 2. VALIDATION -->
+  <rect x="330" y="130" width="220" height="120" rx="12" fill="#fff" stroke="#c96a4a" stroke-width="2"/>
+  <text x="346" y="158" font-size="15" font-weight="700" fill="#c96a4a">2 · Validation</text>
+  <text x="346" y="182" font-size="12.5" fill="#3a3340">FastAPI + Pydantic models</text>
+  <text x="346" y="202" font-size="12.5" fill="#3a3340">Check org / track / gap codes</text>
+  <text x="346" y="222" font-size="12.5" fill="#3a3340">Range-check overrides</text>
+  <text x="346" y="242" font-size="12.5" fill="#3a3340">(app.py)</text>
+
+  <!-- 3. ASSUMPTIONS -->
+  <rect x="610" y="130" width="220" height="120" rx="12" fill="#fff" stroke="#c96a4a" stroke-width="2"/>
+  <text x="626" y="158" font-size="15" font-weight="700" fill="#c96a4a">3 · Resolve Assumptions</text>
+  <text x="626" y="182" font-size="12.5" fill="#3a3340">Org base panel × track factor</text>
+  <text x="626" y="202" font-size="12.5" fill="#3a3340">Merge user overrides on defaults</text>
+  <text x="626" y="222" font-size="12.5" fill="#3a3340">7 tunable parameters</text>
+  <text x="626" y="242" font-size="12.5" fill="#3a3340">(projection_engine.py)</text>
+
+  <!-- 4. CORE MODEL -->
+  <rect x="890" y="130" width="250" height="120" rx="12" fill="#fff" stroke="#c96a4a" stroke-width="2"/>
+  <text x="906" y="158" font-size="15" font-weight="700" fill="#c96a4a">4 · Core Projection Model</text>
+  <text x="906" y="182" font-size="12.5" fill="#3a3340">Logistic S-curve enrollment</text>
+  <text x="906" y="202" font-size="12.5" fill="#3a3340">Savings maturity + gap drag</text>
+  <text x="906" y="222" font-size="12.5" fill="#3a3340">Gross - cost - net - share</text>
+  <text x="906" y="242" font-size="12.5" fill="#3a3340">6 performance years (2026–31)</text>
+
+  <!-- 5. OPTIONAL AI -->
+  <rect x="610" y="330" width="250" height="130" rx="12" fill="#f6efe9" stroke="#4a2e4f" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="626" y="358" font-size="15" font-weight="700" fill="#4a2e4f">5 · Optional AI Narrative</text>
+  <text x="626" y="382" font-size="12.5" fill="#3a3340">If OPENAI_API_KEY set:</text>
+  <text x="626" y="402" font-size="12.5" fill="#3a3340">LLM executive summary</text>
+  <text x="626" y="422" font-size="12.5" fill="#3a3340">Else: deterministic template</text>
+  <text x="626" y="442" font-size="12.5" fill="#3a3340">(ai_narrative.py)</text>
+
+  <!-- 6. OUTPUT -->
+  <rect x="890" y="330" width="250" height="130" rx="12" fill="#fff" stroke="#3d6a3f" stroke-width="2"/>
+  <text x="906" y="358" font-size="15" font-weight="700" fill="#3d6a3f">6 · Output / Result</text>
+  <text x="906" y="382" font-size="12.5" fill="#3a3340">JSON: per-year rows + totals</text>
+  <text x="906" y="402" font-size="12.5" fill="#3a3340">Peak panel, cum net, cum share</text>
+  <text x="906" y="422" font-size="12.5" fill="#3a3340">Executive summary text</text>
+  <text x="906" y="442" font-size="12.5" fill="#3a3340">API response, demo table, or UI</text>
+
+  <!-- ERROR / FALLBACK -->
+  <rect x="330" y="330" width="220" height="130" rx="12" fill="#fff" stroke="#8a3040" stroke-width="2"/>
+  <text x="346" y="358" font-size="15" font-weight="700" fill="#8a3040">Error / Fallback</text>
+  <text x="346" y="382" font-size="12.5" fill="#3a3340">Invalid input yields HTTP 422</text>
+  <text x="346" y="402" font-size="12.5" fill="#3a3340">with a clear message</text>
+  <text x="346" y="422" font-size="12.5" fill="#3a3340">AI failure or no key: use</text>
+  <text x="346" y="442" font-size="12.5" fill="#3a3340">template summary (never fails)</text>
+
+  <!-- CONSUMERS -->
+  <rect x="40" y="540" width="1100" height="90" rx="12" fill="#f6efe9" stroke="#e0d8ca" stroke-width="1.5"/>
+  <text x="56" y="568" font-size="15" font-weight="700" fill="#4a2e4f">Verification &amp; Consumers</text>
+  <text x="56" y="592" font-size="12.5" fill="#3a3340">pytest suite (19 tests, incl. cent-for-cent parity with the ACCESS web app)  •  demo_run.py sample run  •  POST /projection &amp; /narrative  •  future planner UI</text>
+  <text x="56" y="614" font-size="12.5" fill="#3a3340">The same engine backs the existing client-side ACCESS Rollout.html tool — this backend re-exposes that exact math as a runnable, testable Python service.</text>
+
+  <!-- Arrows: main flow -->
+  <line x1="270" y1="190" x2="326" y2="190" stroke="#6b6478" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="550" y1="190" x2="606" y2="190" stroke="#6b6478" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="830" y1="190" x2="886" y2="190" stroke="#6b6478" stroke-width="2" marker-end="url(#arrow)"/>
+  <!-- model -> ai (down) -->
+  <line x1="1015" y1="250" x2="1015" y2="300" stroke="#6b6478" stroke-width="2"/>
+  <line x1="1015" y1="300" x2="760" y2="300" stroke="#6b6478" stroke-width="2"/>
+  <line x1="760" y1="300" x2="760" y2="326" stroke="#6b6478" stroke-width="2" marker-end="url(#arrow)"/>
+  <!-- ai -> output -->
+  <line x1="860" y1="395" x2="886" y2="395" stroke="#6b6478" stroke-width="2" marker-end="url(#arrow)"/>
+  <!-- model -> output direct (projection-only path) -->
+  <line x1="1015" y1="250" x2="1015" y2="326" stroke="#6b6478" stroke-width="2" stroke-dasharray="3 3" marker-end="url(#arrow)"/>
+  <text x="1022" y="292" font-size="11" fill="#6b6478">/projection</text>
+  <!-- validation -> error (down) -->
+  <line x1="440" y1="250" x2="440" y2="326" stroke="#8a3040" stroke-width="2" marker-end="url(#arrowErr)"/>
+  <text x="448" y="292" font-size="11" fill="#8a3040">invalid</text>
+</svg>
