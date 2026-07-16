@@ -132,6 +132,9 @@ Interactive API docs are auto-generated at http://127.0.0.1:8000/docs.
 export OPENAI_API_KEY=sk-...       # if unset, the template summary is used automatically
 ```
 
+See **Section 8 (Deployment)** below for hosting the API on a server and configuring
+`OPENAI_API_KEY` there.
+
 ---
 
 ## 5. Sample Output (verification)
@@ -159,16 +162,19 @@ captured run and `backend/sample_output.json` for the raw JSON.
 
 ## 6. What Still Needs to Be Completed for the Final Project
 
-- **Wire the front-end to the backend.** The existing `ACCESS Rollout.html` currently
-  runs the math client-side; the final version will call the `POST /projection` and
-  `POST /narrative` endpoints so a single engine powers everything.
+- **Wire the front-end to the backend.** *(done)* The Projections tab of
+  `ACCESS Rollout.html` now has an optional "Backend API" control: paste a running
+  backend URL to compute via `POST /narrative` and show the executive summary. The
+  built-in client-side math remains the default so the tool still works fully offline,
+  and any API failure falls back to it gracefully.
 - **Persist scenarios server-side** (save/compare multiple rollout plans per user)
   instead of `localStorage` only.
 - **Expand beyond ACCESS** — add parameter sets for other CMS VBC programs (MSSP, etc.),
   which the engine is structured to support.
 - **Harden the AI layer** — prompt tuning, caching, and cost controls for the executive
   summary; potentially add an AI-assisted assumption-suggestion feature.
-- **Deployment** — containerize and host the API; add authentication.
+- **Production deployment** — containerize, add authentication, and restrict CORS to the
+  known front-end origin (see Section 8).
 
 ---
 
@@ -180,3 +186,108 @@ user's rollout choices into a multi-year enrollment-and-savings projection — t
 that runs "behind the scenes." The parity tests guarantee that when the final UI is
 pointed at this backend, users see the same results they see today, now served by a
 runnable, testable, extensible Python service.
+
+---
+
+## 8. Deployment Guide
+
+The front-end (`ACCESS Rollout.html`) is a static file hosted on **GitHub Pages**, which
+**cannot run Python**. So the backend is deployed *separately* and the front-end is
+pointed at its URL. Because the app falls back to its built-in engine when no backend is
+reachable, the hosted site keeps working whether or not the API is running.
+
+### 8.1 Environment variables
+
+| Variable | Required? | Purpose |
+|----------|-----------|---------|
+| `OPENAI_API_KEY` | Optional | Enables the **AI** executive summary at `POST /narrative`. If unset (or the call fails), the endpoint automatically returns the deterministic **template** summary instead — it never hard-fails. |
+| `ACCESS_AI_MODEL` | Optional | Overrides the OpenAI model used for the summary. Defaults to `gpt-4o-mini`. Only relevant when `OPENAI_API_KEY` is set. |
+
+There is no `PORT` environment variable read by the code — the port is set on the start
+command via `--port` (or `-b` for Gunicorn). Most hosts expose a `$PORT` value you pass
+into that flag, e.g. `--port $PORT` (shown in Section 8.4).
+
+Set the key locally:
+```bash
+export OPENAI_API_KEY=sk-...        # macOS / Linux
+setx OPENAI_API_KEY "sk-..."        # Windows (new shell after)
+```
+**Never commit the key.** `backend/.gitignore` already excludes `.env`; keep secrets
+there or in the host's secrets manager (below), not in code.
+
+Optional `backend/.env` for local dev (loaded manually or via your shell):
+```
+OPENAI_API_KEY=sk-...
+```
+
+### 8.2 Run locally (development)
+```bash
+cd project-2/backend
+pip install -r requirements.txt
+export OPENAI_API_KEY=sk-...        # optional — omit to use the template summary
+uvicorn app:app --reload --port 8000
+```
+Verify it is up:
+```bash
+curl http://127.0.0.1:8000/health   # -> {"status":"ok"}
+```
+Then open the front-end (`ACCESS Rollout.html`), go to the **Projections** tab, and paste
+`http://127.0.0.1:8000` into the **Backend API** field. Click **Sync with API** — the
+status should read *"Mode: Live API"* and an executive summary appears. This is the
+simplest way to demo the API live (e.g. for grading).
+
+### 8.3 Run for production (single command)
+```bash
+cd project-2/backend
+pip install -r requirements.txt
+uvicorn app:app --host 0.0.0.0 --port ${PORT:-8000}
+```
+`--host 0.0.0.0` makes it reachable from outside the machine; drop `--reload` in
+production. For heavier load, run under Gunicorn with Uvicorn workers:
+```bash
+pip install gunicorn
+gunicorn -k uvicorn.workers.UvicornWorker -w 2 -b 0.0.0.0:${PORT:-8000} app:app
+```
+
+### 8.4 Deploy to a host (Render / Railway / Fly.io / etc.)
+Any host that runs a Python web process works. General steps:
+1. Point the service at this repo, **root directory `project-2/backend`**.
+2. **Build command:** `pip install -r requirements.txt`
+3. **Start command:** `uvicorn app:app --host 0.0.0.0 --port $PORT`
+4. **Environment variables:** add `OPENAI_API_KEY` in the host's dashboard (optional).
+5. Deploy, then confirm `https://<your-app>.<host>/health` returns `{"status":"ok"}`.
+6. In the deployed front-end's **Backend API** field, paste `https://<your-app>.<host>`
+   and click **Sync with API**.
+
+### 8.5 Deploy with Docker (optional)
+No Dockerfile is committed yet; a minimal one:
+```dockerfile
+FROM python:3.11-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY . .
+EXPOSE 8000
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+```
+```bash
+cd project-2/backend
+docker build -t access-api .
+docker run -p 8000:8000 -e OPENAI_API_KEY=sk-... access-api
+```
+
+### 8.6 CORS note
+The API currently allows all origins (`allow_origins=["*"]` in `app.py`) so the
+front-end can call it from a local file or from GitHub Pages during development. For a
+real production deployment, restrict it to the known front-end origin, e.g.:
+```python
+allow_origins=["https://lauraibragimova.github.io"]
+```
+
+### 8.7 Deployment checklist
+- [ ] `pip install -r requirements.txt` succeeds
+- [ ] `GET /health` returns `{"status":"ok"}`
+- [ ] `POST /projection` returns a projection for a valid payload
+- [ ] `OPENAI_API_KEY` set (AI summary) **or** confirmed the template summary is acceptable
+- [ ] Front-end **Backend API** field points at the deployed URL and syncs successfully
+- [ ] (Production) CORS narrowed to the real front-end origin
