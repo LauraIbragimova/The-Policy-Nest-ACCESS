@@ -110,6 +110,12 @@ The-Policy-Nest-ACCESS/
 
 ---
 
+## Course Project 2 — Workflow Pipeline & Backend
+
+The course **Project 2** deliverable (workflow pipeline design + a runnable Python/FastAPI backend that implements the core enrollment-ramp and shared-savings projection logic, with tests, a demo run, and a pipeline diagram) lives in **[`project-2/`](./project-2)**. See **[`project-2/README.md`](./project-2/README.md)** for the full writeup, setup/run instructions, and verification results.
+
+---
+
 ## About The Policy Nest
 
 The Policy Nest creates digital tools and frameworks that help healthcare organizations implement CMS policy with confidence. This product is part of the ACCESS Implementation Series.

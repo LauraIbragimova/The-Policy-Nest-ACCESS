@@ -5,6 +5,9 @@
 **Course project:** builds directly on our final project topic.
 **Live UI (existing front-end):** https://lauraibragimova.github.io/The-Policy-Nest-ACCESS/
 **Repository:** https://github.com/LauraIbragimova/The-Policy-Nest-ACCESS (this `project-2/` folder)
+**Main project overview:** see the [root README](../README.md) for the full product context, features, and roadmap.
+
+> This folder is the **Project 2** submission. It implements and verifies the backend/workflow engine for the ACCESS Rollout Planner described in the [root README](../README.md).
 
 ---
 
