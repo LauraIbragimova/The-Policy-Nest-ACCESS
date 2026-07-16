@@ -1,13 +1,15 @@
 # ACCESS Rollout Planner
 ### A Policy Nest Digital Product
 
-> AI-powered implementation planning tool for CMS ACCESS Model participants
+> Rule-based implementation planning tool for CMS ACCESS Model participants, with optional AI assistance
 
 ---
 
 ## What It Does
 
-The ACCESS Rollout Planner converts an organization's profile — type, track selection, phase, and readiness gaps — into a structured, phase-by-phase implementation roadmap aligned with CMS ACCESS Model requirements.
+The ACCESS Rollout Planner converts an organization's profile — type, track selection, phase, and readiness gaps — into a structured, phase-by-phase implementation roadmap aligned with CMS ACCESS Model requirements. It also projects enrollment ramp and shared-savings over the performance-year horizon.
+
+The core planning and projection logic is **deterministic and rule-based** — transparent, auditable math a reviewer can reproduce by hand — which matters for a healthcare-finance audience. An **optional AI layer** can generate a plain-English executive summary of the projections; when no AI model is configured, the tool falls back to a deterministic template so it always works.
 
 It is designed for value-based care operations leads, ACO administrators, and healthcare consultants who need to move from CMS guidance to executable action fast.
 
@@ -30,20 +32,23 @@ The CMS ACCESS Model (Advancing Chronic Care with Effective, Scalable Solutions)
 
 ## MVP Features
 
-- [ ] Organization type selector (ACO, FQHC, Health System, Physician Group, Rural Health Clinic)
-- [ ] Track selector (CKM, MSK, BH, Oncology)
-- [ ] Phase selector (Phases 1–5)
-- [ ] Readiness gap flags (5 categories)
-- [ ] AI-generated phase-by-phase rollout plan
-- [ ] Risk registry with gap-prioritized risks surfaced first
-- [ ] Regulatory checkpoint log (12 checkpoints)
-- [ ] KPI tracker (OAT rate, 425-day compliance, alignment volume, withheld payment recovery, co-management billing)
-- [ ] Quality tracker (measure submission, baseline capture, care update transmission)
-- [ ] Work breakdown structure with 40+ tasks across 5 phases
-- [ ] Federal Register live updates panel
-- [ ] Export to text / Print to PDF
-- [ ] Light and dark mode
-- [ ] Mobile responsive
+- [x] Organization type selector (ACO, FQHC, Health System, Physician Group, Rural Health Clinic, Oncology, Digital Health)
+- [x] Track selector (eCKM, CKM, MSK, BH, Oncology)
+- [x] Phase selector (Phases 1–5)
+- [x] Readiness gap flags (5 categories: data, workforce, interoperability, finance, governance)
+- [x] Rule-based phase-by-phase rollout plan
+- [x] Projections tab: enrollment ramp line chart + savings-by-year bar chart
+- [x] Risk registry with gap-prioritized risks surfaced first
+- [x] Regulatory checkpoint log
+- [x] KPI tracker (OAT rate, 425-day compliance, alignment volume, withheld payment recovery, co-management billing)
+- [x] Quality tracker (measure submission, baseline capture, care update transmission)
+- [x] Work breakdown structure across 5 phases
+- [x] Export to text / Print to PDF
+- [x] Federal Register updates panel
+- [x] Light and dark mode
+- [x] Mobile responsive
+- [ ] Optional AI executive-summary of projections (backend built in `project-2/`; UI wiring pending)
+- [ ] Live Federal Register API integration (panel present; live feed pending)
 
 ---
 
@@ -54,7 +59,7 @@ The CMS ACCESS Model (Advancing Chronic Care with Effective, Scalable Solutions)
 | CMS ACCESS Model RFA | Track requirements, eligibility, payment rules |
 | CMS ACCESS Technical FAQ | Billing codes, HIE requirements, device policy |
 | ArentFox Schiff Payment Guidance | OAT thresholds, 425-day deadlines, substitute spend |
-| Federal Register API | Live rulemaking updates surfaced in the app |
+| Federal Register API | Live rulemaking updates (planned) |
 
 ---
 
@@ -62,14 +67,30 @@ The CMS ACCESS Model (Advancing Chronic Care with Effective, Scalable Solutions)
 
 ```
 The-Policy-Nest-ACCESS/
-├── README.md                   ← Project overview
-├── index.html                  ← Main app (single-file, pending approval)
-├── assets/
-│   └── policy-nest-logo.jpg   ← Brand logo
+├── README.md                   ← Project overview (this file)
+├── index.html                  ← Landing page
+├── ACCESS Rollout.html         ← Main app (single-file, self-contained)
+├── style.css                   ← Shared styles
+├── Policy Nest Logo.png        ← Brand logo
+├── THE POLICY NEST.png         ← Brand wordmark
+├── PNL RMVBG.png               ← Brand asset
 ├── data/
-│   └── access-tracks.json     ← Track/condition reference data
-└── notes/
-    └── mvp-scope.md           ← Full product blueprint (WBS, risks, KPIs)
+│   └── access-template.json    ← Track/condition reference data
+├── notes/
+│   ├── mvp-scope.md            ← Full product blueprint (WBS, risks, KPIs)
+│   ├── access-workflow.md      ← Workflow notes
+│   └── update-logic.md         ← Update/logic notes
+└── project-2/                  ← Course Project 2: workflow pipeline + Python backend
+    ├── README.md               ← Project 2 writeup
+    ├── pipeline_diagram.png    ← Workflow pipeline diagram
+    ├── pipeline_diagram.svg
+    └── backend/                ← Runnable FastAPI backend (engine, tests, demo)
+        ├── projection_engine.py
+        ├── app.py
+        ├── ai_narrative.py
+        ├── test_projection.py
+        ├── demo_run.py
+        └── requirements.txt
 ```
 
 ---
@@ -79,10 +100,13 @@ The-Policy-Nest-ACCESS/
 | Phase | Description | Status |
 |-------|-------------|--------|
 | 1 | README + Project Blueprint | ✅ Complete |
-| 2 | App scaffold + design system | ⏳ Pending approval |
-| 3 | Plan generation logic + risk/KPI/quality panels | ⏳ Pending |
-| 4 | Federal Register API integration | ⏳ Pending |
-| 5 | Export, polish, QA | ⏳ Pending |
+| 2 | App scaffold + design system | ✅ Complete |
+| 3 | Plan generation logic + risk/KPI/quality panels | ✅ Complete |
+| 4 | Projections tab (enrollment ramp + savings charts) | ✅ Complete |
+| 5 | Python backend + workflow pipeline (Project 2) | ✅ Complete |
+| 6 | Wire front-end to backend API | ⏳ Pending |
+| 7 | Federal Register API integration | ⏳ Pending |
+| 8 | Optional AI summary in UI, final polish + QA | ⏳ Pending |
 
 ---
 
@@ -94,4 +118,4 @@ The Policy Nest creates digital tools and frameworks that help healthcare organi
 
 ---
 
-*Built with AI assistance. Not legal or clinical advice. Always verify against current CMS guidance.*
+*Built with AI assistance. Core planning and projections are rule-based; any AI-generated summaries are optional and clearly labeled. Not legal or clinical advice. Always verify against current CMS guidance.*
