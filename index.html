@@ -14,105 +14,79 @@
     body { display: flex; flex-direction: column; background-color: #F3EEE6; }
     main { flex: 1; }
 
-    /* ── Banner ── */
+    /* ── Banner (matched to ACCESS Rollout.html) ── */
     .site-banner {
-      background: linear-gradient(
-        to bottom,
-        #4a2e4f 0%,
-        #4a2e4f 50%,
-        #1f4e79 100%
-      );
-      border-bottom: 4px solid #C96A4A;
-      position: relative;
-      /* Top padding tightened to pull brand toward top; bottom padding expanded ~30% for tagline breathing room */
-      padding-top: clamp(var(--space-6), 3vw, var(--space-10));
-      padding-bottom: clamp(var(--space-20), 13vw, var(--space-32));
-      padding-inline: clamp(var(--space-8), 6.5vw, var(--space-20));
-      min-height: 240px;  /* raised from 200px to give the enlarged logo room without clipping */
-    }
-
-    .site-banner::after { display: none; }
-
-    .site-banner__inner {
-      position: relative;
-      z-index: 1;
-      max-width: var(--content-wide);
-      margin-inline: auto;
+      background: linear-gradient(135deg, #1b3a6b 0%, #2a3a7a 30%, #4a2e5a 70%, #4a2e4f 100%);
+      padding: 0 clamp(1.25rem, 4vw, 2.5rem);
       display: flex;
-      align-items: flex-start;
-      justify-content: flex-start;  /* was center — push brand block to the LEFT */
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      min-height: clamp(80px, 10vw, 120px);
+      position: relative;
+    }
+    /* Thin clay accent line along the bottom edge (replaces the 4px solid border) */
+    .site-banner::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #c96a4a 0%, transparent 100%);
+      opacity: 0.7;
     }
 
-    .site-banner__brand {
-      display: flex;
-      align-items: flex-start;
-      gap: var(--space-6);
-      flex-direction: row;
-    }
-
-    /* Logo wrapper pinned to TOP of the brand row (no vertical stretch) */
+    /* Logo — pinned to TOP of the banner (not vertically centered) */
     .site-banner__logo-wrap {
-      align-self: flex-start;   /* was stretch — stop filling the row so the logo can sit at the top */
       display: flex;
       align-items: flex-start;
-      margin-top: var(--space-2);  /* top-only inset (was symmetric padding-block) */
+      align-self: flex-start;
+      margin-top: clamp(8px, 1vw, 14px);
       flex-shrink: 0;
     }
-
-    /* Logo: enlarged but still fits inside the banner (bottom not clipped by border) */
     .site-banner__logo {
-      height: clamp(140px, 14vw, 180px);
+      height: auto;
       width: auto;
-      max-height: 100%;
+      max-height: clamp(60px, 8vw, 100px);
       object-fit: contain;
       display: block;
+      border-radius: 10px;
     }
 
+    /* Title + tagline — left-aligned next to the logo */
     .site-banner__text-block {
       display: flex;
       flex-direction: column;
-      gap: var(--space-3);
-      /* Horizontally center title + tagline in the banner (logo stays at top-left, untouched) */
-      align-items: center;
-      text-align: center;
-      padding-top: var(--space-2);
-      /* Center across the full banner width independent of the logo's position */
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      top: 0;
+      gap: 0.35rem;
+      flex: 1;
+      min-width: 0;
     }
-
     .site-banner__name {
       font-family: var(--font-display);
-      font-size: clamp(2rem, 1.2rem + 3.5vw, 3.6rem);
-      font-weight: 800;
+      font-size: clamp(1.6rem, 3vw + 0.5rem, 3rem);
+      font-weight: 700;
       color: #ffffff;
-      letter-spacing: -0.02em;
-      line-height: 1.0;
-      text-shadow: 0 2px 12px rgba(0,0,0,0.25);
+      letter-spacing: -0.015em;
+      line-height: 1.1;
       white-space: nowrap;
     }
-
     .site-banner__tagline {
       font-family: var(--font-body);
-      font-size: clamp(0.95rem, 0.7rem + 1.2vw, 1.35rem);
+      font-size: clamp(0.875rem, 1vw + 0.2rem, 1.2rem);
       font-weight: 400;
-      color: rgba(194,212,194,0.9);
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      white-space: normal;
-      /* Extra bottom padding creates clear space from the border */
-      padding-bottom: var(--space-4);
-      margin-bottom: 0;
+      color: rgba(194, 210, 195, 0.9);
+      letter-spacing: 0.01em;
+      text-transform: none;
+      max-width: max-content;
     }
 
-    /* Dark mode toggle — absolute top-right */
+    /* Right nav (dark-mode toggle) */
     .site-banner__controls {
-      position: absolute;
-      top: var(--space-4);
-      right: var(--space-5);
-      z-index: 2;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-shrink: 0;
+      flex-wrap: wrap;
+      justify-content: flex-end;
     }
 
     /* ── Hero ── */
@@ -295,23 +269,19 @@
 
   <!-- BANNER -->
   <header class="site-banner" role="banner" aria-label="The Policy Nest">
-    <div class="site-banner__inner">
-      <div class="site-banner__brand">
-        <div class="site-banner__logo-wrap">
-          <img
-            src="./PNL%20RMVBG.png"
-            alt="The Policy Nest logo"
-            class="site-banner__logo"
-            width="220"
-            height="220"
-            loading="eager"
-          />
-        </div>
-        <div class="site-banner__text-block">
-          <span class="site-banner__name">THE POLICY NEST</span>
-          <span class="site-banner__tagline">Powering Value-Based Care Transitions</span>
-        </div>
-      </div>
+    <div class="site-banner__logo-wrap">
+      <img
+        src="./PNL%20RMVBG.png"
+        alt="The Policy Nest logo"
+        class="site-banner__logo"
+        width="120"
+        height="100"
+        loading="eager"
+      />
+    </div>
+    <div class="site-banner__text-block">
+      <span class="site-banner__name">THE POLICY NEST</span>
+      <span class="site-banner__tagline">Powering Value-Based Care Transitions</span>
     </div>
     <div class="site-banner__controls">
       <button class="toggle-dark" data-theme-toggle aria-label="Switch to dark mode" title="Toggle dark mode">
