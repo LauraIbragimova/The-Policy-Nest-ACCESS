@@ -283,6 +283,19 @@
     .proj-swatch-net{background:var(--success);}
     .proj-swatch-share{background:var(--aubergine);opacity:0.75;}
     .proj-swatch-loss{background:var(--danger);}
+    /* ---- Optional backend API controls ---- */
+    .proj-api-row{display:flex;flex-wrap:wrap;align-items:center;gap:0.6rem;margin-top:0.5rem;}
+    .proj-api-url{flex:1 1 260px;min-width:200px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:0.85rem;}
+    .proj-api-status{font-size:0.8rem;font-weight:600;color:var(--text-muted);}
+    .proj-api-status--ok{color:var(--success);}
+    .proj-api-status--warn{color:var(--warning);}
+    .proj-api-status--loading{color:var(--clay);}
+    .proj-narrative{margin-top:0.9rem;padding:0.85rem 1rem;border-radius:12px;background:var(--surface-accent);border:1px solid var(--border-subtle);}
+    .proj-narrative-head{display:flex;align-items:center;gap:0.6rem;margin-bottom:0.35rem;}
+    .proj-narrative-title{font-weight:700;color:var(--aubergine);font-size:0.92rem;}
+    .proj-narrative-badge{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;padding:0.15rem 0.5rem;border-radius:999px;background:var(--surface-soft);color:var(--text-muted);border:1px solid var(--border-subtle);}
+    .proj-narrative-badge--ai{background:var(--aubergine);color:#fff;border-color:var(--aubergine);}
+    .proj-narrative-text{margin:0;font-size:0.9rem;line-height:1.5;color:var(--text-main);}
     .kpi-status-select{padding:0.45rem 0.7rem;border-radius:10px;border:1px solid var(--border-subtle);background:var(--surface);color:var(--text-main);font-size:0.85rem;min-height:38px;}
     .kpi-update-btn{padding:0.45rem 0.85rem;border-radius:10px;border:1px solid var(--clay);background:transparent;color:var(--clay);font-size:0.85rem;font-weight:600;transition:background 160ms ease,color 160ms ease;}
     .kpi-update-btn:hover{background:var(--clay);color:#fff;}
@@ -1316,6 +1329,21 @@
         <div class="kpi-grid proj-summary-grid" id="proj-summary"></div>
 
         <article class="phase-card">
+          <div class="phase-card-header">
+            <div><h3>Backend API (optional)</h3><p>By default the projection runs on the built-in engine, so this tool works offline and on GitHub Pages. Point this at a running ACCESS backend (Project 2) to compute via the API and generate an executive summary. Leave blank to stay fully offline.</p></div>
+          </div>
+          <div class="proj-api-row">
+            <input class="kpi-input proj-api-url" type="text" id="proj-api-url" placeholder="http://127.0.0.1:8000" aria-label="Backend API base URL" autocomplete="off" spellcheck="false">
+            <button class="scorecard-update-btn" id="proj-api-sync" type="button">Sync with API</button>
+            <span class="proj-api-status" id="proj-api-status">Mode: Built-in engine</span>
+          </div>
+          <div class="proj-narrative" id="proj-narrative" hidden>
+            <div class="proj-narrative-head"><span class="proj-narrative-title">Executive summary</span><span class="proj-narrative-badge" id="proj-narrative-badge"></span></div>
+            <p class="proj-narrative-text" id="proj-narrative-text"></p>
+          </div>
+        </article>
+
+        <article class="phase-card">
           <h3>Enrollment ramp</h3>
           <p class="proj-help">Projected aligned beneficiaries by performance year (logistic ramp toward steady state).</p>
           <div class="proj-chart-wrap" id="proj-chart"></div>
@@ -1451,11 +1479,9 @@
 
       // Only the outputs (summary + table + charts) are recomputed on edit — the
       // assumption inputs are NOT rebuilt, so focus/caret are never lost.
-      function refreshProjOutputs(){
-        const cur=currentProjAssumptions(orgValue,tracks,gaps);
-        const res=computeProjection(cur,gaps);
-        buildEnrollmentChart(res);
-        buildSavingsChart(res);
+      // Render the summary cards + year-by-year table from any result object
+      // (shared by the built-in path and the API path).
+      function renderSummaryTable(res){
         document.getElementById('proj-summary').innerHTML=`
           <article class="kpi-card"><div class="summary-kicker">Peak aligned panel</div><div class="summary-value">${fmtNum(res.peakEnrolled)}</div></article>
           <article class="kpi-card"><div class="summary-kicker">Cumulative net savings</div><div class="summary-value">${fmtUSD(res.cumSavings)}</div></article>
@@ -1473,6 +1499,14 @@
           : '';
         note.style.display=gaps&&gaps.length?'block':'none';
       }
+
+      function refreshProjOutputs(){
+        const cur=currentProjAssumptions(orgValue,tracks,gaps);
+        const res=computeProjection(cur,gaps);
+        buildEnrollmentChart(res);
+        buildSavingsChart(res);
+        renderSummaryTable(res);
+      }
       refreshProjOutputs();
 
       // Live recompute on edit; persist values. No panel rebuild = no focus loss.
@@ -1485,6 +1519,11 @@
           else { projectionState.assumptions[key]=num; }
           saveStore();
           refreshProjOutputs();
+          // Editing an assumption reverts to the instant built-in result, so
+          // clear any stale "Live API" status and hide the API summary.
+          const st=document.getElementById('proj-api-status');
+          if(st){ st.textContent='Mode: Built-in engine'; st.className='proj-api-status'; }
+          const nw=document.getElementById('proj-narrative'); if(nw) nw.hidden=true;
         });
       });
       const resetBtn=document.getElementById('proj-reset-assump');
@@ -1493,6 +1532,98 @@
         saveStore();
         renderProjections(orgValue,tracks,gaps); // full rebuild to reset input fields
       });
+
+      // ---- Optional backend API integration -------------------------------
+      // The built-in engine above always drives the charts/table instantly and
+      // works offline. The API is an OPTIONAL, on-demand path: clicking "Sync
+      // with API" recomputes via the Project 2 FastAPI backend and fetches an
+      // executive summary. Any failure falls back silently to the built-in
+      // result, so the live GitHub Pages site never breaks.
+      const apiUrlInput=document.getElementById('proj-api-url');
+      const apiSyncBtn=document.getElementById('proj-api-sync');
+      const apiStatus=document.getElementById('proj-api-status');
+      const narrativeWrap=document.getElementById('proj-narrative');
+      const narrativeText=document.getElementById('proj-narrative-text');
+      const narrativeBadge=document.getElementById('proj-narrative-badge');
+
+      // Restore any saved API URL.
+      if(apiUrlInput) apiUrlInput.value=projectionState.apiUrl||'';
+      apiUrlInput&&apiUrlInput.addEventListener('input',()=>{
+        projectionState.apiUrl=apiUrlInput.value.trim();
+        saveStore();
+      });
+
+      function setApiStatus(text,kind){
+        if(!apiStatus) return;
+        apiStatus.textContent=text;
+        apiStatus.className='proj-api-status'+(kind?' proj-api-status--'+kind:'');
+      }
+
+      // Convert the Python API response (snake_case) back into the app's row
+      // shape (camelCase) so it can reuse the existing chart/table renderers.
+      function apiResultToRes(payload){
+        const p=payload.projection;
+        return {
+          rows:p.rows.map(r=>({
+            year:r.year, py:r.py, enrolled:r.enrolled,
+            grossSavings:r.gross_savings, programCost:r.program_cost,
+            netSavings:r.net_savings, shared:r.shared
+          })),
+          cumSavings:p.cum_savings, cumShared:p.cum_shared, peakEnrolled:p.peak_enrolled
+        };
+      }
+
+      async function syncWithApi(){
+        const base=(apiUrlInput&&apiUrlInput.value.trim())||'';
+        if(!base){ setApiStatus('Enter a backend URL first (e.g. http://127.0.0.1:8000)','warn'); return; }
+        const url=base.replace(/\/+$/,'')+'/narrative';
+        // Map current assumptions (camelCase) -> API override keys (snake_case).
+        const a=currentProjAssumptions(orgValue,tracks,gaps);
+        const body={
+          org_value:orgValue,
+          tracks:Array.from(tracks),
+          gaps:Array.from(gaps),
+          assumptions:{
+            start_panel:a.startPanel, steady_panel:a.steadyPanel, ramp_speed:a.rampSpeed,
+            pmpy:a.pmpy, gross_savings_rate:a.grossSavingsRate, shared_share:a.sharedShare,
+            per_ben_cost:a.perBenCost
+          }
+        };
+        setApiStatus('Contacting API…','loading');
+        if(apiSyncBtn) apiSyncBtn.disabled=true;
+        const ctrl=new AbortController();
+        const timer=setTimeout(()=>ctrl.abort(),8000);
+        try{
+          const resp=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),signal:ctrl.signal});
+          clearTimeout(timer);
+          if(!resp.ok){
+            let detail=''; try{ detail=(await resp.json()).detail||''; }catch(e){}
+            throw new Error('HTTP '+resp.status+(detail?': '+detail:''));
+          }
+          const payload=await resp.json();
+          const res=apiResultToRes(payload);
+          // Redraw charts + summary + table from the API-computed result.
+          buildEnrollmentChart(res); buildSavingsChart(res); renderSummaryTable(res);
+          // Show the executive summary.
+          if(payload.narrative){
+            const eng=payload.narrative.engine==='ai'?'AI-generated':'Template';
+            narrativeBadge.textContent=eng;
+            narrativeBadge.className='proj-narrative-badge'+(payload.narrative.engine==='ai'?' proj-narrative-badge--ai':'');
+            narrativeText.textContent=payload.narrative.summary||'';
+            narrativeWrap.hidden=false;
+          }
+          setApiStatus('Mode: Live API — results from backend','ok');
+        }catch(err){
+          clearTimeout(timer);
+          // Graceful fallback: keep the built-in result on screen.
+          refreshProjOutputs();
+          const msg=err.name==='AbortError'?'timed out':err.message;
+          setApiStatus('API unavailable ('+msg+') — using built-in engine','warn');
+        }finally{
+          if(apiSyncBtn) apiSyncBtn.disabled=false;
+        }
+      }
+      apiSyncBtn&&apiSyncBtn.addEventListener('click',syncWithApi);
     }
 
     function renderFR(tracks,orgValue,gaps){

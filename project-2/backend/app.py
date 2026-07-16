@@ -25,6 +25,7 @@ from __future__ import annotations
 from typing import Any
 
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field, field_validator
 
 import projection_engine as engine
@@ -38,6 +39,18 @@ app = FastAPI(
         "savings for a VBC entity entering the ACCESS program, with an optional "
         "AI executive-summary layer."
     ),
+)
+
+# CORS: the ACCESS front-end (opened as a local file, served from GitHub Pages,
+# or hosted anywhere else) calls this API from the browser. Allowing all origins
+# is appropriate for this open, read-only planning API. Tighten allow_origins to
+# specific domains if the API is ever deployed with sensitive data.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=False,
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["*"],
 )
 
 
