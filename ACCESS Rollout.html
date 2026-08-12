@@ -137,6 +137,13 @@
     .toggle-dark{border-radius:999px;border:1px solid var(--border-subtle);background:var(--surface);padding:0.5rem 0.8rem;color:var(--text-main);min-height:44px;display:inline-flex;gap:0.45rem;align-items:center;}
     .toggle-dark--banner{border-radius:999px;border:1px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.1);padding:0.5rem 0.8rem;color:rgba(255,255,255,0.85);min-height:44px;display:inline-flex;gap:0.45rem;align-items:center;transition:background 160ms ease;}
     .toggle-dark--banner:hover{background:rgba(255,255,255,0.2);color:#fff;}
+    /* Home link pill in the right nav — matches the theme toggle look */
+    .home-link--banner{border-radius:999px;border:1px solid rgba(255,255,255,0.35);background:rgba(255,255,255,0.08);color:#fff;padding:0.4rem 0.75rem;font-size:0.85rem;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:0.35rem;transition:background 160ms ease, border-color 160ms ease;}
+    .home-link--banner:hover,.home-link--banner:focus-visible{background:rgba(255,255,255,0.2);border-color:rgba(255,255,255,0.55);color:#fff;text-decoration:none;outline:none;}
+    /* Clickable logo wrapper — remove default link styling, add subtle hover */
+    .site-banner__logo-link{display:inline-flex;text-decoration:none;border-radius:12px;transition:opacity 160ms ease, transform 160ms ease;}
+    .site-banner__logo-link:hover,.site-banner__logo-link:focus-visible{opacity:0.85;outline:none;}
+    .site-banner__logo-link:focus-visible{box-shadow:0 0 0 2px rgba(255,255,255,0.6);}
     .btn-icon{border-radius:999px;border:1px solid var(--border-subtle);background:var(--surface);padding:0.5rem 0.9rem;color:var(--text-main);min-height:44px;display:inline-flex;gap:0.45rem;align-items:center;font-size:0.9rem;font-weight:600;transition:background 160ms ease,border-color 160ms ease;}
     .btn-icon:hover{background:var(--surface-accent);border-color:var(--clay);}
 
@@ -419,7 +426,16 @@
       .scorecard-header{display:none;}
       .scorecard-row{grid-template-columns:1fr 1fr;row-gap:0.5rem;}
       .scorecard-measure{grid-column:1/-1;}
-      .site-banner__title{white-space:normal;}
+      /* Banner: let it wrap onto two rows on narrow screens so nothing overflows */
+      .site-banner{flex-wrap:wrap;row-gap:0.6rem;padding-top:0.75rem;padding-bottom:0.75rem;}
+      .site-banner__title{white-space:normal;font-size:1.35rem;}
+      .site-banner__tagline{font-size:0.8rem;}
+      .site-banner__text{flex:1 1 auto;min-width:0;}
+      /* Nav drops to a full-width second row and hides the (informational) badge to keep things tight */
+      .site-banner__nav{flex:1 1 100%;justify-content:flex-end;flex-wrap:wrap;gap:0.5rem;}
+      .site-banner__nav .badge--banner{display:none;}
+      .home-link--banner{padding:0.35rem 0.6rem;font-size:0.8rem;}
+      .toggle-dark--banner{padding:0.35rem 0.6rem;font-size:0.8rem;min-height:36px;}
     }
 
     @media print{
@@ -436,14 +452,16 @@
   <header class="site-banner">
     <!-- Fix 1: URL-encoded space so the image actually loads -->
     <div class="site-banner__logo-wrap">
-      <img
-        class="site-banner__logo"
-        src="./PNL%20RMVBG.png"
-        alt="The Policy Nest logo"
-        width="120"
-        height="100"
-        loading="eager"
-      >
+      <a href="./index.html" class="site-banner__logo-link" aria-label="The Policy Nest — back to home">
+        <img
+          class="site-banner__logo"
+          src="./PNL%20RMVBG.png"
+          alt="The Policy Nest logo"
+          width="120"
+          height="100"
+          loading="eager"
+        >
+      </a>
     </div>
 
     <!-- Fix 4: gap between title and tagline bumped to 0.35rem from 0 -->
@@ -453,6 +471,7 @@
     </div>
 
     <nav class="site-banner__nav">
+      <a href="./index.html" class="home-link--banner" aria-label="Back to home">← Home</a>
       <span class="badge--banner">CMS ACCESS Model</span>
       <button class="toggle-dark--banner" id="toggle-dark" aria-label="Switch theme">🌗 Theme</button>
     </nav>
