@@ -676,6 +676,15 @@
   </footer>
 
   <script>
+    // NOTE on trackLibrary[track].quality[].target values: these numeric thresholds
+    // (e.g. BP control >=70%, HbA1c >=65%) are internal planning-estimate placeholders,
+    // NOT published CMS performance targets. The ACCESS RFA states that CMS will publish
+    // per-measure outcome targets "informed by clinical guidelines" and that "precise
+    // numerical targets for improvement and maintenance, and denominator exclusions,
+    // will be specified in a future guidance document" (ACCESS RFA p. 52, fn. 38;
+    // https://www.cms.gov/priorities/innovation/files/access-rfa.pdf). Treat these
+    // targets as readiness-tracking placeholders and replace them once CMS publishes
+    // the actual OAP Measure targets. See the disclaimer rendered in renderQuality().
     const trackLibrary = {
       eckm:{
         label:'eCKM',
@@ -1774,7 +1783,8 @@
 
       let html = `
         <div style="margin-bottom:1rem;">
-          <p style="color:var(--text-muted);font-size:0.9rem;">Enter your current performance value for each measure and set a status. Click <strong>Update</strong> to save. Targets are based on ACCESS model guidance.</p>
+          <p style="color:var(--text-muted);font-size:0.9rem;">Enter your current performance value for each measure and set a status. Click <strong>Update</strong> to save.</p>
+          <p class="proj-disclaimer"><strong>Planning estimate, not a published CMS threshold.</strong> The numeric targets below are internal planning estimates for readiness tracking only. CMS's ACCESS RFA confirms outcome measures by track (e.g., BP, LDL-C, weight, and HbA1c for eCKM/CKM; validated PROMs for MSK; PHQ-9/GAD-7 for BH) but states that precise per-measure numerical targets and denominator exclusions &ldquo;will be specified in a future guidance document.&rdquo; Replace these placeholders once CMS publishes the actual OAP Measure targets.</p>
         </div>`;
 
       let scoreIndex = 0;
@@ -1802,7 +1812,7 @@
                 <span>${q.description}</span>
               </div>
               <div style="text-align:center;">
-                <span class="score-badge not-started" style="font-size:0.8rem;font-weight:600;">${q.target}</span>
+                <span class="score-badge not-started" style="font-size:0.8rem;font-weight:600;" title="Planning estimate &mdash; not a published CMS threshold">${q.target}</span>
               </div>
               <div>
                 <input class="score-input" type="text" placeholder="—" value="${String(savedVal).replace(/"/g,'&quot;')}" id="score-val-${si}" aria-label="Current rate for ${q.measure}">
