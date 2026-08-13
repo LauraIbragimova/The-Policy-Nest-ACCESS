@@ -218,6 +218,20 @@
     .task-copy strong{display:block;margin-bottom:0.15rem;}
     .task-meta{color:var(--text-muted);font-size:0.85rem;}
 
+    /* ---- Track-level intake & measure requirements ---- */
+    .track-intake-card{border:1.5px solid var(--clay);}
+    .track-intake-track{padding:0.85rem 0.9rem;border-radius:14px;background:var(--surface);border:1px solid var(--border-subtle);margin-bottom:0.75rem;}
+    .track-intake-track:last-child{margin-bottom:0;}
+    .track-intake-track h4{margin:0 0 0.3rem;font-size:0.95rem;color:var(--aubergine);}
+    .track-intake-label{color:var(--text-muted);font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.03em;margin:0.6rem 0 0.3rem;}
+    .track-intake-window{color:var(--text-muted);font-size:0.85rem;margin-top:0.15rem;}
+    .track-intake-measures{display:grid;gap:0.4rem;}
+    .track-intake-measure{display:flex;justify-content:space-between;gap:0.75rem;padding:0.5rem 0.65rem;border-radius:10px;background:var(--surface-soft);font-size:0.85rem;}
+    .track-intake-measure .measure-name{font-weight:600;}
+    .track-intake-measure .measure-when{color:var(--text-muted);font-size:0.78rem;white-space:nowrap;text-align:right;}
+    .track-intake-escalation{margin-top:0.6rem;font-size:0.85rem;}
+    .track-intake-exclusive{background:rgba(138,90,0,0.09);border:1px solid rgba(138,90,0,0.22);border-radius:10px;padding:0.5rem 0.7rem;color:var(--warning);font-size:0.83rem;margin-top:0.6rem;}
+
     .two-col{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0.9rem;}
     .risk-grid,.kpi-grid{display:grid;gap:0.85rem;}
 
@@ -628,7 +642,22 @@
           {measure:'Patient education completion',description:'Self-monitoring and lifestyle support education documented',target:'≥90%'}
         ],
         kpiLabel:'eCKM composite outcome rate',
-        frTags:['eCKM','BP/Lipid/Weight/HbA1c thresholds']
+        frTags:['eCKM','BP/Lipid/Weight/HbA1c thresholds'],
+        intake:{
+          eligibility:'Medicare beneficiary with early cardio-kidney-metabolic risk (e.g., hypertension, dyslipidemia, elevated BMI, and/or prediabetes) who does not yet carry a qualifying diabetes, CKD, or ASCVD diagnosis for the CKM track.',
+          mutuallyExclusive:['ckm'],
+          baselineWindow:'Baseline panel collected within 60 days of care period start.',
+          baseline:[
+            {measure:'Blood pressure',source:'Clinical visit or remote monitoring device'},
+            {measure:'Lipid panel',source:'Lab result'},
+            {measure:'Weight',source:'Clinical visit or connected scale'},
+            {measure:'HbA1c',source:'Lab result'}
+          ],
+          followUp:[
+            {measure:'BP, lipids, weight, HbA1c',timing:'Repeat at care period close'}
+          ],
+          escalation:'Escalate to PCP/specialist when BP or HbA1c remain above threshold after the care period, or when new diabetes/CKD/ASCVD diagnosis criteria are met (triggers reassessment for the CKM track).'
+        }
       },
       ckm:{
         label:'CKM',
@@ -641,7 +670,24 @@
           {measure:'Denominator validation accuracy',description:'Condition-specific outcome denominator logic confirmed',target:'100%'}
         ],
         kpiLabel:'CKM outcome attainment rate',
-        frTags:['CKM','eGFR/UACR reporting','CKD/ASCVD']
+        frTags:['CKM','eGFR/UACR reporting','CKD/ASCVD'],
+        intake:{
+          eligibility:'Medicare beneficiary with a qualifying diagnosis of diabetes, chronic kidney disease (CKD), and/or atherosclerotic cardiovascular disease (ASCVD) requiring active kidney-metabolic management.',
+          mutuallyExclusive:['eckm'],
+          baselineWindow:'Baseline panel collected within 60 days of care period start.',
+          baseline:[
+            {measure:'Blood pressure',source:'Clinical visit or remote monitoring device'},
+            {measure:'Lipid panel',source:'Lab result'},
+            {measure:'Weight',source:'Clinical visit or connected scale'},
+            {measure:'HbA1c',source:'Lab result'},
+            {measure:'eGFR',source:'Lab result (where clinically applicable)'},
+            {measure:'UACR',source:'Lab result (where clinically applicable)'}
+          ],
+          followUp:[
+            {measure:'BP, lipids, weight, HbA1c, eGFR, UACR',timing:'Repeat at care period close'}
+          ],
+          escalation:'Escalate to nephrology per protocol on eGFR decline or rising UACR; escalate to PCP/cardiology on uncontrolled BP, lipids, or HbA1c beyond threshold.'
+        }
       },
       msk:{
         label:'MSK',
@@ -654,7 +700,20 @@
           {measure:'Patient engagement rate',description:'% of aligned patients completing initial onboarding',target:'≥80%'}
         ],
         kpiLabel:'MSK PROM improvement rate',
-        frTags:['MSK','PROMs','functional status']
+        frTags:['MSK','PROMs','functional status'],
+        intake:{
+          eligibility:'Medicare beneficiary with a chronic musculoskeletal pain condition affecting function, appropriate for a conservative, technology-supported care pathway.',
+          mutuallyExclusive:[],
+          baselineWindow:'Baseline PROM collected within 60 days of care period start.',
+          baseline:[
+            {measure:'Validated pain intensity PROM',source:'Patient-reported (validated instrument)'},
+            {measure:'Validated functional status PROM',source:'Patient-reported (validated instrument)'}
+          ],
+          followUp:[
+            {measure:'Pain intensity and functional status PROMs',timing:'Repeat at care period close'}
+          ],
+          escalation:'Escalate per clinical protocol for inadequate pain control, worsening function, or red-flag symptoms (e.g., progressive neurologic deficit).'
+        }
       },
       bh:{
         label:'BH',
@@ -667,7 +726,22 @@
           {measure:'Crisis escalation adherence',description:'% of flagged patients with documented escalation per BH protocol',target:'100%'}
         ],
         kpiLabel:'BH symptom improvement rate (PHQ-9/GAD-7)',
-        frTags:['BH','PHQ-9','GAD-7','WHODAS 2.0']
+        frTags:['BH','PHQ-9','GAD-7','WHODAS 2.0'],
+        intake:{
+          eligibility:'Medicare beneficiary with a diagnosed behavioral health condition (e.g., depression and/or anxiety) appropriate for technology-supported behavioral health care.',
+          mutuallyExclusive:[],
+          baselineWindow:'Baseline screen collected within 60 days of care period start.',
+          baseline:[
+            {measure:'PHQ-9 (depression) or GAD-7 (anxiety)',source:'Patient-reported (validated instrument)'},
+            {measure:'WHODAS 2.0 (12-item)',source:'Patient-reported (validated instrument)'}
+          ],
+          followUp:[
+            {measure:'PHQ-9/GAD-7 and WHODAS 2.0',timing:'Repeat at care period close'}
+          ],
+          escalation:'Any positive safety-risk item on screening (e.g., PHQ-9 item 9) triggers immediate clinical escalation and a documented safety plan per BH protocol.'
+        }
+      }
+    };
 
     const phaseLibrary = {
       1:{title:'Readiness Assessment',badge:'Foundation',tasks:[['Confirm Medicare Part B enrollment and active TIN/NPI alignment.','Compliance / Enrollment'],['Designate a physician Clinical Director with clear clinical and compliance authority.','Executive leadership'],['Assess track fit, operational risk, and current technology readiness.','Strategy / Operations']]},
@@ -797,9 +871,56 @@
       `;
     }
 
+    // Track-level intake: qualifying condition, baseline/follow-up measure
+    // requirements, and escalation criteria for each selected clinical track.
+    // Rendered at the top of the Work Plan tab so users see eligibility and
+    // data requirements before working through phase tasks.
+    function renderTrackIntake(tracks){
+      if(!tracks.length) return '';
+      const exclusivePairs=[];
+      tracks.forEach(t=>{
+        (trackLibrary[t].intake.mutuallyExclusive||[]).forEach(other=>{
+          if(tracks.includes(other) && !exclusivePairs.some(p=>p[0]===other&&p[1]===t)){
+            exclusivePairs.push([t,other]);
+          }
+        });
+      });
+      const exclusiveWarning=exclusivePairs.length
+        ? `<p class="track-intake-exclusive">⚠ ${exclusivePairs.map(p=>`${trackLibrary[p[0]].label} and ${trackLibrary[p[1]].label} are mutually exclusive ACCESS tracks`).join('; ')} — a beneficiary may be aligned to only one at a time. Confirm track assignment logic prevents dual enrollment.</p>`
+        : '';
+      const trackCards=tracks.map(t=>{
+        const lib=trackLibrary[t], intake=lib.intake;
+        const baselineRows=intake.baseline.map(b=>`
+          <div class="track-intake-measure"><span class="measure-name">${b.measure}</span><span class="measure-when">${b.source}</span></div>`).join('');
+        const followUpRows=intake.followUp.map(f=>`
+          <div class="track-intake-measure"><span class="measure-name">${f.measure}</span><span class="measure-when">${f.timing}</span></div>`).join('');
+        return `
+          <div class="track-intake-track">
+            <h4>${lib.label} — Qualifying condition</h4>
+            <p class="task-meta">${intake.eligibility}</p>
+            <div class="track-intake-label">Baseline data required</div>
+            <p class="track-intake-window">${intake.baselineWindow}</p>
+            <div class="track-intake-measures">${baselineRows}</div>
+            <div class="track-intake-label">Follow-up data required</div>
+            <div class="track-intake-measures">${followUpRows}</div>
+            <p class="track-intake-escalation"><strong>Escalation:</strong> ${intake.escalation}</p>
+          </div>`;
+      }).join('');
+      return `
+        <article class="phase-card track-intake-card">
+          <div class="phase-card-header">
+            <div><h3>Track-level intake &amp; measure requirements</h3><p class="task-meta">Qualifying condition, baseline/follow-up data, and escalation criteria for each selected ACCESS track.</p></div>
+            <span class="phase-badge">${tracks.length} track${tracks.length>1?'s':''} selected</span>
+          </div>
+          ${exclusiveWarning}
+          ${trackCards}
+        </article>`;
+    }
+
     function renderWorkplan(phases,tracks,gaps){
       const container=document.getElementById('panel-workplan');
-      container.innerHTML=phases.map(key=>{
+      const trackIntakeHtml=renderTrackIntake(tracks);
+      container.innerHTML=trackIntakeHtml+phases.map(key=>{
         const phase=phaseLibrary[key];
         const trackNotes=tracks.length
           ?`<p><strong>Track focus:</strong> ${tracks.map(t=>`${trackLibrary[t].label}: ${trackLibrary[t].outcomes}`).join(' ')}</p>`
