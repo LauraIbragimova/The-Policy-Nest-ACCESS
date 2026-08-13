@@ -699,8 +699,13 @@
         kpiLabel:'eCKM composite outcome rate',
         frTags:['eCKM','BP/Lipid/Weight/HbA1c thresholds'],
         intake:{
-          eligibility:'Medicare beneficiary with early cardio-kidney-metabolic risk (e.g., hypertension, dyslipidemia, elevated BMI, and/or prediabetes) who does not yet carry a qualifying diabetes, CKD, or ASCVD diagnosis for the CKM track.',
+          eligibility:'Medicare beneficiary with hypertension, or two or more of: dyslipidemia; obesity or overweight with a marker of central obesity; prediabetes \u2014 who does not yet carry a qualifying diabetes, CKD, or ASCVD diagnosis for the CKM track.',
           mutuallyExclusive:['ckm'],
+          clinicalNotes:[
+            'Obesity is defined as BMI \u226530; overweight is BMI 25\u201329.99 plus waist circumference greater than 40 in (102 cm) for men or 35 in (88 cm) for women.',
+            'A beneficiary already aligned to eCKM may switch to CKM immediately \u2014 the standard 3-month track lock-in does not apply in that circumstance.'
+          ],
+          clinicalNotesBasis:'ACCESS RFA pp. 9, 16',
           baselineWindow:'Baseline panel collected within 60 days of care period start.',
           baseline:[
             {measure:'Blood pressure',source:'Clinical visit or remote monitoring device'},
@@ -727,8 +732,12 @@
         kpiLabel:'CKM outcome attainment rate',
         frTags:['CKM','eGFR/UACR reporting','CKD/ASCVD'],
         intake:{
-          eligibility:'Medicare beneficiary with a qualifying diagnosis of diabetes, chronic kidney disease (CKD), and/or atherosclerotic cardiovascular disease (ASCVD) requiring active kidney-metabolic management.',
+          eligibility:'Medicare beneficiary with a qualifying diagnosis of diabetes mellitus, chronic kidney disease (CKD) stage 3a or 3b, and/or atherosclerotic cardiovascular disease (ASCVD) requiring active kidney-metabolic management.',
           mutuallyExclusive:['eckm'],
+          clinicalNotes:[
+            'CKD stage 4 or 5, or ESRD/dialysis, is an explicit clinical exclusion from the CKM track \u2014 confirm staging before alignment.'
+          ],
+          clinicalNotesBasis:'ACCESS RFA pp. 16, 41, 58',
           baselineWindow:'Baseline panel collected within 60 days of care period start.',
           baseline:[
             {measure:'Blood pressure',source:'Clinical visit or remote monitoring device'},
@@ -759,6 +768,10 @@
         intake:{
           eligibility:'Medicare beneficiary with a chronic musculoskeletal pain condition affecting function, appropriate for a conservative, technology-supported care pathway.',
           mutuallyExclusive:[],
+          clinicalNotes:[
+            '\u201cChronic\u201d musculoskeletal pain is defined as pain lasting more than three months; musculoskeletal disorders broadly include conditions affecting bones, joints, muscles, and connective tissues.'
+          ],
+          clinicalNotesBasis:'ACCESS RFA pp. 9, 16',
           baselineWindow:'Baseline PROM collected within 60 days of care period start.',
           baseline:[
             {measure:'Validated pain intensity PROM',source:'Patient-reported (validated instrument)'},
@@ -785,6 +798,10 @@
         intake:{
           eligibility:'Medicare beneficiary with a diagnosed behavioral health condition (e.g., depression and/or anxiety) appropriate for technology-supported behavioral health care.',
           mutuallyExclusive:[],
+          clinicalNotes:[
+            'Beneficiaries enrolled in a Certified Community Behavioral Health Clinic (CCBHC) program are excluded from the BH track \u2014 confirm CCBHC enrollment status before alignment.'
+          ],
+          clinicalNotesBasis:'ACCESS RFA p. 41',
           baselineWindow:'Baseline screen collected within 60 days of care period start.',
           baseline:[
             {measure:'PHQ-9 (depression) or GAD-7 (anxiety)',source:'Patient-reported (validated instrument)'},
@@ -1031,10 +1048,17 @@
           <div class="track-intake-measure"><span class="measure-name">${b.measure}</span><span class="measure-when">${b.source}</span></div>`).join('');
         const followUpRows=intake.followUp.map(f=>`
           <div class="track-intake-measure"><span class="measure-name">${f.measure}</span><span class="measure-when">${f.timing}</span></div>`).join('');
+        const clinicalNotesHtml=(intake.clinicalNotes&&intake.clinicalNotes.length)
+          ? `<div class="track-intake-exclusive">⚠ <strong>Clinical definitions &amp; exclusions:</strong>
+              <ul style="margin:0.3rem 0 0;padding-left:1.1rem;">${intake.clinicalNotes.map(n=>`<li>${n}</li>`).join('')}</ul>
+              ${intake.clinicalNotesBasis?`<span style="display:block;margin-top:0.35rem;opacity:0.75;font-size:0.78rem;">Source: ${intake.clinicalNotesBasis}</span>`:''}
+            </div>`
+          : '';
         return `
           <div class="track-intake-track">
             <h4>${lib.label} — Qualifying condition</h4>
             <p class="task-meta">${intake.eligibility}</p>
+            ${clinicalNotesHtml}
             <div class="track-intake-label">Baseline data required</div>
             <p class="track-intake-window">${intake.baselineWindow}</p>
             <div class="track-intake-measures">${baselineRows}</div>
