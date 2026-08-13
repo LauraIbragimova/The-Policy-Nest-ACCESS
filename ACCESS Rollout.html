@@ -191,7 +191,7 @@
     .progress-bar{width:100%;height:10px;border-radius:999px;background:var(--surface-soft);overflow:hidden;}
     .progress-bar-fill{height:100%;width:0;background:linear-gradient(90deg,var(--clay),var(--sage),var(--azure));transition:width 520ms cubic-bezier(0.16,1,0.3,1);}
 
-    .tabs-bar{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:0.55rem;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid var(--border-subtle);}
+    .tabs-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:0.55rem;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid var(--border-subtle);}
     .tab-btn{border:1px solid var(--border-subtle);background:var(--surface-soft);color:var(--text-muted);border-radius:999px;min-height:44px;padding:0.55rem 0.75rem;font-weight:600;font-size:0.85rem;}
     .tab-btn.active{color:var(--aubergine);border-color:var(--clay);background:var(--surface-accent);}
 
@@ -375,6 +375,31 @@
     .regcheck-in-progress{border-left-color:var(--warning);background:rgba(138,90,0,0.04);}
     .regcheck-complete{border-left-color:var(--success);background:rgba(61,106,63,0.05);}
     .regcheck-complete .regcheck-body strong{text-decoration:line-through;text-decoration-color:var(--success);text-decoration-thickness:1.5px;}
+
+    /* ── ELIGIBILITY, PRACTITIONER ROSTER & PROGRAM INTEGRITY ────────────── */
+    .elig-category-head{display:flex;align-items:center;gap:0.5rem;margin:1.1rem 0 0.55rem;font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.03em;color:var(--text-muted);}
+    .elig-category-head:first-child{margin-top:0;}
+    .elig-category-badge{background:rgba(74,46,79,0.1);color:var(--aubergine);border-radius:999px;padding:0.15rem 0.6rem;font-size:0.72rem;}
+    .roster-table-wrap{overflow-x:auto;margin-top:0.5rem;}
+    table.roster-table{width:100%;border-collapse:collapse;font-size:0.85rem;min-width:900px;}
+    table.roster-table th:nth-child(1),table.roster-table td:nth-child(1){min-width:170px;}
+    table.roster-table th:nth-child(2),table.roster-table td:nth-child(2){min-width:180px;}
+    table.roster-table th:nth-child(3),table.roster-table td:nth-child(3){min-width:130px;}
+    table.roster-table th{text-align:left;color:var(--text-muted);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.02em;font-weight:700;padding:0.4rem 0.5rem;border-bottom:1px solid var(--border-subtle);}
+    table.roster-table td{padding:0.4rem 0.5rem;border-bottom:1px solid var(--border-subtle);vertical-align:middle;}
+    table.roster-table input[type=text],table.roster-table select{width:100%;font:inherit;padding:0.35rem 0.45rem;border-radius:8px;border:1px solid var(--border-subtle);background:var(--surface);color:var(--text-main);}
+    .roster-remove-btn{border:1px solid var(--border-subtle);background:var(--surface);color:var(--danger);border-radius:8px;padding:0.3rem 0.55rem;font-size:0.78rem;cursor:pointer;}
+    .roster-remove-btn:hover{background:rgba(138,48,64,0.08);}
+    .roster-add-btn{margin-top:0.65rem;cursor:pointer;}
+    .roster-add-btn:hover{background:var(--surface-accent);}
+    .roster-empty{color:var(--text-muted);font-size:0.85rem;padding:0.5rem 0.1rem;}
+    .pi-screening-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:0.75rem;margin-top:0.5rem;}
+    .pi-screening-field label{display:block;font-size:0.78rem;color:var(--text-muted);margin-bottom:0.25rem;}
+    .pi-screening-field input{width:100%;font:inherit;padding:0.45rem 0.6rem;border-radius:8px;border:1px solid var(--border-subtle);background:var(--surface);color:var(--text-main);}
+    .pi-status-pill{display:inline-block;margin-top:0.6rem;border-radius:999px;padding:0.25rem 0.65rem;font-size:0.78rem;font-weight:700;}
+    .pi-status-ok{background:rgba(61,106,63,0.1);color:var(--success);}
+    .pi-status-due{background:rgba(138,90,0,0.1);color:var(--warning);}
+    .pi-status-overdue{background:rgba(138,48,64,0.12);color:var(--danger);}
 
     /* ── LIVE FEDERAL REGISTER UPDATES ───────────────────────────────────── */
     .fr-live-header{display:flex;align-items:center;justify-content:space-between;gap:0.75rem;flex-wrap:wrap;margin-bottom:0.75rem;}
@@ -604,6 +629,7 @@
           <div class="tabs-bar" id="tabs-bar">
             <button class="tab-btn active" data-tab="workplan">Work Plan</button>
             <button class="tab-btn" data-tab="regcheck">Reg. Checkpoints</button>
+            <button class="tab-btn" data-tab="eligibility">Eligibility</button>
             <button class="tab-btn" data-tab="risk">Risk Registry</button>
             <button class="tab-btn" data-tab="kpi">KPI Tracker</button>
             <button class="tab-btn" data-tab="quality">Quality</button>
@@ -613,6 +639,7 @@
 
           <div id="panel-workplan" class="tab-panel active"></div>
           <div id="panel-regcheck" class="tab-panel"></div>
+          <div id="panel-eligibility" class="tab-panel"></div>
           <div id="panel-risk" class="tab-panel"></div>
           <div id="panel-kpi" class="tab-panel"></div>
           <div id="panel-quality" class="tab-panel"></div>
@@ -795,6 +822,27 @@
       {n:11, checkpoint:'425-day deadline calendar confirmed',                         basis:'ACCESS Payment Guidance',                  phase:4, owner:'Compliance Officer'},
       {n:12, checkpoint:'Pre-reconciliation billing audit complete',                   basis:'ACCESS Payment Guidance',                  phase:5, owner:'Billing / Compliance'}
     ];
+
+    // Formal eligibility, practitioner-roster, and program-integrity checklist.
+    // Distinct from regCheckpoints above (which tracks broader program
+    // checkpoints) — this covers the specific participation, roster
+    // maintenance, and OIG/SAM/preclusion screening obligations.
+    const eligibilityChecklist = [
+      {n:1,  category:'Eligibility', item:'Confirm organization TIN has active Medicare Part B enrollment eligible under the Medicare Physician Fee Schedule', basis:'42 CFR § 424.505', when:'Phase 1', owner:'Compliance / Enrollment'},
+      {n:2,  category:'Eligibility', item:'Confirm organization type is not excluded from direct ACCESS participation (e.g., DME supplier, independent lab, or other excluded entity type)', basis:'ACCESS RFA — Eligible Entities', when:'Phase 1', owner:'Legal / Compliance'},
+      {n:3,  category:'Eligibility', item:'Document Clinical/Medical Director accountability charter covering clinical oversight, safety, outcomes, and compliance', basis:'ACCESS RFA § 4.2', when:'Phase 1', owner:'Executive leadership'},
+      {n:4,  category:'Eligibility', item:'Document beneficiary alignment/attribution methodology and minimum panel thresholds for each selected track', basis:'ACCESS Payment Guidance', when:'Phase 1', owner:'Analytics / Clinical ops'},
+      {n:5,  category:'Practitioner Roster', item:'Build and maintain a complete CMS practitioner roster (name, NPI, role) for all furnishing/supervising practitioners', basis:'ACCESS FAQ — Practitioner Roster', when:'Phase 1', owner:'Compliance / Enrollment'},
+      {n:6,  category:'Practitioner Roster', item:'Confirm reassignment of Medicare benefits to the participating TIN for every roster practitioner', basis:'42 CFR § 424.80', when:'Phase 1', owner:'Compliance / Enrollment'},
+      {n:7,  category:'Practitioner Roster', item:'Validate licensure and scope-of-practice for each roster practitioner against track-specific care-delivery requirements', basis:'State licensing board / ACCESS FAQ', when:'Phase 1', owner:'Clinical / Regulatory'},
+      {n:8,  category:'Practitioner Roster', item:'Establish a recurring roster refresh cadence and change-management process for practitioner additions, departures, and role changes', basis:'ACCESS FAQ — Practitioner Roster', when:'Ongoing', owner:'Compliance / Enrollment'},
+      {n:9,  category:'Program Integrity', item:'Screen organization and all roster practitioners against the OIG List of Excluded Individuals/Entities (LEIE)', basis:'42 CFR § 1001.1901', when:'Phase 1', owner:'Compliance Officer'},
+      {n:10, category:'Program Integrity', item:'Screen organization and all roster practitioners against the CMS Preclusion List and SAM.gov exclusions', basis:'42 CFR § 422.222 / § 423.120', when:'Phase 1', owner:'Compliance Officer'},
+      {n:11, category:'Program Integrity', item:'Document any historical program-integrity actions, corrective action plans, or Corporate Integrity Agreements (CIAs) and remediation status', basis:'OIG CIA guidance', when:'Phase 1', owner:'Compliance Officer'},
+      {n:12, category:'Program Integrity', item:'Establish an ongoing monthly re-screening cadence for OIG / SAM / Preclusion checks across the organization and roster', basis:'ACCESS Program Integrity Guidance', when:'Ongoing', owner:'Compliance Officer'},
+      {n:13, category:'Program Integrity', item:'Designate a named Compliance Officer of record accountable for program-integrity attestations', basis:'ACCESS RFA — Program Integrity', when:'Phase 1', owner:'Executive leadership'}
+    ];
+    const ELIG_CATEGORIES = ['Eligibility','Practitioner Roster','Program Integrity'];
 
     const selectedTracks=new Set();
     const selectedPhases=new Set(['1','2','3']);
@@ -1022,13 +1070,21 @@
       try{
         localStorage.setItem(STORE_KEY, JSON.stringify({
           intake: persisted.intake || null,
-          regCheckState, riskState, kpiState, qualityState, projectionState
+          regCheckState, riskState, kpiState, qualityState, projectionState,
+          eligCheckState, rosterState, piScreeningState
         }));
       }catch(e){ /* storage unavailable (private mode / quota) — fail silently */ }
     }
 
     // Persist checkpoint status across tab switches, re-renders, and reloads.
     const regCheckState = Object.assign({}, persisted.regCheckState);
+    // Eligibility/roster/program-integrity checklist status, keyed by item number.
+    const eligCheckState = Object.assign({}, persisted.eligCheckState);
+    // Practitioner roster rows. No beneficiary/PHI fields — provider/practitioner
+    // roster data only (name, NPI, role, enrollment/reassignment/licensure flags).
+    let rosterState = Array.isArray(persisted.rosterState) ? persisted.rosterState : [];
+    // Program-integrity screening log: last screened date + compliance officer of record.
+    const piScreeningState = Object.assign({lastScreened:'', complianceOfficer:''}, persisted.piScreeningState);
     // KPI edits keyed by metric label; quality edits keyed by measure text (stable across re-renders).
     const kpiState = Object.assign({}, persisted.kpiState);
     const qualityState = Object.assign({}, persisted.qualityState);
@@ -1046,6 +1102,162 @@
         const done = Object.values(regCheckState).filter(v => v === 'complete').length;
         countEl.textContent = done + '/12 complete';
       }
+    }
+
+    function updateEligCheck(n){
+      const sel = document.getElementById('elig-sel-'+n);
+      if(!sel) return;
+      eligCheckState[n] = sel.value;
+      saveStore();
+      const row = document.getElementById('elig-row-'+n);
+      if(row){ row.className = 'regcheck-row regcheck-'+sel.value; }
+      const countEl = document.getElementById('elig-count');
+      if(countEl){
+        const done = Object.values(eligCheckState).filter(v => v === 'complete').length;
+        countEl.textContent = done + '/' + eligibilityChecklist.length + ' complete';
+      }
+    }
+
+    // ---- Practitioner roster: dynamic add/remove rows, no beneficiary/PHI fields ----
+    function addRosterRow(){
+      rosterState.push({name:'', role:'', npi:'', enrolled:'pending', reassigned:'pending', licensure:'pending'});
+      saveStore();
+      renderEligibility();
+    }
+    function removeRosterRow(idx){
+      rosterState.splice(idx,1);
+      saveStore();
+      renderEligibility();
+    }
+    function updateRosterField(idx, field, value){
+      if(!rosterState[idx]) return;
+      rosterState[idx][field] = value;
+      saveStore();
+    }
+    function updatePiScreening(field){
+      const el = document.getElementById('pi-'+field);
+      if(!el) return;
+      piScreeningState[field] = el.value;
+      saveStore();
+      renderEligibility();
+    }
+
+    function renderEligibility(){
+      const panel = document.getElementById('panel-eligibility');
+      if(!panel) return;
+
+      const completed = eligibilityChecklist.filter(c => eligCheckState[c.n] === 'complete').length;
+      const checklistRows = ELIG_CATEGORIES.map(cat => {
+        const items = eligibilityChecklist.filter(c => c.category === cat);
+        const rows = items.map(c => {
+          const state = eligCheckState[c.n] || 'not-started';
+          return `
+            <div class="regcheck-row regcheck-${state}" id="elig-row-${c.n}">
+              <div class="regcheck-num">${c.n}</div>
+              <div class="regcheck-body">
+                <strong>${c.item}</strong>
+                <div class="regcheck-meta">
+                  <span class="regcheck-basis" title="Regulatory basis">${c.basis}</span>
+                  <span class="regcheck-phase">${c.when}</span>
+                  <span class="regcheck-owner">Owner: ${c.owner}</span>
+                </div>
+              </div>
+              <div class="regcheck-status-wrap">
+                <select class="regcheck-status-select" id="elig-sel-${c.n}" aria-label="Status for ${c.item}" onchange="updateEligCheck(${c.n})">
+                  <option value="not-started"${state==='not-started'?' selected':''}>Not Started</option>
+                  <option value="in-progress"${state==='in-progress'?' selected':''}>In Progress</option>
+                  <option value="complete"${state==='complete'?' selected':''}>Complete</option>
+                </select>
+              </div>
+            </div>`;
+        }).join('');
+        return `<div class="elig-category-head">${cat} <span class="elig-category-badge">${items.length} item${items.length>1?'s':''}</span></div>${rows}`;
+      }).join('');
+
+      const rosterRows = rosterState.map((r,idx) => `
+        <tr>
+          <td><input type="text" value="${(r.name||'').replace(/"/g,'&quot;')}" placeholder="Practitioner name" oninput="updateRosterField(${idx},'name',this.value)"></td>
+          <td><input type="text" value="${(r.role||'').replace(/"/g,'&quot;')}" placeholder="e.g. Clinical Director, NP" oninput="updateRosterField(${idx},'role',this.value)"></td>
+          <td><input type="text" value="${(r.npi||'').replace(/"/g,'&quot;')}" placeholder="10-digit NPI" oninput="updateRosterField(${idx},'npi',this.value)"></td>
+          <td><select onchange="updateRosterField(${idx},'enrolled',this.value)">
+            <option value="pending"${r.enrolled==='pending'?' selected':''}>Pending</option>
+            <option value="yes"${r.enrolled==='yes'?' selected':''}>Yes</option>
+            <option value="no"${r.enrolled==='no'?' selected':''}>No</option>
+          </select></td>
+          <td><select onchange="updateRosterField(${idx},'reassigned',this.value)">
+            <option value="pending"${r.reassigned==='pending'?' selected':''}>Pending</option>
+            <option value="yes"${r.reassigned==='yes'?' selected':''}>Yes</option>
+            <option value="no"${r.reassigned==='no'?' selected':''}>No</option>
+          </select></td>
+          <td><select onchange="updateRosterField(${idx},'licensure',this.value)">
+            <option value="pending"${r.licensure==='pending'?' selected':''}>Pending</option>
+            <option value="yes"${r.licensure==='yes'?' selected':''}>Yes</option>
+            <option value="no"${r.licensure==='no'?' selected':''}>No</option>
+          </select></td>
+          <td><button type="button" class="roster-remove-btn" onclick="removeRosterRow(${idx})">Remove</button></td>
+        </tr>`).join('');
+
+      let piBadge = '';
+      if(piScreeningState.lastScreened){
+        const last = new Date(piScreeningState.lastScreened);
+        const daysSince = Math.floor((Date.now() - last.getTime())/86400000);
+        if(daysSince <= 30) piBadge = `<span class="pi-status-pill pi-status-ok">Screened ${daysSince} day${daysSince===1?'':'s'} ago · next screening due within ${30-daysSince} day${(30-daysSince)===1?'':'s'}</span>`;
+        else if(daysSince <= 45) piBadge = `<span class="pi-status-pill pi-status-due">Screening due — last screened ${daysSince} days ago (monthly cadence)</span>`;
+        else piBadge = `<span class="pi-status-pill pi-status-overdue">Screening overdue — last screened ${daysSince} days ago</span>`;
+      } else {
+        piBadge = `<span class="pi-status-pill pi-status-due">No screening date on file yet</span>`;
+      }
+
+      panel.innerHTML = `
+        <article class="phase-card">
+          <div class="phase-card-header">
+            <div>
+              <h3>Eligibility, roster &amp; program-integrity checklist</h3>
+              <p style="margin:0.2rem 0 0;color:var(--text-muted);font-size:0.85rem;">${eligibilityChecklist.length} items across Eligibility, Practitioner Roster, and Program Integrity. Set each to Not Started, In Progress, or Complete.</p>
+            </div>
+            <span class="phase-badge" id="elig-count">${completed}/${eligibilityChecklist.length} complete</span>
+          </div>
+          <div class="regcheck-list">
+            ${checklistRows}
+          </div>
+        </article>
+
+        <article class="phase-card">
+          <div class="phase-card-header">
+            <div>
+              <h3>Practitioner roster</h3>
+              <p style="margin:0.2rem 0 0;color:var(--text-muted);font-size:0.85rem;">Name, NPI, and enrollment/reassignment/licensure status for every furnishing or supervising practitioner. Provider data only — no beneficiary information is stored here.</p>
+            </div>
+            <span class="phase-badge">${rosterState.length} practitioner${rosterState.length===1?'':'s'}</span>
+          </div>
+          <div class="roster-table-wrap">
+            <table class="roster-table">
+              <thead><tr><th>Name</th><th>Role</th><th>NPI</th><th>Medicare enrolled</th><th>Reassigned to TIN</th><th>Licensure/scope validated</th><th></th></tr></thead>
+              <tbody>${rosterRows || '<tr><td colspan="7" class="roster-empty">No practitioners added yet. Click “Add practitioner” to start the roster.</td></tr>'}</tbody>
+            </table>
+          </div>
+          <button type="button" class="btn-icon roster-add-btn" onclick="addRosterRow()">+ Add practitioner</button>
+        </article>
+
+        <article class="phase-card">
+          <div class="phase-card-header">
+            <div>
+              <h3>Program-integrity screening log</h3>
+              <p style="margin:0.2rem 0 0;color:var(--text-muted);font-size:0.85rem;">Track the most recent OIG/SAM/Preclusion screening date and the named compliance officer of record. Recommended cadence: monthly.</p>
+            </div>
+          </div>
+          <div class="pi-screening-grid">
+            <div class="pi-screening-field">
+              <label for="pi-lastScreened">Last OIG / SAM / Preclusion screening date</label>
+              <input type="date" id="pi-lastScreened" value="${piScreeningState.lastScreened||''}" onchange="updatePiScreening('lastScreened')">
+            </div>
+            <div class="pi-screening-field">
+              <label for="pi-complianceOfficer">Compliance officer of record</label>
+              <input type="text" id="pi-complianceOfficer" value="${(piScreeningState.complianceOfficer||'').replace(/"/g,'&quot;')}" placeholder="Name / title" onchange="updatePiScreening('complianceOfficer')">
+            </div>
+          </div>
+          ${piBadge}
+        </article>`;
     }
 
     // 15-risk registry, each scored on Likelihood x Impact (High/Medium/Low).
@@ -1972,6 +2184,7 @@
       renderSummary(orgValue,tracks,gapsArr);
       renderWorkplan(phases,tracks,gapsArr);
       renderRegCheck(tracks);
+      renderEligibility();
       renderRisk(gaps,orgValue);
       renderKpi(tracks);
       renderQuality(tracks);
