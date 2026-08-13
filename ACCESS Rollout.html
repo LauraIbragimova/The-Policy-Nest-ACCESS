@@ -868,7 +868,7 @@
       {n:6,  checkpoint:'Cost-sharing election documented (uniform policy)',           basis:'ACCESS RFA — Beneficiary Policy',          phase:1, owner:'Billing / Compliance'},
       {n:7,  checkpoint:'FFS exclusion audit activated',                               basis:'ACCESS FAQ — Billing Rules',               phase:2, owner:'Billing / Compliance'},
       {n:8,  checkpoint:'HIE / Aligned Network contract executed',                     basis:'ACCESS FAQ — Care Coordination',           phase:1, owner:'IT / Interoperability'},
-      {n:9,  checkpoint:'Control group management process active',                     basis:'ACCESS FAQ — Randomization',               phase:2, owner:'Clinical operations'},
+      {n:9,  checkpoint:'Beneficiary disclosure script (CMS standardized language) and 12-month control-group exclusion tracking active — see Eligibility tab', basis:'ACCESS RFA p. 39',               phase:2, owner:'Clinical operations'},
       {n:10, checkpoint:'Baseline measures submitted (60-day window)',                 basis:'ACCESS Payment Guidance',                  phase:3, owner:'Analytics / Clinical ops'},
       {n:11, checkpoint:'OAP claims-filing (90-day) & semi-annual reconciliation calendar confirmed', basis:'ACCESS RFA — Claims & Reconciliation (pp. 27–30)', phase:4, owner:'Compliance Officer'},
       {n:12, checkpoint:'Pre-reconciliation billing audit complete',                   basis:'ACCESS Payment Guidance',                  phase:5, owner:'Billing / Compliance'}
@@ -894,6 +894,24 @@
       {n:13, category:'Program Integrity', item:'Designate a named Compliance Officer of record accountable for program-integrity attestations', basis:'ACCESS RFA — Program Integrity', when:'Phase 1', owner:'Executive leadership'}
     ];
     const ELIG_CATEGORIES = ['Eligibility','Practitioner Roster','Program Integrity'];
+
+    // Randomization & control-group disclosure checklist. ACCESS uses a
+    // randomized evaluation design with beneficiary-level randomization
+    // (90:10 intervention-to-control ratio in Year 1). CMS communicates
+    // assignment results via the Eligibility API and Alignment API. Before
+    // querying either API to verify eligibility or enroll a beneficiary,
+    // participants must disclose specific required elements to the
+    // beneficiary using CMS's standardized language. A beneficiary assigned
+    // to the control group is ineligible for the clinical track for the
+    // following 12-month period. Source: ACCESS RFA p. 39
+    // (https://www.cms.gov/priorities/innovation/files/access-rfa.pdf).
+    const randomizationChecklist = [
+      {n:1, item:'Obtain and adopt CMS\u2019s standardized required beneficiary disclosure language for control-group communication verbatim \u2014 do not draft independent disclosure wording', basis:'ACCESS RFA p. 39', when:'Phase 1', owner:'Compliance / Legal'},
+      {n:2, item:'Confirm the disclosure is delivered to every beneficiary before querying the CMS Eligibility API or Alignment API to verify eligibility or enroll them, and that it covers all required elements: (a) this is part of a new CMS payment model test; (b) data may be shared with CMS subject to federal privacy/security protections; (c) the beneficiary may be randomly assigned to a comparison group; (d) if assigned to the comparison group, the beneficiary is ineligible for the clinical track; (e) usual Medicare benefits and services remain available; (f) assignment will not affect Medicare benefits, rights, or coverage', basis:'ACCESS RFA p. 39', when:'Phase 1', owner:'Clinical operations'},
+      {n:3, item:'Build and test a workflow to receive and act on randomization assignment results returned by the CMS Eligibility API and CMS Alignment API before enrolling any beneficiary in a clinical track', basis:'ACCESS RFA p. 39', when:'Phase 1', owner:'IT / Interoperability'},
+      {n:4, item:'Document the initial 90:10 intervention-to-control randomization ratio for Year 1 and establish a process to monitor for CMS-announced ratio changes in future years', basis:'ACCESS RFA p. 39', when:'Phase 1', owner:'Clinical operations'},
+      {n:5, item:'Establish a HIPAA-compliant process, outside this planning tool, to track each control-group-assigned beneficiary\u2019s 12-month re-eligibility date and confirm no clinical-track enrollment is attempted until that period has elapsed', basis:'ACCESS RFA p. 39', when:'Ongoing', owner:'Clinical operations'}
+    ];
 
     // ---- Billing, G-code, FFS-exclusion & CMP (Co-Management Payment) workflows ----
     // NOTE: in official CMS ACCESS guidance, "CMP" stands for Co-Management Payment —
@@ -1185,7 +1203,7 @@
         localStorage.setItem(STORE_KEY, JSON.stringify({
           intake: persisted.intake || null,
           regCheckState, riskState, kpiState, qualityState, projectionState,
-          eligCheckState, rosterState, piScreeningState,
+          eligCheckState, rosterState, piScreeningState, randCheckState,
           cmpCheckState, ffsCheckState, billingRiskState, oatCalcState, sstCalcState
         }));
       }catch(e){ /* storage unavailable (private mode / quota) — fail silently */ }
@@ -1200,6 +1218,8 @@
     let rosterState = Array.isArray(persisted.rosterState) ? persisted.rosterState : [];
     // Program-integrity screening log: last screened date + compliance officer of record.
     const piScreeningState = Object.assign({lastScreened:'', complianceOfficer:''}, persisted.piScreeningState);
+    // Randomization & control-group disclosure checklist status, keyed by item number.
+    const randCheckState = Object.assign({}, persisted.randCheckState);
     // Billing/CMP/FFS-exclusion/program-integrity checklist status, keyed by item number.
     const cmpCheckState = Object.assign({}, persisted.cmpCheckState);
     const ffsCheckState = Object.assign({}, persisted.ffsCheckState);
@@ -1265,6 +1285,51 @@
       piScreeningState[field] = el.value;
       saveStore();
       renderEligibility();
+    }
+
+    function updateRandCheck(n){
+      const sel = document.getElementById('rand-sel-'+n);
+      if(!sel) return;
+      randCheckState[n] = sel.value;
+      saveStore();
+      const row = document.getElementById('rand-row-'+n);
+      if(row){ row.className = 'regcheck-row regcheck-'+sel.value; }
+      const countEl = document.getElementById('rand-count');
+      if(countEl){
+        const done = Object.values(randCheckState).filter(v => v === 'complete').length;
+        countEl.textContent = done + '/' + randomizationChecklist.length + ' complete';
+      }
+    }
+
+    // Ephemeral 12-month control-group re-eligibility date calculator. Deliberately
+    // NOT persisted to randCheckState/localStorage \u2014 this tool stores no
+    // beneficiary-level information, so the assignment date entered here is
+    // recalculated in-session only and is cleared on refresh (ACCESS RFA p. 39).
+    function calcControlGroupExclusion(){
+      const input = document.getElementById('cg-assignment-date');
+      const resultEl = document.getElementById('cg-exclusion-result');
+      if(!input || !resultEl) return;
+      const raw = input.value;
+      if(!raw){
+        resultEl.textContent = 'Enter an assignment date to calculate the 12-month re-eligibility date.';
+        resultEl.className = 'oat-result-pill';
+        return;
+      }
+      const assigned = new Date(raw+'T00:00:00');
+      if(isNaN(assigned.getTime())){
+        resultEl.textContent = 'Invalid date.';
+        resultEl.className = 'oat-result-pill oat-result-danger';
+        return;
+      }
+      const eligibleAgain = new Date(assigned);
+      eligibleAgain.setMonth(eligibleAgain.getMonth()+12);
+      const fmt = d => d.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+      const today = new Date(); today.setHours(0,0,0,0);
+      const stillExcluded = eligibleAgain > today;
+      resultEl.textContent = stillExcluded
+        ? `Ineligible for the clinical track until ${fmt(eligibleAgain)} (12 months from assignment).`
+        : `12-month exclusion period ended ${fmt(eligibleAgain)} \u2014 re-check current eligibility rules before enrolling.`;
+      resultEl.className = 'oat-result-pill ' + (stillExcluded ? 'oat-result-warn' : 'oat-result-ok');
     }
 
     function renderEligibility(){
@@ -1333,6 +1398,30 @@
         piBadge = `<span class="pi-status-pill pi-status-due">No screening date on file yet</span>`;
       }
 
+      const randCompleted = randomizationChecklist.filter(c => randCheckState[c.n] === 'complete').length;
+      const randRows = randomizationChecklist.map(c => {
+        const state = randCheckState[c.n] || 'not-started';
+        return `
+          <div class="regcheck-row regcheck-${state}" id="rand-row-${c.n}">
+            <div class="regcheck-num">${c.n}</div>
+            <div class="regcheck-body">
+              <strong>${c.item}</strong>
+              <div class="regcheck-meta">
+                <span class="regcheck-basis" title="Regulatory basis">${c.basis}</span>
+                <span class="regcheck-phase">${c.when}</span>
+                <span class="regcheck-owner">Owner: ${c.owner}</span>
+              </div>
+            </div>
+            <div class="regcheck-status-wrap">
+              <select class="regcheck-status-select" id="rand-sel-${c.n}" aria-label="Status for ${c.item}" onchange="updateRandCheck(${c.n})">
+                <option value="not-started"${state==='not-started'?' selected':''}>Not Started</option>
+                <option value="in-progress"${state==='in-progress'?' selected':''}>In Progress</option>
+                <option value="complete"${state==='complete'?' selected':''}>Complete</option>
+              </select>
+            </div>
+          </div>`;
+      }).join('');
+
       panel.innerHTML = `
         <article class="phase-card">
           <div class="phase-card-header">
@@ -1382,6 +1471,28 @@
             </div>
           </div>
           ${piBadge}
+        </article>
+
+        <article class="phase-card">
+          <div class="phase-card-header">
+            <div>
+              <h3>Randomization &amp; control-group disclosure</h3>
+              <p style="margin:0.2rem 0 0;color:var(--text-muted);font-size:0.85rem;">ACCESS uses beneficiary-level randomization (90:10 intervention-to-control ratio in Year 1). CMS communicates assignment results via the Eligibility API and Alignment API. Required beneficiary disclosure must happen before either API is queried to verify eligibility or enroll a beneficiary (ACCESS RFA p. 39).</p>
+            </div>
+            <span class="phase-badge" id="rand-count">${randCompleted}/${randomizationChecklist.length} complete</span>
+          </div>
+          <div class="regcheck-list">
+            ${randRows}
+          </div>
+          <div class="track-intake-label" style="margin-top:1rem;">12-month control-group re-eligibility date calculator</div>
+          <div class="oat-calc-grid">
+            <div class="oat-calc-field">
+              <label for="cg-assignment-date">Control-group assignment date</label>
+              <input type="date" id="cg-assignment-date" oninput="calcControlGroupExclusion()">
+            </div>
+          </div>
+          <div id="cg-exclusion-result" class="oat-result-pill"></div>
+          <p class="billing-note">A beneficiary assigned to the control group is ineligible for the clinical track for the following 12-month period (ACCESS RFA p. 39). This calculator performs date math only in your browser session \u2014 it is not saved to storage and holds no beneficiary identifiers; track actual assignment dates in a HIPAA-compliant system of record, not in this tool.</p>
         </article>`;
     }
 
@@ -2682,6 +2793,7 @@
       Object.keys(eligCheckState).forEach(k=>delete eligCheckState[k]);
       rosterState.length=0;
       piScreeningState.lastScreened=''; piScreeningState.complianceOfficer='';
+      Object.keys(randCheckState).forEach(k=>delete randCheckState[k]);
       Object.keys(cmpCheckState).forEach(k=>delete cmpCheckState[k]);
       Object.keys(ffsCheckState).forEach(k=>delete ffsCheckState[k]);
       Object.keys(billingRiskState).forEach(k=>delete billingRiskState[k]);
