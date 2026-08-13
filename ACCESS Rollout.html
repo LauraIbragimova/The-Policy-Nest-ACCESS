@@ -827,6 +827,12 @@
 
     // 12 named regulatory checkpoints with regulatory basis, phase, and suggested owner.
     // Regulatory citations sourced from the ACCESS RFA, CMS ACCESS FAQ/payment guidance, and referenced federal statute/regulation.
+    // NOTE (item 11): CMS's ACCESS RFA and payment guidance do not define a "425-day"
+    // deadline for this model — that figure is an MSSP/ACO claims run-out concept and
+    // does not apply here. The actual ACCESS claims/reconciliation timing is: OAP claims
+    // due within 90 days of date of service, and payment reconciliation performed on a
+    // semi-annual basis after each beneficiary's 12-month Care Period ends. Item 11 below
+    // reflects those real deadlines instead. Source: ACCESS RFA pp. 27–30.
     const regCheckpoints = [
       {n:1,  checkpoint:'Physician Clinical Director designated',                     basis:'ACCESS RFA § 4.2',                          phase:1, owner:'Executive leadership'},
       {n:2,  checkpoint:'PECOS enrollment verified (all billing practitioners)',       basis:'ACCESS FAQ — Billing Eligibility',          phase:1, owner:'Compliance / Enrollment'},
@@ -838,7 +844,7 @@
       {n:8,  checkpoint:'HIE / Aligned Network contract executed',                     basis:'ACCESS FAQ — Care Coordination',           phase:1, owner:'IT / Interoperability'},
       {n:9,  checkpoint:'Control group management process active',                     basis:'ACCESS FAQ — Randomization',               phase:2, owner:'Clinical operations'},
       {n:10, checkpoint:'Baseline measures submitted (60-day window)',                 basis:'ACCESS Payment Guidance',                  phase:3, owner:'Analytics / Clinical ops'},
-      {n:11, checkpoint:'425-day deadline calendar confirmed',                         basis:'ACCESS Payment Guidance',                  phase:4, owner:'Compliance Officer'},
+      {n:11, checkpoint:'OAP claims-filing (90-day) & semi-annual reconciliation calendar confirmed', basis:'ACCESS RFA — Claims & Reconciliation (pp. 27–30)', phase:4, owner:'Compliance Officer'},
       {n:12, checkpoint:'Pre-reconciliation billing audit complete',                   basis:'ACCESS Payment Guidance',                  phase:5, owner:'Billing / Compliance'}
     ];
 
@@ -1596,7 +1602,7 @@
       {title:'AKS / Stark exposure',category:'Legal',likelihood:'Low',impact:'High',desc:'Vendor or referral arrangements are not structured within safe harbors, creating Anti-Kickback or Stark liability.'},
       {title:'HIPAA / BAA gap',category:'Legal',likelihood:'Low',impact:'High',desc:'A vendor handling PHI operates without an executed Business Associate Agreement, risking a breach and penalties.'},
       {title:'Control group contamination',category:'Clinical ops',likelihood:'Medium',impact:'Medium',desc:'Randomization or control-group management fails, biasing results and jeopardizing model evaluation.'},
-      {title:'425-day deadline miss',category:'Operations',likelihood:'Medium',impact:'High',desc:'The care-period reconciliation deadline is missed, forfeiting payment for affected episodes.'},
+      {title:'Claims-filing / reconciliation deadline miss',category:'Operations',likelihood:'Medium',impact:'High',desc:'The 90-day OAP claims-filing window or a semi-annual reconciliation cycle is missed, forfeiting payment for affected episodes.'},
       {title:'Cost-sharing inconsistency',category:'Compliance',likelihood:'Low',impact:'Medium',desc:'Beneficiary cost-sharing is applied non-uniformly, breaching the documented election policy.'},
       {title:'Staffing / capacity shortfall',category:'Operations',likelihood:'Medium',impact:'Medium',desc:'Care coordination and analytics roles are understaffed relative to enrolled volume.'},
       {title:'Financial model / withhold risk',category:'Finance',likelihood:'Medium',impact:'High',desc:'Payment withholds and care-period unit economics erode margin if utilization or performance assumptions miss.'},
