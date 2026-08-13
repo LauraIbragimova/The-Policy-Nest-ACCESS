@@ -944,10 +944,11 @@
     // from the Co-Management Payment — tracked explicitly as item 3 so this is never
     // confused with a penalty schedule.
     const billingRiskChecklist = [
-      {n:1, item:'Document the Outcome Attainment Threshold (OAT) schedule for the current participation year and confirm the payment-reduction methodology for underperformance (proportional reduction, capped at 50% of gross Outcome-Aligned Payment)', basis:'CMS ACCESS Technical FAQ \u2014 OAP Payment', when:'Ongoing', owner:'Analytics / Finance'},
+      {n:1, item:'Document the Outcome Attainment Threshold (OAT) schedule for the current participation year and confirm the payment-reduction methodology for underperformance (proportional reduction, capped at 50% of gross Outcome-Aligned Payment). Note: CMS reconciles this against the Substitute Spend Adjustment below and applies only whichever produces the larger reduction \u2014 never both.', basis:'ACCESS RFA p. 28, 30', when:'Ongoing', owner:'Analytics / Finance'},
       {n:2, item:'Establish internal monitoring for CMP billing patterns across referring clinicians per beneficiary/track to pre-empt CMS duplication/abuse review \u2014 CMS does not cap the number of clinicians who may bill CMP for the same beneficiary, but does monitor billing patterns for duplication or abuse', basis:'CMS ACCESS CMP Billing Guidance', when:'Ongoing', owner:'Compliance Officer'},
       {n:3, item:'Confirm no distinct Civil Monetary Penalty exists in current CMS ACCESS billing/FAQ guidance for FFS-exclusion or CMP billing violations; document that standard Medicare program-integrity remedies (overpayment recovery, exclusion, disenrollment) apply until CMS publishes CMP-specific penalty guidance', basis:'CMS ACCESS CMP Billing Guidance / Technical FAQ', when:'Phase 1', owner:'Compliance Officer'},
-      {n:4, item:'Confirm disenrollment-risk criteria (quality, safety, and outcome standards) are tracked in the Risk Registry, KPI, and Quality tabs and escalated to the Clinical Director and Compliance Officer of record', basis:'CMS ACCESS Technical FAQ \u2014 Program Integrity', when:'Ongoing', owner:'Executive leadership'}
+      {n:4, item:'Confirm disenrollment-risk criteria (quality, safety, and outcome standards) are tracked in the Risk Registry, KPI, and Quality tabs and escalated to the Clinical Director and Compliance Officer of record', basis:'CMS ACCESS Technical FAQ \u2014 Program Integrity', when:'Ongoing', owner:'Executive leadership'},
+      {n:5, item:'Obtain and maintain the full per-track list of \u201clisted substitute services\u201d (HCPCS/CPT codes billed by other Medicare-enrolled providers/suppliers with a principal diagnosis matching the beneficiary\u2019s ACCESS qualifying condition) and track the resulting Substitute Spend Rate (SSR) for the Substitute Spend Threshold (SST = 90% for the first 18 months) calculator below', basis:'ACCESS RFA pp. 4\u20135, 29', when:'Ongoing', owner:'Analytics / Finance'}
     ];
 
     const selectedTracks=new Set();
@@ -1185,7 +1186,7 @@
           intake: persisted.intake || null,
           regCheckState, riskState, kpiState, qualityState, projectionState,
           eligCheckState, rosterState, piScreeningState,
-          cmpCheckState, ffsCheckState, billingRiskState, oatCalcState
+          cmpCheckState, ffsCheckState, billingRiskState, oatCalcState, sstCalcState
         }));
       }catch(e){ /* storage unavailable (private mode / quota) — fail silently */ }
     }
@@ -1205,6 +1206,10 @@
     const billingRiskState = Object.assign({}, persisted.billingRiskState);
     // OAT calculator input (% of aligned beneficiaries meeting OAP targets).
     const oatCalcState = Object.assign({actualPct:''}, persisted.oatCalcState);
+    // SST calculator input (Substitute Spend Rate: % of aligned beneficiaries who
+    // did NOT receive a listed substitute service from another Medicare provider/
+    // supplier for the same qualifying condition during the ACCESS Care Period).
+    const sstCalcState = Object.assign({actualPct:''}, persisted.sstCalcState);
     // KPI edits keyed by metric label; quality edits keyed by measure text (stable across re-renders).
     const kpiState = Object.assign({}, persisted.kpiState);
     const qualityState = Object.assign({}, persisted.qualityState);
@@ -1423,9 +1428,9 @@
       }
     }
 
-    // Outcome Attainment Threshold (OAT) payment-impact calculator. First-year
+    // Outcome Attainment Threshold (OAT) payment-impact calculator. First-18-month
     // threshold is 50%; reduction is proportional (actual % ÷ threshold %) and
-    // capped at 50% of the gross Outcome-Aligned Payment, per CMS ACCESS Technical FAQ.
+    // capped at 50% of the gross Outcome-Aligned Payment, per ACCESS RFA p. 28.
     function calcOAT(){
       const input = document.getElementById('oat-actual-pct');
       const resultEl = document.getElementById('oat-result');
@@ -1435,7 +1440,8 @@
       const raw = input.value;
       if(raw === ''){
         resultEl.className = 'oat-result-pill oat-result-ok';
-        resultEl.textContent = 'Enter a percentage above to estimate the OAP payment adjustment.';
+        resultEl.textContent = 'Enter a percentage above to estimate the Clinical Outcome Adjustment.';
+        updateCombinedAdjustment();
         return;
       }
       const actual = parseFloat(raw);
@@ -1443,6 +1449,7 @@
       if(isNaN(actual) || actual < 0 || actual > 100){
         resultEl.className = 'oat-result-pill oat-result-warn';
         resultEl.textContent = 'Enter a value between 0 and 100.';
+        updateCombinedAdjustment();
         return;
       }
       const pct = Math.min(100, (actual/threshold)*100);
@@ -1453,7 +1460,84 @@
       if(finalPct < 100 && finalPct >= 80) cls = 'oat-result-warn';
       if(finalPct < 80) cls = 'oat-result-danger';
       resultEl.className = 'oat-result-pill '+cls;
-      resultEl.textContent = `Estimated OAP payment: ${finalPct.toFixed(0)}% of gross (${cappedReduction.toFixed(0)}% reduction, capped at 50%) — first-year threshold ${threshold}%`;
+      resultEl.textContent = `Estimated Clinical Outcome Adjustment: ${finalPct.toFixed(0)}% of gross OAP (${cappedReduction.toFixed(0)}% reduction, capped at 50%) — first-18-month OAT ${threshold}%`;
+      updateCombinedAdjustment();
+    }
+
+    // Substitute Spend Threshold (SST) payment-impact calculator. First-18-month
+    // threshold is 90%; reduction is proportional (actual SSR % ÷ threshold %) and
+    // capped at 25% of the gross Outcome-Aligned Payment, per ACCESS RFA p. 29.
+    // SSR = % of aligned beneficiaries who did NOT receive a listed substitute
+    // service (from another Medicare provider/supplier, matching the beneficiary's
+    // ACCESS qualifying diagnosis) during the ACCESS Care Period.
+    function calcSST(){
+      const input = document.getElementById('sst-actual-pct');
+      const resultEl = document.getElementById('sst-result');
+      if(!input || !resultEl) return;
+      sstCalcState.actualPct = input.value;
+      saveStore();
+      const raw = input.value;
+      if(raw === ''){
+        resultEl.className = 'oat-result-pill oat-result-ok';
+        resultEl.textContent = 'Enter a percentage above to estimate the Substitute Spend Adjustment.';
+        updateCombinedAdjustment();
+        return;
+      }
+      const actual = parseFloat(raw);
+      const threshold = 90;
+      if(isNaN(actual) || actual < 0 || actual > 100){
+        resultEl.className = 'oat-result-pill oat-result-warn';
+        resultEl.textContent = 'Enter a value between 0 and 100.';
+        updateCombinedAdjustment();
+        return;
+      }
+      const pct = Math.min(100, (actual/threshold)*100);
+      const reduction = 100 - pct;
+      const cappedReduction = Math.min(reduction, 25);
+      const finalPct = 100 - cappedReduction;
+      let cls = 'oat-result-ok';
+      if(finalPct < 100 && finalPct >= 85) cls = 'oat-result-warn';
+      if(finalPct < 85) cls = 'oat-result-danger';
+      resultEl.className = 'oat-result-pill '+cls;
+      resultEl.textContent = `Estimated Substitute Spend Adjustment: ${finalPct.toFixed(0)}% of gross OAP (${cappedReduction.toFixed(0)}% reduction, capped at 25%) — first-18-month SST ${threshold}%`;
+      updateCombinedAdjustment();
+    }
+
+    // Per ACCESS RFA p. 30: at each semi-annual reconciliation, CMS applies only
+    // ONE downward adjustment — the LARGER of the Clinical Outcome Adjustment
+    // (OAT-based) or the Substitute Spend Adjustment (SST-based). The two are
+    // never compounded. This mirrors that comparison using both calculator inputs.
+    function updateCombinedAdjustment(){
+      const el = document.getElementById('combined-adjustment-result');
+      if(!el) return;
+      const oatRaw = (oatCalcState.actualPct||'').toString();
+      const sstRaw = (sstCalcState.actualPct||'').toString();
+      const oatActual = parseFloat(oatRaw);
+      const sstActual = parseFloat(sstRaw);
+      const oatValid = oatRaw !== '' && !isNaN(oatActual) && oatActual >= 0 && oatActual <= 100;
+      const sstValid = sstRaw !== '' && !isNaN(sstActual) && sstActual >= 0 && sstActual <= 100;
+      if(!oatValid && !sstValid){
+        el.className = 'oat-result-pill oat-result-ok';
+        el.textContent = 'Enter both percentages above to see which adjustment CMS would apply this period.';
+        return;
+      }
+      const oatReduction = oatValid ? Math.min(100 - Math.min(100,(oatActual/50)*100), 50) : 0;
+      const sstReduction = sstValid ? Math.min(100 - Math.min(100,(sstActual/90)*100), 25) : 0;
+      let text, larger;
+      if(!oatValid){
+        larger = sstReduction;
+        text = `Substitute Spend Adjustment only (OAT input missing): ${sstReduction.toFixed(0)}% reduction would apply.`;
+      } else if(!sstValid){
+        larger = oatReduction;
+        text = `Clinical Outcome Adjustment only (SST input missing): ${oatReduction.toFixed(0)}% reduction would apply.`;
+      } else {
+        larger = Math.max(oatReduction, sstReduction);
+        const which = oatReduction >= sstReduction ? 'Clinical Outcome Adjustment (OAT-based)' : 'Substitute Spend Adjustment (SST-based)';
+        text = `CMS applies the larger of the two, not both (RFA p. 30): ${which} at ${larger.toFixed(0)}% reduction.`;
+      }
+      const cls = larger === 0 ? 'oat-result-ok' : (larger >= 25 ? 'oat-result-danger' : 'oat-result-warn');
+      el.className = 'oat-result-pill '+cls;
+      el.textContent = text;
     }
 
     function renderBilling(tracks){
@@ -1597,19 +1681,35 @@
           <div class="phase-card-header">
             <div>
               <h3>Program integrity &amp; payment risk</h3>
-              <p style="margin:0.2rem 0 0;color:var(--text-muted);font-size:0.85rem;">${billingRiskChecklist.length} items tracking the Outcome Attainment Threshold reduction, CMP billing-abuse monitoring, and disenrollment risk CMS actually defines — not a separate civil monetary penalty schedule.</p>
+              <p style="margin:0.2rem 0 0;color:var(--text-muted);font-size:0.85rem;">${billingRiskChecklist.length} items tracking the Clinical Outcome Adjustment (OAT-based) and Substitute Spend Adjustment (SST-based) payment reductions, CMP billing-abuse monitoring, and disenrollment risk CMS actually defines — not a separate civil monetary penalty schedule.</p>
             </div>
             <span class="phase-badge" id="billrisk-count">${riskCompleted}/${billingRiskChecklist.length} complete</span>
           </div>
           <div class="regcheck-list">${riskRows}</div>
+
+          <div class="track-intake-label" style="margin-top:0.9rem;">Clinical Outcome Adjustment (OAT) calculator</div>
           <div class="oat-calc-grid">
             <div class="oat-calc-field">
-              <label for="oat-actual-pct">% of aligned beneficiaries meeting OAP targets this period</label>
+              <label for="oat-actual-pct">% of aligned beneficiaries meeting OAP targets this period (OAR)</label>
               <input type="number" id="oat-actual-pct" min="0" max="100" step="1" placeholder="e.g. 40" value="${(oatCalcState.actualPct||'').toString().replace(/"/g,'&quot;')}" oninput="calcOAT()">
             </div>
           </div>
           <div id="oat-result" class="oat-result-pill oat-result-ok"></div>
-          <p class="billing-note">First-year Outcome Attainment Threshold (OAT) is 50%; CMS publishes thresholds for future participation years in advance of each application deadline. Payment reduction is proportional (actual % ÷ threshold %) and capped at 50% of the gross Outcome-Aligned Payment.</p>
+          <p class="billing-note">First-18-month Outcome Attainment Threshold (OAT) is 50%; CMS publishes thresholds for future participation years in advance of each application deadline. Payment reduction is proportional (OAR ÷ OAT) and capped at a 50% reduction to the gross Outcome-Aligned Payment (ACCESS RFA p. 28).</p>
+
+          <div class="track-intake-label" style="margin-top:0.9rem;">Substitute Spend Adjustment (SST) calculator</div>
+          <div class="oat-calc-grid">
+            <div class="oat-calc-field">
+              <label for="sst-actual-pct">% of aligned beneficiaries with NO listed substitute service billed this period (SSR)</label>
+              <input type="number" id="sst-actual-pct" min="0" max="100" step="1" placeholder="e.g. 85" value="${(sstCalcState.actualPct||'').toString().replace(/"/g,'&quot;')}" oninput="calcSST()">
+            </div>
+          </div>
+          <div id="sst-result" class="oat-result-pill oat-result-ok"></div>
+          <p class="billing-note">First-18-month Substitute Spend Threshold (SST) is 90%; the Substitute Spend Rate (SSR) is the % of aligned beneficiaries who did NOT receive a listed substitute service (matching diagnosis, billed by another Medicare provider/supplier) during the ACCESS Care Period. Payment reduction is proportional (SSR ÷ SST) and capped at a 25% reduction to the gross Outcome-Aligned Payment (ACCESS RFA p. 29).</p>
+
+          <div class="track-intake-label" style="margin-top:0.9rem;">Applied adjustment this reconciliation period</div>
+          <div id="combined-adjustment-result" class="oat-result-pill oat-result-ok"></div>
+          <p class="billing-note">CMS conducts semi-annual reconciliation and applies only ONE downward adjustment per period — the larger of the Clinical Outcome Adjustment or the Substitute Spend Adjustment. The two are never compounded (ACCESS RFA p. 30).</p>
         </article>
 
         <a class="fr-ref-card" href="https://www.cms.gov/priorities/innovation/access-co-management-payment-cmp-billing-guidance" target="_blank" rel="noopener noreferrer" aria-label="CMS ACCESS Co-Management Payment (CMP) Billing Guidance" style="margin-top:0.9rem;">
@@ -1622,6 +1722,7 @@
         </a>`;
 
       calcOAT();
+      calcSST();
     }
 
     // 15-risk registry, each scored on Likelihood x Impact (High/Medium/Low).
@@ -2585,6 +2686,7 @@
       Object.keys(ffsCheckState).forEach(k=>delete ffsCheckState[k]);
       Object.keys(billingRiskState).forEach(k=>delete billingRiskState[k]);
       oatCalcState.actualPct='';
+      sstCalcState.actualPct='';
       projectionState.assumptions={};
       delete persisted.intake;
       try{ localStorage.removeItem(STORE_KEY); }catch(e){}
