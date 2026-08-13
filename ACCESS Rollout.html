@@ -401,6 +401,23 @@
     .pi-status-due{background:rgba(138,90,0,0.1);color:var(--warning);}
     .pi-status-overdue{background:rgba(138,48,64,0.12);color:var(--danger);}
 
+    /* ── BILLING, G-CODES, FFS EXCLUSION & CO-MANAGEMENT PAYMENT (CMP) ───── */
+    .gcode-table-wrap{overflow-x:auto;margin-top:0.5rem;}
+    table.gcode-table{width:100%;border-collapse:collapse;font-size:0.85rem;min-width:760px;}
+    table.gcode-table th{text-align:left;color:var(--text-muted);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.02em;font-weight:700;padding:0.5rem 0.6rem;border-bottom:1px solid var(--border-subtle);}
+    table.gcode-table td{padding:0.55rem 0.6rem;border-bottom:1px solid var(--border-subtle);vertical-align:top;}
+    table.gcode-table tr.gcode-row-selected td{background:rgba(61,106,63,0.07);}
+    table.gcode-table .gcode-code{font-weight:700;color:var(--aubergine);white-space:nowrap;}
+    table.gcode-table .gcode-amount{font-weight:600;color:var(--success);white-space:nowrap;}
+    .billing-note{color:var(--text-muted);font-size:0.85rem;margin-top:0.6rem;padding:0.65rem 0.8rem;border-radius:10px;background:var(--surface-soft);border:1px solid var(--border-subtle);}
+    .oat-calc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:0.75rem;margin-top:0.7rem;}
+    .oat-calc-field label{display:block;font-size:0.78rem;color:var(--text-muted);margin-bottom:0.25rem;}
+    .oat-calc-field input{width:100%;font:inherit;padding:0.45rem 0.6rem;border-radius:8px;border:1px solid var(--border-subtle);background:var(--surface);color:var(--text-main);}
+    .oat-result-pill{display:inline-block;margin-top:0.6rem;border-radius:999px;padding:0.3rem 0.75rem;font-size:0.82rem;font-weight:700;}
+    .oat-result-ok{background:rgba(61,106,63,0.1);color:var(--success);}
+    .oat-result-warn{background:rgba(138,90,0,0.1);color:var(--warning);}
+    .oat-result-danger{background:rgba(138,48,64,0.12);color:var(--danger);}
+
     /* ── LIVE FEDERAL REGISTER UPDATES ───────────────────────────────────── */
     .fr-live-header{display:flex;align-items:center;justify-content:space-between;gap:0.75rem;flex-wrap:wrap;margin-bottom:0.75rem;}
     .fr-live-status{font-size:0.8rem;color:var(--text-muted);display:flex;align-items:center;gap:0.4rem;}
@@ -630,6 +647,7 @@
             <button class="tab-btn active" data-tab="workplan">Work Plan</button>
             <button class="tab-btn" data-tab="regcheck">Reg. Checkpoints</button>
             <button class="tab-btn" data-tab="eligibility">Eligibility</button>
+            <button class="tab-btn" data-tab="billing">Billing &amp; CMP</button>
             <button class="tab-btn" data-tab="risk">Risk Registry</button>
             <button class="tab-btn" data-tab="kpi">KPI Tracker</button>
             <button class="tab-btn" data-tab="quality">Quality</button>
@@ -640,6 +658,7 @@
           <div id="panel-workplan" class="tab-panel active"></div>
           <div id="panel-regcheck" class="tab-panel"></div>
           <div id="panel-eligibility" class="tab-panel"></div>
+          <div id="panel-billing" class="tab-panel"></div>
           <div id="panel-risk" class="tab-panel"></div>
           <div id="panel-kpi" class="tab-panel"></div>
           <div id="panel-quality" class="tab-panel"></div>
@@ -843,6 +862,61 @@
       {n:13, category:'Program Integrity', item:'Designate a named Compliance Officer of record accountable for program-integrity attestations', basis:'ACCESS RFA — Program Integrity', when:'Phase 1', owner:'Executive leadership'}
     ];
     const ELIG_CATEGORIES = ['Eligibility','Practitioner Roster','Program Integrity'];
+
+    // ---- Billing, G-code, FFS-exclusion & CMP (Co-Management Payment) workflows ----
+    // NOTE: in official CMS ACCESS guidance, "CMP" stands for Co-Management Payment —
+    // the G-code-based payment referring/PCP clinicians bill for reviewing ACCESS Care
+    // Updates and coordinating care — NOT a Civil Monetary Penalty. CMS's ACCESS CMP
+    // Billing Guidance and Technical FAQ do not define a separate civil monetary
+    // penalty distinct from standard Medicare program-integrity remedies (see the
+    // Program Integrity & Payment Risk checklist below). Sources: CMS ACCESS
+    // Co-Management Payment (CMP) Billing Guidance
+    // (cms.gov/priorities/innovation/access-co-management-payment-cmp-billing-guidance)
+    // and CMS ACCESS Technical FAQ
+    // (cms.gov/priorities/innovation/access-technical-frequently-asked-questions).
+    const gcodeLibrary = [
+      {code:'G0676', tracks:['eckm','ckm'], base:30, onboardingAdd:10, eligibleFrom:'July 5, 2026', desc:'Review of ACCESS Care Update for eCKM/CKM track conditions plus at least one care-coordination activity.'},
+      {code:'G0677', tracks:['msk'], base:30, onboardingAdd:10, eligibleFrom:'July 5, 2026', desc:'Review of ACCESS Care Update for MSK track conditions plus at least one care-coordination activity.'},
+      {code:'G0678', tracks:['bh'], base:30, onboardingAdd:10, eligibleFrom:'July 5, 2026', desc:'Review of ACCESS Care Update for BH track conditions plus at least one care-coordination activity.'}
+    ];
+
+    // CMP billing requirements for the referring/PCP clinician billing the Co-Management Payment.
+    const cmpBillingChecklist = [
+      {n:1, item:'Confirm the rendering practitioner type is on the CMS-eligible list (physicians, NPs, PAs, CNS, clinical psychologists, LCSWs, registered dietitians/nutrition professionals, PT/OT/SLP in private practice, MFTs, mental health counselors); FQHCs/RHCs become eligible October 2026', basis:'CMS ACCESS CMP Billing Guidance', when:'Ongoing', owner:'Billing / Compliance'},
+      {n:2, item:'Confirm rendering practitioner NPI and billing TIN are reported per Part B rules; when CMP services are furnished by auxiliary personnel under general supervision, the supervising practitioner\u2019s NPI is reported as both the rendering and supervising practitioner', basis:'CMS ACCESS CMP Billing Guidance', when:'Phase 2', owner:'Billing / Compliance'},
+      {n:3, item:'Confirm the diagnosis code on each CMP claim corresponds to a qualifying condition for the beneficiary\u2019s aligned ACCESS track \u2014 claims are denied without a corresponding diagnosis code', basis:'CMS ACCESS CMP Billing Guidance', when:'Phase 2', owner:'Billing / Compliance'},
+      {n:4, item:'Confirm a minimum of 5 total minutes of practitioner time (review of the ACCESS Care Update plus the associated care-coordination activity) is met and documented before billing', basis:'CMS ACCESS CMP Billing Guidance', when:'Phase 2', owner:'Clinical / Billing'},
+      {n:5, item:'Confirm the EHR note documents review of the ACCESS Care Update, a clinical assessment, and the specific care-coordination action taken (e.g., medication change/reconciliation, problem-list update, monitoring instruction, referral, or documented agreement/disagreement with rationale)', basis:'CMS ACCESS CMP Billing Guidance', when:'Phase 2', owner:'Clinical / Billing'},
+      {n:6, item:'Confirm modifier AC (+$10 onboarding support) is applied only once per billing provider, per beneficiary, per track, on the first CMP claim for that beneficiary', basis:'CMS ACCESS CMP Billing Guidance', when:'Phase 2', owner:'Billing / Compliance'},
+      {n:7, item:'Confirm CMP claims for a given beneficiary/track do not exceed 3 per 12 months (approximately once every 4 months); clinicians may bill separately across multiple ACCESS tracks for the same beneficiary only when distinct review and care-coordination activities are performed per track', basis:'CMS ACCESS CMP Billing Guidance', when:'Ongoing', owner:'Billing / Compliance'},
+      {n:8, item:'Confirm no beneficiary cost-sharing is collected and no advance beneficiary consent is obtained for CMP services \u2014 neither is required or applicable', basis:'CMS ACCESS CMP Billing Guidance', when:'Phase 2', owner:'Billing / Compliance'},
+      {n:9, item:'Confirm CMP claims are submitted within standard Medicare timely-filing limits, with date of service matching the documented review/care-coordination date', basis:'CMS ACCESS CMP Billing Guidance', when:'Ongoing', owner:'Billing / Compliance'}
+    ];
+
+    // FFS Exclusion applies to the ACCESS Participant organization and its affiliates for
+    // aligned beneficiaries — distinct from the referring/PCP clinician CMP checklist
+    // above. Builds out regCheckpoints item #7 ("FFS exclusion audit activated") rather
+    // than duplicating it.
+    const ffsExclusionChecklist = [
+      {n:1, item:'Confirm only ACCESS-specific G-codes are billed by the Participant and its affiliated entities for any ACCESS-aligned beneficiary during an active care period \u2014 no other Medicare FFS claims for that beneficiary during that period', basis:'CMS ACCESS Technical FAQ \u2014 FFS Exclusion', when:'Phase 2', owner:'Billing / Compliance'},
+      {n:2, item:'Confirm the exclusion is applied at the beneficiary level: the Participant may continue traditional FFS billing (or other payment arrangements) for patients who are not ACCESS-aligned, even while treating other patients under ACCESS', basis:'CMS ACCESS Technical FAQ \u2014 FFS Exclusion', when:'Phase 2', owner:'Billing / Compliance'},
+      {n:3, item:'Confirm the prohibition is checked for indirect billing arrangements too \u2014 e.g., contracted care-management services billed through another organization on behalf of an ACCESS-aligned beneficiary', basis:'CMS ACCESS Technical FAQ \u2014 FFS Exclusion', when:'Phase 2', owner:'Billing / Compliance'},
+      {n:4, item:'Confirm affiliate scope is documented (co-ownership, control, and reassignment relationships per the Request for Applications); for reassignment relationships the exclusion applies to the organization, not to an individual clinician solely because they reassigned billing rights', basis:'CMS ACCESS Technical FAQ \u2014 FFS Exclusion', when:'Phase 1', owner:'Legal / Compliance'},
+      {n:5, item:'Confirm billing-system or claims-scrubber logic flags any non-ACCESS-G-code claim for a beneficiary currently in an active ACCESS care period before submission (CMS has not published a specific audit protocol \u2014 this is an internally recommended control)', basis:'Internal control \u2014 no CMS-published audit protocol exists', when:'Phase 2', owner:'IT / Billing'},
+      {n:6, item:'Confirm PCP/referring-clinician Co-Management Payment billing is correctly excluded from this Participant-level FFS Exclusion \u2014 referring clinicians may bill CMP codes independently and are not ACCESS affiliates solely because they bill CMP', basis:'CMS ACCESS Technical FAQ \u2014 FFS Exclusion', when:'Phase 2', owner:'Billing / Compliance'},
+      {n:7, item:'Confirm the organization cooperates with CMS program-integrity and evaluation activities and maintains audit-ready documentation, since CMS has not published a specific FFS-exclusion audit frequency, sampling methodology, or documentation-retention period', basis:'CMS ACCESS Technical FAQ \u2014 Program Integrity', when:'Ongoing', owner:'Compliance Officer'}
+    ];
+
+    // Program-integrity and payment-risk items CMS actually defines. CMS's ACCESS CMP
+    // Billing Guidance and Technical FAQ do NOT define a Civil Monetary Penalty distinct
+    // from the Co-Management Payment — tracked explicitly as item 3 so this is never
+    // confused with a penalty schedule.
+    const billingRiskChecklist = [
+      {n:1, item:'Document the Outcome Attainment Threshold (OAT) schedule for the current participation year and confirm the payment-reduction methodology for underperformance (proportional reduction, capped at 50% of gross Outcome-Aligned Payment)', basis:'CMS ACCESS Technical FAQ \u2014 OAP Payment', when:'Ongoing', owner:'Analytics / Finance'},
+      {n:2, item:'Establish internal monitoring for CMP billing patterns across referring clinicians per beneficiary/track to pre-empt CMS duplication/abuse review \u2014 CMS does not cap the number of clinicians who may bill CMP for the same beneficiary, but does monitor billing patterns for duplication or abuse', basis:'CMS ACCESS CMP Billing Guidance', when:'Ongoing', owner:'Compliance Officer'},
+      {n:3, item:'Confirm no distinct Civil Monetary Penalty exists in current CMS ACCESS billing/FAQ guidance for FFS-exclusion or CMP billing violations; document that standard Medicare program-integrity remedies (overpayment recovery, exclusion, disenrollment) apply until CMS publishes CMP-specific penalty guidance', basis:'CMS ACCESS CMP Billing Guidance / Technical FAQ', when:'Phase 1', owner:'Compliance Officer'},
+      {n:4, item:'Confirm disenrollment-risk criteria (quality, safety, and outcome standards) are tracked in the Risk Registry, KPI, and Quality tabs and escalated to the Clinical Director and Compliance Officer of record', basis:'CMS ACCESS Technical FAQ \u2014 Program Integrity', when:'Ongoing', owner:'Executive leadership'}
+    ];
 
     const selectedTracks=new Set();
     const selectedPhases=new Set(['1','2','3']);
@@ -1071,7 +1145,8 @@
         localStorage.setItem(STORE_KEY, JSON.stringify({
           intake: persisted.intake || null,
           regCheckState, riskState, kpiState, qualityState, projectionState,
-          eligCheckState, rosterState, piScreeningState
+          eligCheckState, rosterState, piScreeningState,
+          cmpCheckState, ffsCheckState, billingRiskState, oatCalcState
         }));
       }catch(e){ /* storage unavailable (private mode / quota) — fail silently */ }
     }
@@ -1085,6 +1160,12 @@
     let rosterState = Array.isArray(persisted.rosterState) ? persisted.rosterState : [];
     // Program-integrity screening log: last screened date + compliance officer of record.
     const piScreeningState = Object.assign({lastScreened:'', complianceOfficer:''}, persisted.piScreeningState);
+    // Billing/CMP/FFS-exclusion/program-integrity checklist status, keyed by item number.
+    const cmpCheckState = Object.assign({}, persisted.cmpCheckState);
+    const ffsCheckState = Object.assign({}, persisted.ffsCheckState);
+    const billingRiskState = Object.assign({}, persisted.billingRiskState);
+    // OAT calculator input (% of aligned beneficiaries meeting OAP targets).
+    const oatCalcState = Object.assign({actualPct:''}, persisted.oatCalcState);
     // KPI edits keyed by metric label; quality edits keyed by measure text (stable across re-renders).
     const kpiState = Object.assign({}, persisted.kpiState);
     const qualityState = Object.assign({}, persisted.qualityState);
@@ -1258,6 +1339,250 @@
           </div>
           ${piBadge}
         </article>`;
+    }
+
+    // ---- Billing, G-code, FFS-exclusion & CMP checklist update handlers ----
+    function updateCmpCheck(n){
+      const sel = document.getElementById('cmp-sel-'+n);
+      if(!sel) return;
+      cmpCheckState[n] = sel.value;
+      saveStore();
+      const row = document.getElementById('cmp-row-'+n);
+      if(row){ row.className = 'regcheck-row regcheck-'+sel.value; }
+      const countEl = document.getElementById('cmp-count');
+      if(countEl){
+        const done = Object.values(cmpCheckState).filter(v => v === 'complete').length;
+        countEl.textContent = done + '/' + cmpBillingChecklist.length + ' complete';
+      }
+    }
+
+    function updateFfsCheck(n){
+      const sel = document.getElementById('ffs-sel-'+n);
+      if(!sel) return;
+      ffsCheckState[n] = sel.value;
+      saveStore();
+      const row = document.getElementById('ffs-row-'+n);
+      if(row){ row.className = 'regcheck-row regcheck-'+sel.value; }
+      const countEl = document.getElementById('ffs-count');
+      if(countEl){
+        const done = Object.values(ffsCheckState).filter(v => v === 'complete').length;
+        countEl.textContent = done + '/' + ffsExclusionChecklist.length + ' complete';
+      }
+    }
+
+    function updateBillingRisk(n){
+      const sel = document.getElementById('billrisk-sel-'+n);
+      if(!sel) return;
+      billingRiskState[n] = sel.value;
+      saveStore();
+      const row = document.getElementById('billrisk-row-'+n);
+      if(row){ row.className = 'regcheck-row regcheck-'+sel.value; }
+      const countEl = document.getElementById('billrisk-count');
+      if(countEl){
+        const done = Object.values(billingRiskState).filter(v => v === 'complete').length;
+        countEl.textContent = done + '/' + billingRiskChecklist.length + ' complete';
+      }
+    }
+
+    // Outcome Attainment Threshold (OAT) payment-impact calculator. First-year
+    // threshold is 50%; reduction is proportional (actual % ÷ threshold %) and
+    // capped at 50% of the gross Outcome-Aligned Payment, per CMS ACCESS Technical FAQ.
+    function calcOAT(){
+      const input = document.getElementById('oat-actual-pct');
+      const resultEl = document.getElementById('oat-result');
+      if(!input || !resultEl) return;
+      oatCalcState.actualPct = input.value;
+      saveStore();
+      const raw = input.value;
+      if(raw === ''){
+        resultEl.className = 'oat-result-pill oat-result-ok';
+        resultEl.textContent = 'Enter a percentage above to estimate the OAP payment adjustment.';
+        return;
+      }
+      const actual = parseFloat(raw);
+      const threshold = 50;
+      if(isNaN(actual) || actual < 0 || actual > 100){
+        resultEl.className = 'oat-result-pill oat-result-warn';
+        resultEl.textContent = 'Enter a value between 0 and 100.';
+        return;
+      }
+      const pct = Math.min(100, (actual/threshold)*100);
+      const reduction = 100 - pct;
+      const cappedReduction = Math.min(reduction, 50);
+      const finalPct = 100 - cappedReduction;
+      let cls = 'oat-result-ok';
+      if(finalPct < 100 && finalPct >= 80) cls = 'oat-result-warn';
+      if(finalPct < 80) cls = 'oat-result-danger';
+      resultEl.className = 'oat-result-pill '+cls;
+      resultEl.textContent = `Estimated OAP payment: ${finalPct.toFixed(0)}% of gross (${cappedReduction.toFixed(0)}% reduction, capped at 50%) — first-year threshold ${threshold}%`;
+    }
+
+    function renderBilling(tracks){
+      const panel = document.getElementById('panel-billing');
+      if(!panel) return;
+
+      const gcodeRows = gcodeLibrary.map(g=>{
+        const matched = tracks.some(t=>g.tracks.includes(t));
+        const trackLabels = g.tracks.map(t=>trackLibrary[t] ? trackLibrary[t].label : t).join(' / ');
+        return `
+          <tr class="${matched?'gcode-row-selected':''}">
+            <td class="gcode-code">${g.code}</td>
+            <td>${trackLabels}</td>
+            <td class="gcode-amount">$${g.base} base<br><span style="font-weight:400;color:var(--text-muted);font-size:0.78rem;">+$${g.onboardingAdd} with modifier AC (first bill only)</span></td>
+            <td>${g.eligibleFrom}</td>
+            <td>${g.desc}</td>
+          </tr>`;
+      }).join('');
+
+      const cmpCompleted = cmpBillingChecklist.filter(c => cmpCheckState[c.n] === 'complete').length;
+      const cmpRows = cmpBillingChecklist.map(c => {
+        const state = cmpCheckState[c.n] || 'not-started';
+        return `
+          <div class="regcheck-row regcheck-${state}" id="cmp-row-${c.n}">
+            <div class="regcheck-num">${c.n}</div>
+            <div class="regcheck-body">
+              <strong>${c.item}</strong>
+              <div class="regcheck-meta">
+                <span class="regcheck-basis" title="Regulatory basis">${c.basis}</span>
+                <span class="regcheck-phase">${c.when}</span>
+                <span class="regcheck-owner">Owner: ${c.owner}</span>
+              </div>
+            </div>
+            <div class="regcheck-status-wrap">
+              <select class="regcheck-status-select" id="cmp-sel-${c.n}" aria-label="Status for ${c.item}" onchange="updateCmpCheck(${c.n})">
+                <option value="not-started"${state==='not-started'?' selected':''}>Not Started</option>
+                <option value="in-progress"${state==='in-progress'?' selected':''}>In Progress</option>
+                <option value="complete"${state==='complete'?' selected':''}>Complete</option>
+              </select>
+            </div>
+          </div>`;
+      }).join('');
+
+      const ffsCompleted = ffsExclusionChecklist.filter(c => ffsCheckState[c.n] === 'complete').length;
+      const ffsRows = ffsExclusionChecklist.map(c => {
+        const state = ffsCheckState[c.n] || 'not-started';
+        return `
+          <div class="regcheck-row regcheck-${state}" id="ffs-row-${c.n}">
+            <div class="regcheck-num">${c.n}</div>
+            <div class="regcheck-body">
+              <strong>${c.item}</strong>
+              <div class="regcheck-meta">
+                <span class="regcheck-basis" title="Regulatory basis">${c.basis}</span>
+                <span class="regcheck-phase">${c.when}</span>
+                <span class="regcheck-owner">Owner: ${c.owner}</span>
+              </div>
+            </div>
+            <div class="regcheck-status-wrap">
+              <select class="regcheck-status-select" id="ffs-sel-${c.n}" aria-label="Status for ${c.item}" onchange="updateFfsCheck(${c.n})">
+                <option value="not-started"${state==='not-started'?' selected':''}>Not Started</option>
+                <option value="in-progress"${state==='in-progress'?' selected':''}>In Progress</option>
+                <option value="complete"${state==='complete'?' selected':''}>Complete</option>
+              </select>
+            </div>
+          </div>`;
+      }).join('');
+
+      const riskCompleted = billingRiskChecklist.filter(c => billingRiskState[c.n] === 'complete').length;
+      const riskRows = billingRiskChecklist.map(c => {
+        const state = billingRiskState[c.n] || 'not-started';
+        return `
+          <div class="regcheck-row regcheck-${state}" id="billrisk-row-${c.n}">
+            <div class="regcheck-num">${c.n}</div>
+            <div class="regcheck-body">
+              <strong>${c.item}</strong>
+              <div class="regcheck-meta">
+                <span class="regcheck-basis" title="Regulatory basis">${c.basis}</span>
+                <span class="regcheck-phase">${c.when}</span>
+                <span class="regcheck-owner">Owner: ${c.owner}</span>
+              </div>
+            </div>
+            <div class="regcheck-status-wrap">
+              <select class="regcheck-status-select" id="billrisk-sel-${c.n}" aria-label="Status for ${c.item}" onchange="updateBillingRisk(${c.n})">
+                <option value="not-started"${state==='not-started'?' selected':''}>Not Started</option>
+                <option value="in-progress"${state==='in-progress'?' selected':''}>In Progress</option>
+                <option value="complete"${state==='complete'?' selected':''}>Complete</option>
+              </select>
+            </div>
+          </div>`;
+      }).join('');
+
+      panel.innerHTML = `
+        <article class="phase-card">
+          <div class="phase-card-header">
+            <div>
+              <h3>Billing note: what "CMP" means in ACCESS</h3>
+            </div>
+          </div>
+          <p style="margin:0;color:var(--text-muted);font-size:0.88rem;">In official CMS ACCESS guidance, <strong>CMP stands for Co-Management Payment</strong> — the G-code-based payment referring/PCP clinicians bill for reviewing ACCESS Care Updates and coordinating care — not a Civil Monetary Penalty. CMS's ACCESS billing guidance and technical FAQ do not define a separate civil monetary penalty distinct from standard Medicare program-integrity remedies; see the Program Integrity &amp; Payment Risk card below for what CMS actually defines.</p>
+        </article>
+
+        <article class="phase-card">
+          <div class="phase-card-header">
+            <div>
+              <h3>G-code / Co-Management Payment (CMP) reference</h3>
+              <p style="margin:0.2rem 0 0;color:var(--text-muted);font-size:0.85rem;">Referring/PCP clinician billing codes, by track. Rows for your selected track(s) are highlighted.</p>
+            </div>
+          </div>
+          <div class="gcode-table-wrap">
+            <table class="gcode-table">
+              <thead><tr><th>Code</th><th>Track</th><th>Payment</th><th>Eligible practitioners since</th><th>Description</th></tr></thead>
+              <tbody>${gcodeRows}</tbody>
+            </table>
+          </div>
+          <p class="billing-note">FQHCs and Rural Health Clinics become eligible to bill CMP codes beginning October 2026; guidance for pharmacists and medical supply companies with pharmacists is forthcoming. CMP is billable up to 3 times every 12 months per beneficiary per track (approximately once every 4 months), and modifier AC may be billed only once per billing provider, per beneficiary, per track.</p>
+        </article>
+
+        <article class="phase-card">
+          <div class="phase-card-header">
+            <div>
+              <h3>CMP billing requirements checklist</h3>
+              <p style="margin:0.2rem 0 0;color:var(--text-muted);font-size:0.85rem;">${cmpBillingChecklist.length} items covering practitioner eligibility, documentation, frequency, and claim requirements for referring/PCP clinicians billing the Co-Management Payment.</p>
+            </div>
+            <span class="phase-badge" id="cmp-count">${cmpCompleted}/${cmpBillingChecklist.length} complete</span>
+          </div>
+          <div class="regcheck-list">${cmpRows}</div>
+        </article>
+
+        <article class="phase-card">
+          <div class="phase-card-header">
+            <div>
+              <h3>FFS exclusion workflow</h3>
+              <p style="margin:0.2rem 0 0;color:var(--text-muted);font-size:0.85rem;">${ffsExclusionChecklist.length} items governing Participant-level Fee-for-Service billing exclusion for ACCESS-aligned beneficiaries — builds out regulatory checkpoint #7 ("FFS exclusion audit activated").</p>
+            </div>
+            <span class="phase-badge" id="ffs-count">${ffsCompleted}/${ffsExclusionChecklist.length} complete</span>
+          </div>
+          <div class="regcheck-list">${ffsRows}</div>
+        </article>
+
+        <article class="phase-card">
+          <div class="phase-card-header">
+            <div>
+              <h3>Program integrity &amp; payment risk</h3>
+              <p style="margin:0.2rem 0 0;color:var(--text-muted);font-size:0.85rem;">${billingRiskChecklist.length} items tracking the Outcome Attainment Threshold reduction, CMP billing-abuse monitoring, and disenrollment risk CMS actually defines — not a separate civil monetary penalty schedule.</p>
+            </div>
+            <span class="phase-badge" id="billrisk-count">${riskCompleted}/${billingRiskChecklist.length} complete</span>
+          </div>
+          <div class="regcheck-list">${riskRows}</div>
+          <div class="oat-calc-grid">
+            <div class="oat-calc-field">
+              <label for="oat-actual-pct">% of aligned beneficiaries meeting OAP targets this period</label>
+              <input type="number" id="oat-actual-pct" min="0" max="100" step="1" placeholder="e.g. 40" value="${(oatCalcState.actualPct||'').toString().replace(/"/g,'&quot;')}" oninput="calcOAT()">
+            </div>
+          </div>
+          <div id="oat-result" class="oat-result-pill oat-result-ok"></div>
+          <p class="billing-note">First-year Outcome Attainment Threshold (OAT) is 50%; CMS publishes thresholds for future participation years in advance of each application deadline. Payment reduction is proportional (actual % ÷ threshold %) and capped at 50% of the gross Outcome-Aligned Payment.</p>
+        </article>
+
+        <a class="fr-ref-card" href="https://www.cms.gov/priorities/innovation/access-co-management-payment-cmp-billing-guidance" target="_blank" rel="noopener noreferrer" aria-label="CMS ACCESS Co-Management Payment (CMP) Billing Guidance" style="margin-top:0.9rem;">
+          <div class="fr-ref-icon">🧾</div>
+          <div class="fr-ref-body">
+            <strong>CMS ACCESS Co-Management Payment (CMP) Billing Guidance</strong>
+            <span>G-code amounts, modifier AC rules, eligible practitioner types, billing frequency, and documentation requirements.</span>
+            <div class="fr-ref-url">↗ cms.gov/priorities/innovation/access-co-management-payment-cmp-billing-guidance</div>
+          </div>
+        </a>`;
+
+      calcOAT();
     }
 
     // 15-risk registry, each scored on Likelihood x Impact (High/Medium/Low).
@@ -2185,6 +2510,7 @@
       renderWorkplan(phases,tracks,gapsArr);
       renderRegCheck(tracks);
       renderEligibility();
+      renderBilling(tracks);
       renderRisk(gaps,orgValue);
       renderKpi(tracks);
       renderQuality(tracks);
@@ -2212,6 +2538,13 @@
       Object.keys(riskState).forEach(k=>delete riskState[k]);
       Object.keys(kpiState).forEach(k=>delete kpiState[k]);
       Object.keys(qualityState).forEach(k=>delete qualityState[k]);
+      Object.keys(eligCheckState).forEach(k=>delete eligCheckState[k]);
+      rosterState.length=0;
+      piScreeningState.lastScreened=''; piScreeningState.complianceOfficer='';
+      Object.keys(cmpCheckState).forEach(k=>delete cmpCheckState[k]);
+      Object.keys(ffsCheckState).forEach(k=>delete ffsCheckState[k]);
+      Object.keys(billingRiskState).forEach(k=>delete billingRiskState[k]);
+      oatCalcState.actualPct='';
       projectionState.assumptions={};
       delete persisted.intake;
       try{ localStorage.removeItem(STORE_KEY); }catch(e){}
