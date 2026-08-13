@@ -268,6 +268,7 @@
     .proj-pos{color:var(--success);font-weight:700;}
     .proj-neg{color:var(--danger);font-weight:700;}
     .proj-note{color:var(--text-muted);font-size:0.8rem;margin-top:0.7rem;font-style:italic;}
+    .proj-disclaimer{background:rgba(138,90,0,0.09);border:1px solid rgba(138,90,0,0.22);border-radius:12px;padding:0.65rem 0.85rem;color:var(--warning);font-size:0.8rem;line-height:1.4;margin:0.75rem 0 1rem;}
     /* ---- Enrollment ramp chart ---- */
     .proj-chart-wrap{margin-top:0.6rem;width:100%;}
     .proj-chart-svg{width:100%;height:auto;display:block;overflow:visible;}
@@ -1216,9 +1217,13 @@
     }
 
     /* =========================================================
-       RULE-BASED PROJECTIONS  (enrollment ramp + shared savings)
+       RULE-BASED PROJECTIONS  (enrollment ramp + outcome-aligned
+       payment scenario)
        All numbers are planning estimates from transparent rules,
-       NOT CMS-guaranteed figures. Every driver is user-editable.
+       NOT CMS-guaranteed figures. ACCESS pays participants based on
+       outcome attainment and model-specific requirements — it is not
+       an MSSP-style shared-savings arrangement. Every driver is
+       user-editable.
        ========================================================= */
 
     // Default starting panel (eligible aligned beneficiaries at go-live)
@@ -1245,7 +1250,7 @@
         rampSpeed:0.9,                  // logistic growth rate (0.4 slow - 1.6 fast)
         pmpy:13000,                     // baseline total cost per beneficiary / yr ($)
         grossSavingsRate:8,             // % gross reduction vs. baseline at maturity
-        sharedShare:50,                 // % of net savings kept by the entity
+        sharedShare:50,                 // % of net savings modeled as outcome-aligned payment (planning scenario only)
         perBenCost:550                  // program cost per aligned beneficiary / yr ($)
       };
     }
@@ -1294,7 +1299,7 @@
     function renderProjections(orgValue,tracks,gaps){
       const panel=document.getElementById('panel-projections');
       if(!orgValue){
-        panel.innerHTML='<article class="phase-card"><p>Select an organization type and generate a plan to model enrollment ramp and shared savings.</p></article>';
+        panel.innerHTML='<article class="phase-card"><p>Select an organization type and generate a plan to model enrollment ramp and an outcome-aligned payment scenario.</p></article>';
         return;
       }
       const a=currentProjAssumptions(orgValue,tracks,gaps);
@@ -1315,13 +1320,14 @@
             <div><h3>Projection assumptions</h3><p>Planning estimates from transparent rules — not CMS-guaranteed results. Adjust any driver; the model recomputes instantly and your inputs are saved.</p></div>
             <button class="scorecard-update-btn" id="proj-reset-assump" type="button">Reset to defaults</button>
           </div>
+          <p class="proj-disclaimer"><strong>Planning scenario only.</strong> This tool does not calculate or guarantee CMS ACCESS payment. ACCESS is an outcome-aligned payment model — participants are paid based on outcome attainment and model-specific requirements, not a percentage of generated savings the way MSSP shared savings works.</p>
           <div class="proj-assump-grid">
             ${inputRow('Starting aligned panel','startPanel',a.startPanel,'ben.','Aligned beneficiaries at go-live (year 1).')}
             ${inputRow('Steady-state panel','steadyPanel',a.steadyPanel,'ben.','Ceiling the ramp matures toward.')}
             ${inputRow('Ramp speed','rampSpeed',a.rampSpeed,'','Logistic growth rate (0.4 slow – 1.6 fast).')}
             ${inputRow('Baseline cost / ben. / yr','pmpy',a.pmpy,'$','Total annual cost per aligned beneficiary.')}
             ${inputRow('Gross savings rate','grossSavingsRate',a.grossSavingsRate,'%','Cost reduction vs. baseline at full maturity.')}
-            ${inputRow('Shared-savings share','sharedShare',a.sharedShare,'%','Portion of net savings the entity keeps.')}
+            ${inputRow('Outcome-aligned payment rate','sharedShare',a.sharedShare,'%','Modeled % of net savings scenario framed as outcome-aligned payment — a planning assumption, not a CMS-guaranteed share.')}
             ${inputRow('Program cost / ben. / yr','perBenCost',a.perBenCost,'$','Care-management & reporting cost per beneficiary.')}
           </div>
         </article>
@@ -1350,11 +1356,11 @@
         </article>
 
         <article class="phase-card">
-          <h3>Savings by year</h3>
-          <p class="proj-help">Net savings vs. entity shared-savings share per performance year. Bars below the zero line are net losses during ramp-up.</p>
+          <h3>Outcome-aligned payment scenario by year</h3>
+          <p class="proj-help">Net savings vs. modeled outcome-aligned payment scenario per performance year — a planning estimate, not a CMS-guaranteed figure. Bars below the zero line are net losses during ramp-up.</p>
           <div class="proj-legend">
             <span class="proj-legend-item"><span class="proj-swatch proj-swatch-net"></span>Net savings</span>
-            <span class="proj-legend-item"><span class="proj-swatch proj-swatch-share"></span>Entity share</span>
+            <span class="proj-legend-item"><span class="proj-swatch proj-swatch-share"></span>Outcome-aligned payment (scenario)</span>
             <span class="proj-legend-item"><span class="proj-swatch proj-swatch-loss"></span>Net loss</span>
           </div>
           <div class="proj-chart-wrap" id="proj-bar-chart"></div>
@@ -1367,7 +1373,7 @@
               <thead>
                 <tr>
                   <th>Perf. year</th><th>Calendar</th><th>Aligned panel</th>
-                  <th>Gross savings</th><th>Program cost</th><th>Net savings</th><th>Entity share</th>
+                  <th>Gross savings</th><th>Program cost</th><th>Net savings</th><th>Outcome-aligned payment (scenario)</th>
                 </tr>
               </thead>
               <tbody id="proj-tbody"></tbody>
@@ -1422,7 +1428,7 @@
           </svg>`;
       }
 
-      // Grouped bar chart: net savings vs. entity share per year, with a zero
+      // Grouped bar chart: net savings vs. outcome-aligned payment scenario per year, with a zero
       // baseline so early-year net losses render below the axis (in danger red).
       function buildSavingsChart(res){
         const wrap=document.getElementById('proj-bar-chart');
@@ -1459,7 +1465,7 @@
           const netH=Math.max(1,Math.abs(netY2-netY));
           const netCls=r.netSavings<0?'proj-bar-loss':'proj-bar-net';
           bars+=`<rect x="${netX.toFixed(1)}" y="${Math.min(netY,netY2).toFixed(1)}" width="${barW.toFixed(1)}" height="${netH.toFixed(1)}" rx="2" class="${netCls}"/>`;
-          // Entity share bar (never negative).
+          // Outcome-aligned payment bar (never negative).
           const shY=yFor(Math.max(0,r.shared));
           const shH=Math.max(1,Math.abs(zeroY-shY));
           bars+=`<rect x="${shareX.toFixed(1)}" y="${shY.toFixed(1)}" width="${barW.toFixed(1)}" height="${shH.toFixed(1)}" rx="2" class="proj-bar-share"/>`;
@@ -1467,7 +1473,7 @@
           xLabels+=`<text x="${cx.toFixed(1)}" y="${(H-mB+34).toFixed(1)}" class="proj-axis-label proj-axis-sub" text-anchor="middle">${r.year}</text>`;
         });
         wrap.innerHTML=`
-          <svg viewBox="0 0 ${W} ${H}" class="proj-chart-svg" role="img" aria-label="Grouped bar chart of net savings and entity share by performance year" preserveAspectRatio="xMidYMid meet">
+          <svg viewBox="0 0 ${W} ${H}" class="proj-chart-svg" role="img" aria-label="Grouped bar chart of net savings and outcome-aligned payment scenario by performance year" preserveAspectRatio="xMidYMid meet">
             ${grid}
             <line x1="${mL}" y1="${mT}" x2="${mL}" y2="${mT+plotH}" class="proj-axis"/>
             ${bars}
@@ -1485,7 +1491,7 @@
         document.getElementById('proj-summary').innerHTML=`
           <article class="kpi-card"><div class="summary-kicker">Peak aligned panel</div><div class="summary-value">${fmtNum(res.peakEnrolled)}</div></article>
           <article class="kpi-card"><div class="summary-kicker">Cumulative net savings</div><div class="summary-value">${fmtUSD(res.cumSavings)}</div></article>
-          <article class="kpi-card"><div class="summary-kicker">Cumulative entity share</div><div class="summary-value">${fmtUSD(res.cumShared)}</div></article>`;
+          <article class="kpi-card"><div class="summary-kicker">Cumulative outcome-aligned payment (scenario est.)</div><div class="summary-value">${fmtUSD(res.cumShared)}</div></article>`;
         document.getElementById('proj-tbody').innerHTML=res.rows.map(r=>`
           <tr>
             <td>PY${r.py}</td><td>${r.year}</td><td>${fmtNum(r.enrolled)}</td>
