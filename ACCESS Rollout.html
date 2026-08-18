@@ -400,6 +400,9 @@
     .pi-status-ok{background:rgba(61,106,63,0.1);color:var(--success);}
     .pi-status-due{background:rgba(138,90,0,0.1);color:var(--warning);}
     .pi-status-overdue{background:rgba(138,48,64,0.12);color:var(--danger);}
+    .golive-banner{border-radius:10px;padding:0.75rem 1rem;font-size:0.9rem;margin-bottom:0.4rem;}
+    .golive-banner.golive-ready{background:rgba(61,106,63,0.1);color:var(--success);border:1px solid rgba(61,106,63,0.3);}
+    .golive-banner.golive-blocked{background:rgba(138,48,64,0.1);color:var(--danger);border:1px solid rgba(138,48,64,0.3);}
 
     /* ── BILLING, G-CODES, FFS EXCLUSION & CO-MANAGEMENT PAYMENT (CMP) ───── */
     .gcode-table-wrap{overflow-x:auto;margin-top:0.5rem;}
@@ -913,6 +916,32 @@
       {n:5, item:'Establish a HIPAA-compliant process, outside this planning tool, to track each control-group-assigned beneficiary\u2019s 12-month re-eligibility date and confirm no clinical-track enrollment is attempted until that period has elapsed', basis:'ACCESS RFA p. 39', when:'Ongoing', owner:'Clinical operations'}
     ];
 
+    // Hard go-live gates: FHIR/API submission, PCP Care Update delivery, HIPAA
+    // compliance, and FDA/device review. Unlike the other checklists on this page
+    // (which are informational trackers), these items feed a blocking readiness
+    // banner \u2014 gate:true items must ALL read Complete before the tool will show
+    // \"ready for go-live\". gate:false marks an item as tracked but optional (does
+    // not block readiness). Sources: ACCESS RFA pp. 8, 21, 24, 33, 35\u201338, 57
+    // (https://www.cms.gov/priorities/innovation/files/access-rfa.pdf); CMS ACCESS
+    // Technical FAQ; FDA TEMPO for Digital Health Devices Pilot
+    // (https://www.fda.gov/medical-devices/digital-health-center-excellence/tempo-digital-health-devices-pilot).
+    const goLiveGateChecklist = [
+      {n:1,  category:'FHIR / API Submission', gate:true,  item:'Confirm production connectivity and a successful test eligibility check through the CMS Eligibility API', basis:'ACCESS RFA p. 8', owner:'IT / Interoperability'},
+      {n:2,  category:'FHIR / API Submission', gate:true,  item:'Confirm production connectivity and a successful test beneficiary enrollment/alignment through the CMS Alignment API', basis:'ACCESS RFA p. 8', owner:'IT / Interoperability'},
+      {n:3,  category:'FHIR / API Submission', gate:true,  item:'Confirm production connectivity and a successful test OAP Measures submission through the FHIR-based Data Reporting API, using the Person-Centered Outcomes (PCO) HL7\u00ae FHIR\u00ae Implementation Guide profiles CMS publishes', basis:'ACCESS RFA pp. 8, 24, 33, 38, 57', owner:'IT / Interoperability'},
+      {n:4,  category:'FHIR / API Submission', gate:true,  item:'Confirm health IT meets the Standardized API certification criteria (45 CFR \u00a7 170.315(g)(10)) and uses the most recent U.S. Core Data for Interoperability (USCDI) version (45 CFR \u00a7 170.213)', basis:'ACCESS RFA p. 37', owner:'IT / Interoperability'},
+      {n:5,  category:'FHIR / API Submission', gate:true,  item:'Confirm health information exchange (HIE) connectivity is established, enabling bidirectional exchange of clinical information (required within 12 months of the model start date)', basis:'ACCESS RFA p. 38', owner:'IT / Interoperability'},
+      {n:6,  category:'FHIR / API Submission', gate:false, item:'Optional: Beneficiary Claims Data API (BCDA) request submitted, if the organization elects to receive Medicare claims data', basis:'ACCESS RFA pp. 7, 20, 34', owner:'IT / Interoperability'},
+      {n:7,  category:'PCP Care Update Delivery', gate:true, item:'Confirm at least one CMS-acceptable secure electronic method \u2014 Direct Secure Messaging, an HIE-supported push mechanism, or another HIPAA-compliant exchange method \u2014 is operational for delivering ACCESS Care Updates; query-only exchange does not by itself satisfy this requirement', basis:'ACCESS RFA pp. 35\u201336', owner:'IT / Clinical operations'},
+      {n:8,  category:'PCP Care Update Delivery', gate:true, item:'Confirm a documented process exists to identify the beneficiary\u2019s PCP/referring clinician and check at least one trusted routing source (an HIE, a state/regional directory, a DirectTrust directory, or NPPES) before each Care Update delivery', basis:'ACCESS RFA p. 35', owner:'Clinical operations'},
+      {n:9,  category:'PCP Care Update Delivery', gate:true, item:'Confirm a process exists to take reasonable steps ensuring beneficiary-identifiable information in each Care Update is sent only to the intended recipient', basis:'CMS ACCESS Technical FAQ', owner:'Compliance / IT'},
+      {n:10, category:'HIPAA Compliance', gate:true, item:'Confirm signed Business Associate Agreements are executed and on file with every vendor/subcontractor that creates, receives, maintains, or transmits PHI on the organization\u2019s behalf', basis:'45 CFR \u00a7 164.502', owner:'Legal / Compliance'},
+      {n:11, category:'HIPAA Compliance', gate:true, item:'Confirm a written HIPAA Privacy & Security compliance program \u2014 workforce training, access controls, and a breach-notification procedure \u2014 is documented and active before go-live', basis:'45 CFR Parts 160, 164', owner:'Compliance Officer'},
+      {n:12, category:'FDA / Device Review', gate:true, item:'For every clinical device or software used in ACCESS care delivery, confirm it is either (a) FDA-cleared, authorized, or approved for its intended use, or (b) supplied by a manufacturer accepted into the FDA TEMPO pilot for that specific intended use and clinical use area, with a valid FDA enforcement-discretion statement on file \u2014 do not deploy a device outside these two pathways', basis:'ACCESS RFA p. 21; FDA TEMPO for Digital Health Devices Pilot', owner:'Clinical / Regulatory'},
+      {n:13, category:'FDA / Device Review', gate:true, item:'Confirm a process exists to re-verify FDA clearance/authorization or TEMPO enforcement-discretion status whenever a device, its software version, or its intended use changes', basis:'FDA TEMPO for Digital Health Devices Pilot', owner:'Clinical / Regulatory'}
+    ];
+    const GOLIVE_CATEGORIES = ['FHIR / API Submission','PCP Care Update Delivery','HIPAA Compliance','FDA / Device Review'];
+
     // ---- Billing, G-code, FFS-exclusion & CMP (Co-Management Payment) workflows ----
     // NOTE: in official CMS ACCESS guidance, "CMP" stands for Co-Management Payment —
     // the G-code-based payment referring/PCP clinicians bill for reviewing ACCESS Care
@@ -1170,7 +1199,48 @@
           </div>`;
       }).join('');
 
+      const goLiveRows = GOLIVE_CATEGORIES.map(cat => {
+        const items = goLiveGateChecklist.filter(c => c.category === cat);
+        const rows = items.map(c => {
+          const state = goLiveGateState[c.n] || 'not-started';
+          return `
+            <div class="regcheck-row regcheck-${state}" id="golive-row-${c.n}">
+              <div class="regcheck-num">${c.n}</div>
+              <div class="regcheck-body">
+                <strong>${c.item}${c.gate ? '' : ' <em>(optional \u2014 not a go-live gate)</em>'}</strong>
+                <div class="regcheck-meta">
+                  <span class="regcheck-basis" title="Regulatory basis">${c.basis}</span>
+                  <span class="regcheck-owner">Owner: ${c.owner}</span>
+                </div>
+              </div>
+              <div class="regcheck-status-wrap">
+                <select class="regcheck-status-select" id="golive-sel-${c.n}" aria-label="Status for ${c.item}" onchange="updateGoLiveGate(${c.n})">
+                  <option value="not-started"${state==='not-started'?' selected':''}>Not Started</option>
+                  <option value="in-progress"${state==='in-progress'?' selected':''}>In Progress</option>
+                  <option value="complete"${state==='complete'?' selected':''}>Complete</option>
+                </select>
+              </div>
+            </div>`;
+        }).join('');
+        return `<div class="elig-category-head">${cat} <span class="elig-category-badge">${items.length} item${items.length>1?'s':''}</span></div>${rows}`;
+      }).join('');
+
+      const goLiveCard = `
+        <article class="phase-card">
+          <div class="phase-card-header">
+            <div>
+              <h3>Hard go-live gates</h3>
+              <p style="margin:0.2rem 0 0;color:var(--text-muted);font-size:0.85rem;">FHIR/API submission, PCP Care Update delivery, HIPAA compliance, and FDA/device review must all be Complete before the organization is ready for go-live. One optional item (BCDA) is tracked but does not block readiness.</p>
+            </div>
+          </div>
+          <div id="golive-banner" class="golive-banner"></div>
+          <div class="regcheck-list" style="margin-top:0.9rem;">
+            ${goLiveRows}
+          </div>
+        </article>`;
+
       const sectionsHtml = `
+        ${goLiveCard}
         <article class="phase-card">
           <div class="phase-card-header">
             <div>
@@ -1185,6 +1255,7 @@
         </article>`;
 
       document.getElementById('panel-regcheck').innerHTML = sectionsHtml + trackSection;
+      renderGoLiveBanner();
     }
 
     // ---- Persistence layer: survive full page reloads via localStorage ----
@@ -1203,7 +1274,7 @@
         localStorage.setItem(STORE_KEY, JSON.stringify({
           intake: persisted.intake || null,
           regCheckState, riskState, kpiState, qualityState, projectionState,
-          eligCheckState, rosterState, piScreeningState, randCheckState,
+          eligCheckState, rosterState, piScreeningState, randCheckState, goLiveGateState,
           cmpCheckState, ffsCheckState, billingRiskState, oatCalcState, sstCalcState
         }));
       }catch(e){ /* storage unavailable (private mode / quota) — fail silently */ }
@@ -1220,6 +1291,8 @@
     const piScreeningState = Object.assign({lastScreened:'', complianceOfficer:''}, persisted.piScreeningState);
     // Randomization & control-group disclosure checklist status, keyed by item number.
     const randCheckState = Object.assign({}, persisted.randCheckState);
+    // Hard go-live gate checklist status (FHIR/API, PCP Care Update, HIPAA, FDA/device), keyed by item number.
+    const goLiveGateState = Object.assign({}, persisted.goLiveGateState);
     // Billing/CMP/FFS-exclusion/program-integrity checklist status, keyed by item number.
     const cmpCheckState = Object.assign({}, persisted.cmpCheckState);
     const ffsCheckState = Object.assign({}, persisted.ffsCheckState);
@@ -1246,6 +1319,38 @@
       if(countEl){
         const done = Object.values(regCheckState).filter(v => v === 'complete').length;
         countEl.textContent = done + '/12 complete';
+      }
+    }
+
+    function updateGoLiveGate(n){
+      const sel = document.getElementById('golive-sel-'+n);
+      if(!sel) return;
+      goLiveGateState[n] = sel.value;
+      saveStore();
+      const row = document.getElementById('golive-row-'+n);
+      if(row){ row.className = 'regcheck-row regcheck-'+sel.value; }
+      renderGoLiveBanner();
+    }
+
+    // Recomputes the blocking go-live readiness banner from the gate:true items
+    // only \u2014 the optional BCDA item (gate:false) is tracked but never blocks
+    // readiness. All four categories (FHIR/API, PCP Care Update, HIPAA, FDA/device)
+    // must be 100% Complete on their hard-gate items before the tool reports ready.
+    function renderGoLiveBanner(){
+      const bannerEl = document.getElementById('golive-banner');
+      if(!bannerEl) return;
+      const hardItems = goLiveGateChecklist.filter(c => c.gate);
+      const doneCount = hardItems.filter(c => goLiveGateState[c.n] === 'complete').length;
+      const incompleteCats = GOLIVE_CATEGORIES.filter(cat => {
+        const catHard = hardItems.filter(c => c.category === cat);
+        return catHard.some(c => goLiveGateState[c.n] !== 'complete');
+      });
+      if(incompleteCats.length === 0){
+        bannerEl.className = 'golive-banner golive-ready';
+        bannerEl.innerHTML = `<strong>Ready for go-live \u2014 all ${hardItems.length} hard gates complete.</strong> FHIR/API submission, PCP Care Update delivery, HIPAA compliance, and FDA/device review are all satisfied.`;
+      } else {
+        bannerEl.className = 'golive-banner golive-blocked';
+        bannerEl.innerHTML = `<strong>Not ready for go-live \u2014 ${doneCount}/${hardItems.length} hard gates complete.</strong> Outstanding: ${incompleteCats.join(', ')}.`;
       }
     }
 
